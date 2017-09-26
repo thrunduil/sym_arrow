@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "hash_equal.h"
-#include "mmlib_internals/hash_table/hash_table.h"
+#include "dag/details/hash_equal.h"
+#include "dag/details/hash_table/hash_table.h"
 
 #include <boost/pool/pool.hpp>
 #include <vector>
@@ -109,7 +109,7 @@ class hashed_object_table
         using hasher            = obj_hasher<value_type>;
         using equaler           = obj_equaler<value_type>;
         using storage_type      = Storage;
-        using hash_table        = mmlib::hash_table<value_type, hasher, equaler>;
+        using hash_table        = hash_table<value_type, hasher, equaler>;
         using hash_entry        = typename hash_table::entry;
 
     public:

@@ -30,6 +30,9 @@
     <ClInclude Include="..\..\src\sym_arrow\include\dag\details\dag_header.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\dag\details\global_objects.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\dag\details\hash_equal.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\hash_table\hash_equal.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\hash_table\hash_table.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\hash_table\hash_table_details.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\dag\details\leak_detector.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\dag\details\memory_manager.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\dag\details\object_table.h" />
@@ -45,6 +48,8 @@
     <None Include="..\..\src\sym_arrow\include\dag\details\dag_visitor.inl" />
     <None Include="..\..\src\sym_arrow\include\dag\details\global_objects.inl" />
     <None Include="..\..\src\sym_arrow\include\dag\details\hash_equal.inl" />
+    <None Include="..\..\src\sym_arrow\include\dag\details\hash_table\hash_equal.inl" />
+    <None Include="..\..\src\sym_arrow\include\dag\details\hash_table\hash_table.inl" />
     <None Include="..\..\src\sym_arrow\include\dag\details\object_table.inl" />
     <None Include="..\..\src\sym_arrow\include\dag\details\refptr.inl" />
     <None Include="..\..\src\sym_arrow\include\dag\details\release_stack.inl" />
