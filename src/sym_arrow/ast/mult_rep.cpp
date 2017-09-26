@@ -20,12 +20,12 @@
 
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/ast/ast.h"
-#include "mmlib_internals/utils/stack_array.h"
+#include "sym_arrow/utils/stack_array.h"
 
 namespace sym_arrow { namespace ast
 {
  
-namespace md = mmlib::details;
+namespace sd = sym_arrow :: details;
 
 mult_rep::~mult_rep()
 {

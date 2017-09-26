@@ -18,13 +18,13 @@
     <ClCompile Include="..\..\src\test_sym_arrow\rand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test_sym_arrow\test_fast_sym.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\test_sym_arrow\test_set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\test_sym_arrow\timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test_sym_arrow\test_harmonics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

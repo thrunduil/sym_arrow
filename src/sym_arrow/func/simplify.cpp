@@ -23,7 +23,7 @@
 #include "dag/dag.h"
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/ast/builder/vlist_add.h"
-#include "mmlib_internals/utils/stack_array.h"
+#include "sym_arrow/utils/stack_array.h"
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/func/symbol_functions.h"
 #include "sym_arrow/ast/cannonization/cannonize.h"
@@ -36,7 +36,7 @@
 namespace sym_arrow { namespace details
 {
 
-namespace md = mmlib::details;
+namespace sd = sym_arrow :: details;
 
 class do_simplify_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_simplify_vis>
 {
@@ -149,12 +149,12 @@ expr do_simplify_vis::eval(const ast::add_rep* h)
     size_t n            = h->size();
 
     using item          = ast::build_item<value>;
-    using item_pod      = md::pod_type<item>;
+    using item_pod      = sd::pod_type<item>;
 
     int size_counter    = 0;
     size_t length       = n + 1;
     item_pod::destructor_type d(&size_counter);
-    md::stack_array<item_pod> sum_buff(length, &d);    
+    sd::stack_array<item_pod> sum_buff(length, &d);    
 
     item* sum_buff_ptr  = sum_buff.get_cast<item>();
 
@@ -212,19 +212,19 @@ expr do_simplify_vis::eval(const ast::mult_rep* h)
     if (ex.empty() == false)
         return expr(ex->get_value());
 
-    namespace md = mmlib::details;
+    namespace sd = sym_arrow :: details;
 
     size_t in           = h->isize();
     size_t rn           = h->rsize();
 
     using iitem         = ast::build_item<int>;
     using ritem         = ast::build_item<value>;
-    using iitem_pod     = md::pod_type<iitem>;
-    using ritem_pod     = md::pod_type<ritem>;
+    using iitem_pod     = sd::pod_type<iitem>;
+    using ritem_pod     = sd::pod_type<ritem>;
 
     int ipow_counter    = 0;
     iitem_pod::destructor_type d_ipow(&ipow_counter);
-    md::stack_array<iitem_pod> ipow_buff(in, &d_ipow);
+    sd::stack_array<iitem_pod> ipow_buff(in, &d_ipow);
 
     iitem* ipow_ptr     = ipow_buff.get_cast<iitem>();
 
@@ -239,7 +239,7 @@ expr do_simplify_vis::eval(const ast::mult_rep* h)
 
     int rpow_counter    = 0;
     ritem_pod::destructor_type d_rpow(&rpow_counter);
-    md::stack_array<ritem_pod> rpow_buff(rn, &d_rpow);    
+    sd::stack_array<ritem_pod> rpow_buff(rn, &d_rpow);    
 
     ritem* rpow_ptr     = rpow_buff.get_cast<ritem>();
 
@@ -280,9 +280,9 @@ expr do_simplify_vis::eval(const ast::function_rep* h)
     size_t n                = h->size();
 
     int size_counter        = 0;
-    using expr_pod          =  md::pod_type<expr>;
+    using expr_pod          =  sd::pod_type<expr>;
     expr_pod::destructor_type d(&size_counter);
-    md::stack_array<expr_pod> buff(n, &d);    
+    sd::stack_array<expr_pod> buff(n, &d);    
 
     expr* buff_ptr          = reinterpret_cast<expr*>(buff.get());
 

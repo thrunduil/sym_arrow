@@ -23,14 +23,14 @@
 #include "sym_arrow/functions/expr_functions.h"
 #include "sym_arrow/ast/cannonization/cannonize.h"
 #include "sym_arrow/ast/mult_rep.inl"
-#include "mmlib_internals/utils/stack_array.h"
+#include "sym_arrow/utils/stack_array.h"
 #include "sym_arrow/utils/sort.h"
 #include "sym_arrow/ast/cannonization/simplifier.inl"
 
 namespace sym_arrow { namespace ast
 {
 
-namespace md = mmlib::details;
+namespace sd = sym_arrow::details;
 
 //-------------------------------------------------------------------
 //                  helpers
@@ -198,13 +198,13 @@ bool subexpr_collector::make(size_t n, add_item_handle* ih, expr& res,
     // collect subexpressions
     static const size_t buffer_size = 10;
 
-    md::stack_array<md::pod_type<ipow_item>, buffer_size> ipow_array(counter.n_ipow);
+    sd::stack_array<sd::pod_type<ipow_item>, buffer_size> ipow_array(counter.n_ipow);
     ipow_item* ibuf = (ipow_item*)ipow_array.get();
 
-    md::stack_array<md::pod_type<rpow_item>, buffer_size> rpow_array(counter.n_rpow);
+    sd::stack_array<sd::pod_type<rpow_item>, buffer_size> rpow_array(counter.n_rpow);
     rpow_item* rbuf = (rpow_item*)rpow_array.get();
 
-    md::stack_array<md::pod_type<exp_item>, buffer_size> epow_array(counter.n_exp);
+    sd::stack_array<sd::pod_type<exp_item>, buffer_size> epow_array(counter.n_exp);
     exp_item* ebuf = (exp_item*)epow_array.get();
 
     {
@@ -286,11 +286,11 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
     using ritem_handle  = ritem::handle_type;
 
     using item          = build_item<value>;
-    using item_pod      = md::pod_type<item>;
+    using item_pod      = sd::pod_type<item>;
 
     int size_counter    = 0;
     item_pod::destructor_type d(&size_counter);
-    md::stack_array<item_pod> buff(length, &d);    
+    sd::stack_array<item_pod> buff(length, &d);    
 
     value add           = value::make_zero();
     item* it            = (item*)buff.get();
@@ -324,10 +324,10 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
         //destructor is trivial
         static const size_t buffer_size = 20;
         
-        md::stack_array<md::pod_type<iitem_handle>, buffer_size> ih_array(isize + 1);
+        sd::stack_array<sd::pod_type<iitem_handle>, buffer_size> ih_array(isize + 1);
         iitem_handle* imh = (iitem_handle*)ih_array.get();
 
-        md::stack_array<md::pod_type<ritem_handle>, buffer_size> rh_array(rsize + 1);
+        sd::stack_array<sd::pod_type<ritem_handle>, buffer_size> rh_array(rsize + 1);
         ritem_handle* rmh = (ritem_handle*)rh_array.get();
 
         for (size_t i2 = 0; i2 < isize; ++i2)
@@ -399,10 +399,10 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
     //destructor is trivial
     static const size_t buffer_size = 10;
         
-    md::stack_array<md::pod_type<iitem_handle>, buffer_size> ih_array(isize + 1);
+    sd::stack_array<sd::pod_type<iitem_handle>, buffer_size> ih_array(isize + 1);
     iitem_handle* imh = (iitem_handle*)ih_array.get();
 
-    md::stack_array<md::pod_type<ritem_handle>, buffer_size> rh_array(rsize + 1);
+    sd::stack_array<sd::pod_type<ritem_handle>, buffer_size> rh_array(rsize + 1);
     ritem_handle* rmh = (ritem_handle*)rh_array.get();
 
     size_t ipow_size    = 0;

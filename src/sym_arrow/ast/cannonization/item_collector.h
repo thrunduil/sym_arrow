@@ -23,10 +23,12 @@
 #include "sym_arrow/ast/builder/build_item.h"
 #include "sym_arrow/ast/helpers/utils.h"
 #include "sym_arrow/nodes/expr.h"
-#include "mmlib_internals/utils/stack_array.h"
+#include "sym_arrow/utils/stack_array.h"
 
 namespace sym_arrow { namespace ast
 {
+
+namespace sd = sym_arrow :: details;
 
 class item_collector_add
 {
@@ -41,8 +43,8 @@ class item_collector_add
 
         static const size_t stack_size  = 10 + buf_reserve;        
 
-        using stack_elem    = mmlib::details::pod_type<item_handle>;
-        using item_array    = mmlib::details::stack_array<stack_elem, stack_size>;
+        using stack_elem    = details::pod_type<item_handle>;
+        using item_array    = sd::stack_array<stack_elem, stack_size>;
 
     private:
         size_t              m_size;
@@ -119,8 +121,8 @@ class item_collector_mult_arrays
         using ritem_handle      = build_item_handle<value>;
         using collector_size    = item_collector_size;
 
-        using ritem_array       = mmlib::details::stack_array<mmlib::details::pod_type<ritem_handle>>;
-        using iih_array         = mmlib::details::stack_array<mmlib::details::pod_type<iitem_handle>>;
+        using ritem_array       = sd::stack_array<details::pod_type<ritem_handle>>;
+        using iih_array         = sd::stack_array<details::pod_type<iitem_handle>>;
 
     private:
         ritem_array         m_rih_array;        
@@ -140,8 +142,8 @@ class item_collector_mult
         using ritem_handle      = build_item_handle<value>;
         using collector_size    = item_collector_size;
 
-        using ritem_array       = mmlib::details::stack_array<mmlib::details::pod_type<ritem_handle>>;
-        using iih_array         = mmlib::details::stack_array<mmlib::details::pod_type<iitem_handle>>;
+        using ritem_array       = sd::stack_array<details::pod_type<ritem_handle>>;
+        using iih_array         = sd::stack_array<details::pod_type<iitem_handle>>;
         using value_type        = typename ritem_array::value_type;
         using arrays            = item_collector_mult_arrays;
 

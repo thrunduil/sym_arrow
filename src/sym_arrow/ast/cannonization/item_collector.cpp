@@ -212,8 +212,8 @@ void item_collector_mult::collect_base()
     };
 
     using base_map          = std::map<expr_handle, info>;
-    using info_vec          = mmlib::details::stack_array<info*>;
-    using int_vec           = mmlib::details::stack_array<int>;
+    using info_vec          = sd::stack_array<info*>;
+    using int_vec           = sd::stack_array<int>;
     using base_value_type   = base_map::value_type;
 
     base_map    m_base_map;    

@@ -225,6 +225,9 @@
     <ClInclude Include="..\..\src\sym_arrow\grammar\output\sym_arrow_vocabularyTokenTypes.hpp">
       <Filter>Source Files\grammar\output</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\utils\stack_array.h">
+      <Filter>Source Files\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp">

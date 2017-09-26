@@ -2,6 +2,7 @@
 #include "timer.h"
 
 #include "../../sym_arrow/func/symbol_functions.h"
+#include "test_set.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -55,8 +56,10 @@ expr spherical_harmonic(int l, int m, const symbol& x, const symbol& y, const sy
         return P(l, abs_m, z) * C(abs_m, x, y);
 };
 
-void test_sym_arrow()
+void test_set::test_harmonics()
 {
+    std::cout << "\n" << "test harmonics" << "\n";
+
     expr ret    = expr(0.0);
 
     tic();
@@ -67,7 +70,12 @@ void test_sym_arrow()
 
     std::vector<expr> diffs;
 
-    int max_l   = 20;
+    #ifndef _DEBUG
+        int max_l   = 20;
+    #else
+        int max_l   = 15;
+    #endif
+    
     for (int l = 0; l < max_l; ++l)
     for (int m = -l; m <= l; ++m)
     {
@@ -82,11 +90,6 @@ void test_sym_arrow()
         expr ex_x   = diff(ex, x);
         expr ex_y   = diff(ex, y);
         expr ex_z   = diff(ex, z);
-
-        //disp(ex);
-        //disp(ex_x);
-        //disp(ex_y);
-        //disp(ex_z);
 
         symbol sl(sym_name.str());
         ret     = std::move(ret) + sl * std::move(ex);
@@ -106,9 +109,11 @@ void test_sym_arrow()
     sym_arrow::ast::details::measure_complexity(ret.get_ptr().get(), stats);
 
     double d = toc();
+    
     std::cout << "spherical harmonics lev " << max_l << " time: " << d << "\n";
 
     std::cout << "\n";
+    std::cout << "expr stast: " << "\n";
     stats.disp();    
 
     //disp(ret);
