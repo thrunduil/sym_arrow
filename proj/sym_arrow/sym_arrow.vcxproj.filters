@@ -1,0 +1,457 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{0064c808-7e8c-41a2-8a4a-87dcde2a2467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\include">
+      <UniqueIdentifier>{f3a45f21-b4c1-4b22-9467-a07bee1089d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ast">
+      <UniqueIdentifier>{6cb9ee6f-27c4-4e3f-ab71-f92a3f6fda29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\nodes">
+      <UniqueIdentifier>{4ca508bf-4bfb-4821-9a40-3e21b6907763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ast\helpers">
+      <UniqueIdentifier>{0df6795a-8047-49a1-9a59-9638ca7e5ffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\error">
+      <UniqueIdentifier>{b45ecfbb-5082-4e87-b524-5b0449b6bc86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\func">
+      <UniqueIdentifier>{1c212fae-8cdd-4efd-ba1e-05c00103cb87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ast\builder">
+      <UniqueIdentifier>{7dd56674-1cf1-4f5b-ae04-a7f2ca6ca66c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ast\cannonization">
+      <UniqueIdentifier>{e2c1ba98-e1d9-40a6-91cf-6892cad00d0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{f9722368-5652-44ac-aad8-d194e5552cd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\grammar">
+      <UniqueIdentifier>{47093969-8f71-4d57-8a8f-0a778f50021b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\grammar\output">
+      <UniqueIdentifier>{bc066dd8-5445-4d45-8cce-c8695d2c9825}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\include\sym_arrow">
+      <UniqueIdentifier>{53233b0b-2ee7-4fee-8149-7429e4822b69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\include\sym_arrow\nodes">
+      <UniqueIdentifier>{8796df46-0d9d-441b-9583-72db9aa9bd2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\include\sym_arrow\details">
+      <UniqueIdentifier>{9644656a-917c-4141-b8e0-6fc3141e4ff5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\include\sym_arrow\functions">
+      <UniqueIdentifier>{bd3463bc-5dbf-491a-a07d-f787ad13a62d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\fast_sym\simplifications.txt">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\config.h">
+      <Filter>Source Files\include\sym_arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\exception.h">
+      <Filter>Source Files\include\sym_arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\fwd_decls.h">
+      <Filter>Source Files\include\sym_arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\sym_arrow.h">
+      <Filter>Source Files\include\sym_arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\details\dag_traits.h">
+      <Filter>Source Files\include\sym_arrow\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\contexts.h">
+      <Filter>Source Files\include\sym_arrow\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\expr_functions.h">
+      <Filter>Source Files\include\sym_arrow\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\add_expr.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\expr.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\expr_visitor.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\function_expr.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\mult_expr.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\scalar.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\symbol.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\add_rep.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\ast.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\ast_rep_details.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\ast_tags.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\expr_cache.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\expr_symbols.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\function_rep.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\mult_rep.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\scalar_rep.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\symbol_rep.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\term_context_data.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\traversal_visitor.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\add_build.h">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\build_item.h">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\mult_build.h">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\vlist.h">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\vlist_add.h">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\vlist_mult.h">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\branch_predictor.h">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\cannonize.h">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\cse_hash.h">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\cse_hash_data.h">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\item_collector.h">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\simplifier.h">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\subexpr_collector.h">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\subexpr_ordering.h">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\helpers\registered_symbols.h">
+      <Filter>Source Files\ast\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\helpers\string_data.h">
+      <Filter>Source Files\ast\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\helpers\utils.h">
+      <Filter>Source Files\ast\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\error\error_formatter.h">
+      <Filter>Source Files\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\func\compound.h">
+      <Filter>Source Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\func\diff_hash.h">
+      <Filter>Source Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\func\process_scalar.h">
+      <Filter>Source Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\func\symbol_functions.h">
+      <Filter>Source Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\grammar\lexer_include.h">
+      <Filter>Source Files\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\grammar\parser_include.h">
+      <Filter>Source Files\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\grammar\parser_members.h">
+      <Filter>Source Files\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\utils\pool_hash_map.h">
+      <Filter>Source Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\utils\sort.h">
+      <Filter>Source Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\grammar\output\lexer_sym_arrow.hpp">
+      <Filter>Source Files\grammar\output</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\grammar\output\parser_sym_arrow.hpp">
+      <Filter>Source Files\grammar\output</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\grammar\output\sym_arrow_vocabularyTokenTypes.hpp">
+      <Filter>Source Files\grammar\output</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\function_rep.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\mult_rep.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\scalar_rep.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\symbol_rep.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\term_context_data.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\builder\add_build.cpp">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\builder\mult_build.cpp">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\builder\vlist.cpp">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\builder\vlist_add.cpp">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\builder\vlist_mult.cpp">
+      <Filter>Source Files\ast\builder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\branch_predictor.cpp">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\cannonize.cpp">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\cse_hash.cpp">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\cse_hash_data.cpp">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\item_collector.cpp">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\subexpr_collector.cpp">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\subexpr_ordering.cpp">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\helpers\registered_symbols.cpp">
+      <Filter>Source Files\ast\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\helpers\string_data.cpp">
+      <Filter>Source Files\ast\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\error\error_formatter.cpp">
+      <Filter>Source Files\error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\error\exception.cpp">
+      <Filter>Source Files\error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\check_rep.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\compound.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\contexts.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\diff.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\diff_hash.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\disp.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\eval.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\exp_log.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\expr_cast.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\mult_div_pow.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\parse.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\plus_minus.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\simplify.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\subs.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\symbol_functions.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\unary.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\grammar\parser_members.cpp">
+      <Filter>Source Files\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\add_expr.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\expr.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\function_expr.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\mult_expr.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\scalar.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\symbol.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\value.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\grammar\output\lexer_sym_arrow.cpp">
+      <Filter>Source Files\grammar\output</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\grammar\output\parser_sym_arrow.cpp">
+      <Filter>Source Files\grammar\output</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr.inl">
+      <Filter>Source Files\include\sym_arrow\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr_visitor.inl">
+      <Filter>Source Files\include\sym_arrow\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\scalar.inl">
+      <Filter>Source Files\include\sym_arrow\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value.inl">
+      <Filter>Source Files\include\sym_arrow\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\add_rep.inl">
+      <Filter>Source Files\ast</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\expr_cache.inl">
+      <Filter>Source Files\ast</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\expr_symbols.inl">
+      <Filter>Source Files\ast</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\mult_rep.inl">
+      <Filter>Source Files\ast</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\scalar_rep.inl">
+      <Filter>Source Files\ast</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\symbol_rep.inl">
+      <Filter>Source Files\ast</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\term_context_data.inl">
+      <Filter>Source Files\ast</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\builder\add_build.inl">
+      <Filter>Source Files\ast\builder</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\builder\build_item.inl">
+      <Filter>Source Files\ast\builder</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\builder\mult_build.inl">
+      <Filter>Source Files\ast\builder</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\builder\vlist.inl">
+      <Filter>Source Files\ast\builder</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\builder\vlist_add.inl">
+      <Filter>Source Files\ast\builder</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\builder\vlist_mult.inl">
+      <Filter>Source Files\ast\builder</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\cannonization\cannonize.inl">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\cannonization\item_collector.inl">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\cannonization\simplifier.inl">
+      <Filter>Source Files\ast\cannonization</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\helpers\string_data.inl">
+      <Filter>Source Files\ast\helpers</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\grammar\sym_arrow.g">
+      <Filter>Source Files\grammar</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\nodes\symbol.inl">
+      <Filter>Source Files\nodes</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\utils\pool_hash_map.inl">
+      <Filter>Source Files\utils</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\utils\sort.inl">
+      <Filter>Source Files\utils</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\src\sym_arrow\grammar\output\sym_arrow_vocabularyTokenTypes.txt">
+      <Filter>Source Files\grammar\output</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

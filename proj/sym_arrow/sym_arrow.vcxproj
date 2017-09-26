@@ -1,0 +1,352 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\fast_sym\simplifications.txt" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\add_rep.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\ast.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\ast_rep_details.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\ast_tags.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\add_build.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\build_item.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\mult_build.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\vlist.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\vlist_add.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\builder\vlist_mult.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\branch_predictor.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\cannonize.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\cse_hash.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\cse_hash_data.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\item_collector.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\simplifier.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\subexpr_collector.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\cannonization\subexpr_ordering.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\expr_cache.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\expr_symbols.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\function_rep.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\helpers\registered_symbols.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\helpers\string_data.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\helpers\utils.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\mult_rep.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\scalar_rep.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\symbol_rep.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\term_context_data.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\traversal_visitor.h" />
+    <ClInclude Include="..\..\src\sym_arrow\error\error_formatter.h" />
+    <ClInclude Include="..\..\src\sym_arrow\func\compound.h" />
+    <ClInclude Include="..\..\src\sym_arrow\func\diff_hash.h" />
+    <ClInclude Include="..\..\src\sym_arrow\func\process_scalar.h" />
+    <ClInclude Include="..\..\src\sym_arrow\func\symbol_functions.h" />
+    <ClInclude Include="..\..\src\sym_arrow\grammar\lexer_include.h" />
+    <ClInclude Include="..\..\src\sym_arrow\grammar\output\lexer_sym_arrow.hpp" />
+    <ClInclude Include="..\..\src\sym_arrow\grammar\output\parser_sym_arrow.hpp" />
+    <ClInclude Include="..\..\src\sym_arrow\grammar\output\sym_arrow_vocabularyTokenTypes.hpp" />
+    <ClInclude Include="..\..\src\sym_arrow\grammar\parser_include.h" />
+    <ClInclude Include="..\..\src\sym_arrow\grammar\parser_members.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\config.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\details\dag_traits.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\exception.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\contexts.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\expr_functions.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\fwd_decls.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\add_expr.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\expr.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\expr_visitor.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\function_expr.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\mult_expr.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\scalar.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\symbol.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\sym_arrow.h" />
+    <ClInclude Include="..\..\src\sym_arrow\utils\pool_hash_map.h" />
+    <ClInclude Include="..\..\src\sym_arrow\utils\sort.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\builder\add_build.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\builder\mult_build.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\builder\vlist.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\builder\vlist_add.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\builder\vlist_mult.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\branch_predictor.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\cannonize.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\cse_hash.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\cse_hash_data.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\item_collector.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\subexpr_collector.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\cannonization\subexpr_ordering.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\function_rep.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\helpers\registered_symbols.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\helpers\string_data.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\mult_rep.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\scalar_rep.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\symbol_rep.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\term_context_data.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\error\error_formatter.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\error\exception.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\check_rep.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\compound.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\contexts.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\diff.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\diff_hash.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\disp.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\eval.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\expr_cast.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\exp_log.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\mult_div_pow.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\parse.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\plus_minus.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\simplify.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\subs.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\symbol_functions.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\unary.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\grammar\output\lexer_sym_arrow.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</TreatWarningAsError>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</TreatWarningAsError>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</TreatWarningAsError>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</TreatWarningAsError>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\grammar\output\parser_sym_arrow.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</TreatWarningAsError>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</TreatWarningAsError>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</TreatWarningAsError>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</TreatWarningAsError>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\grammar\parser_members.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\add_expr.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\expr.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\function_expr.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\mult_expr.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\scalar.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\symbol.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\value.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\sym_arrow\ast\add_rep.inl" />
+    <None Include="..\..\src\sym_arrow\ast\builder\add_build.inl" />
+    <None Include="..\..\src\sym_arrow\ast\builder\build_item.inl" />
+    <None Include="..\..\src\sym_arrow\ast\builder\mult_build.inl" />
+    <None Include="..\..\src\sym_arrow\ast\builder\vlist.inl" />
+    <None Include="..\..\src\sym_arrow\ast\builder\vlist_add.inl" />
+    <None Include="..\..\src\sym_arrow\ast\builder\vlist_mult.inl" />
+    <None Include="..\..\src\sym_arrow\ast\cannonization\cannonize.inl" />
+    <None Include="..\..\src\sym_arrow\ast\cannonization\item_collector.inl" />
+    <None Include="..\..\src\sym_arrow\ast\cannonization\simplifier.inl" />
+    <None Include="..\..\src\sym_arrow\ast\expr_cache.inl" />
+    <None Include="..\..\src\sym_arrow\ast\expr_symbols.inl" />
+    <None Include="..\..\src\sym_arrow\ast\helpers\string_data.inl" />
+    <None Include="..\..\src\sym_arrow\ast\mult_rep.inl" />
+    <None Include="..\..\src\sym_arrow\ast\scalar_rep.inl" />
+    <None Include="..\..\src\sym_arrow\ast\symbol_rep.inl" />
+    <None Include="..\..\src\sym_arrow\ast\term_context_data.inl" />
+    <None Include="..\..\src\sym_arrow\grammar\sym_arrow.g" />
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr.inl" />
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr_visitor.inl" />
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\scalar.inl" />
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value.inl" />
+    <None Include="..\..\src\sym_arrow\nodes\symbol.inl" />
+    <None Include="..\..\src\sym_arrow\utils\pool_hash_map.inl" />
+    <None Include="..\..\src\sym_arrow\utils\sort.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\sym_dag\sym_dag.vcxproj">
+      <Project>{3cd5a52f-3633-4e4b-a7e1-edbbdf42a5b8}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\src\sym_arrow\grammar\output\sym_arrow_vocabularyTokenTypes.txt" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4BE517FA-056D-4070-91EC-C33F3274AE38}</ProjectGuid>
+    <RootNamespace>symbolic</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <SccProjectName>
+    </SccProjectName>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IncludePath);$(boost_dir)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath);$(boost_lib_x64)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IncludePath);$(boost_dir)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(LibraryPath);$(boost_lib_x64)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;C:\Program Files %28x86%29\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN64;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
