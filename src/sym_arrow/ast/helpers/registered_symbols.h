@@ -48,7 +48,7 @@ class registered_symbols
                                                         { return c1->first == c2; };
         };
 
-        using code_sym_map      = mmlib::hash_table<code_sym, cs_h, cs_e>;
+        using code_sym_map      = sym_dag::hash_table<code_sym, cs_h, cs_e>;
 
     private:
         pool_allocator          m_pool;

@@ -16,6 +16,9 @@
     <Filter Include="Source Files\include\dag\details">
       <UniqueIdentifier>{503d137a-85b1-4da1-a944-1b791b6436a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\include\dag\details\hash_table">
+      <UniqueIdentifier>{d655cbdc-dbb7-4007-904d-d7de8b055248}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\sym_arrow\include\dag\config.h">
@@ -69,6 +72,15 @@
     <ClInclude Include="..\..\src\sym_arrow\include\dag\details\vector_provider.h">
       <Filter>Source Files\include\dag\details</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\hash_table\hash_equal.h">
+      <Filter>Source Files\include\dag\details\hash_table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\hash_table\hash_table.h">
+      <Filter>Source Files\include\dag\details\hash_table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\hash_table\hash_table_details.h">
+      <Filter>Source Files\include\dag\details\hash_table</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\sym_arrow\include\dag\details\dag_context.inl">
@@ -103,6 +115,12 @@
     </None>
     <None Include="..\..\src\sym_arrow\include\dag\details\vector_provider.inl">
       <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\hash_table\hash_equal.inl">
+      <Filter>Source Files\include\dag\details\hash_table</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\hash_table\hash_table.inl">
+      <Filter>Source Files\include\dag\details\hash_table</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
