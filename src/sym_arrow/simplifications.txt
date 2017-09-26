@@ -1,0 +1,144 @@
+Simplication rules:
+
+1.  0 * x   -> 0                        for any x (including inf, NaN)
+2.  0 + x   -> x
+3.  1 * x   -> x
+4.  v1 * x + v2 * x -> (v1 + v2) * x    for any v1, v2, x
+5.  x ^ 0   -> 1                        for any x
+6.  x ^ 1   -> x
+7.  (x^a) * (x^b) -> x^(a + b)          for any x and any integers a, b
+8.  1 ^ x   -> 1                        for any x
+9.  a^x     -> e^(x*log(|a|))           for any a and x
+
+common subexpressions elimination:
+1.  negative powers are collected separately to positive powers
+2.  ordering for integer powers:
+        1. prefer sequence of equal powers higher number of
+            subexpr can be deeply simplified
+        2. then prefer longest sequences of equal powers
+        3. in case of equal length prefer negative powers first
+        4. prefer sequence with higher total length
+        5. if both sequences have negative powers:            
+            a. then prefer sequence with lower power
+        6. if both sequences have positive power
+            a. prefer sequence with higher power
+        7. otherwise both sequences are equal
+2.  ordering for ipow_horner
+        1. prefer sequence with negative power
+        2. prefer sequence with higher number of deep simplifications
+        3. if both sequences have negative powers:            
+            - then prefer sequence with lower power
+        4. if both sequences have positive powers:            
+            - then prefer sequence with higher power
+        5. prefer sequence with higher total length
+        6. otherwise both sequences are equal
+3.  ordering for real powers
+        1. prefer sequence of equal powers higher number of
+            subexpr can be deeply simplified
+        2. then prefer longest sequences of equal powers
+        3. if two sequences have the same length, then prefer sequence
+            with higher power
+        4. otherwise both sequences are equal
+4.  ordering for exp expressions
+        1. prefer sequence of equal powers higher number of
+            subexpr can be deeply simplified
+        2. then prefer longest sequences of equal exp expressions
+        3. otherwise both sequences are equal
+5.  ordering between expression types
+        1. if both sequences have the same type, then use ordering for given type
+        2. if one of sequence is not horner, then select this one
+        3. then compare number of deep simplifications
+        4. then compare sequence lengths
+        5. then exp power subexpression are preferred
+        6. then real power subexpressions are preferred
+        7. then int power subexpressions are preferred        
+        8. otherwise both sequences are equal
+7.  selection of subexpression to eliminate:
+        1. construct a set of all possible one-element subsexpressions
+        2. select best subexpressions according to above ordering
+        3. if a set of best subexpressions has more than one element, then
+           prefer the sequence with more complex base
+        4. if a set of best subexpressions stil has more than one element, then
+           compare base expressions birth time
+
+expression complexity comparison:
+expression a is more complex than expression b if
+    1. a has more symbols than b
+    2. a has higher total number of subexpressions than b
+    3. otherwise a and b are equally complex        
+
+consistency checks:
+1.  scalar:
+    - always valid
+2.  symbol:
+    - always valid
+    
+3.  add_rep:
+    - if size = 0, then has_log = true
+    - values are consistent:
+        - subterm values are not zero
+        - is size = 1 and has_log = false
+            if V0 = 0 and V(0) = 1 then error
+    - subexpr are consistent:
+        - every subexpression is not null and is cannonized
+        - every subexpression is atom or mult_rep
+        - every subexpression is consistent
+        - every subexpression base is different
+        - subterms are sorted based on expr pointers
+    - if has_log, then log is consistent: 
+        - log subexpr must be consistent
+        - log subexpr cannot be a scalar
+        - log subexpr is cannonized
+        - if subexpr is a mult_rep, then this mult_rep is exp free
+        - if subexpr is an add_rep, then this add_rep is not simple,
+            (add term is simple if size = 1 and has_log = false and V0() = 0)
+        
+3a. add_rep is normalized if:
+    - has log or
+    - normalize scaling is 1, where absolute value of normalize scaling 
+        is equal to maximum value of scalars in add_rep (including constant)
+        and sign is the same as sign of the first nonzero scalar (including
+        constant); if maximum value of scalars is not finite, then expression
+        is considered as normalized
+    
+4.  mult_rep
+    - if isize == 0 and rsize == 0 and has_exp == false then error
+    - values are consistent:
+        - integer powers cannot be zero
+        - real powers cannot be zero
+        - if isize == 1 and rsize == 0 and IV(0) == 1 and has_exp == false
+            then error
+    - subexpr are consistent:
+        - for every integer subterm
+            - subtern is cannonized
+            - subterm is atom or add_rep
+            - add_rep subterm:
+                - cannot be simple
+                    (add term is simple if size = 1 and has_log = false and V0() = 0)
+                - must be normalized
+            - subterm must be consistent
+        - for every real subterm
+            - subterm is cannonized
+            - subterm is atom or add_rep
+            - add_rep subterm:
+                - cannot be simple
+                    (add term is simple if size = 1 and has_log = false and V0() = 0)
+                - must be normalized
+            - subterm must be consistent
+            - real powers cannot be zero: 
+        - every integer subterm base is different
+        - every real subterm base is different
+        - integer subterms are sorted according to expr pointers
+        - real subterms are sorted according to expr pointers
+    - exp subexpr is consistent:
+        - exp subexpr must be consistent
+        - exp subexpr cannot be a scalar
+        - exp subexpr is cannonized
+        - if subexpr is an add rep, then this add rep if log free
+            and constant free
+
+5. function_rep
+    - for every subterm 
+        - subterm is not null
+        - subterm is cannonized
+        - subterm is consistent

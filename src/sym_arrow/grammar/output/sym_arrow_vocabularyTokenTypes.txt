@@ -1,0 +1,36 @@
+// $ANTLR 2.7.7 (2006-11-01): sym_arrow.g -> sym_arrow_vocabularyTokenTypes.txt$
+sym_arrow_vocabulary    // output token vocab name
+PLUS("'+'")=4
+MINUS("'-'")=5
+MULT("'*'")=6
+DIV("'/'")=7
+POWER("'^'")=8
+OR("|")=9
+LPAREN("'('")=10
+RPAREN("')'")=11
+ID("an identifier")=12
+LBRACK("'['")=13
+COMMA("','")=14
+RBRACK("']'")=15
+NUMBER("number")=16
+INT("integer")=17
+LCURL("'{'")=18
+RCURL("'}'")=19
+SEMI("';'")=20
+ESC=21
+WHITESPACE("white space")=22
+NEWLINE("new line")=23
+NOT_NEWLINE("not new line")=24
+NON_NEWLINE_WHITESPACE("not new line")=25
+COMMENT("comment")=26
+SL_COMMENT=27
+SL_DCOMMENT=28
+ML_COMMENT=29
+STRING_LITERAL("string")=30
+MULTILINE_STRING("string")=31
+CONTINUATION("continuation")=32
+DIGIT("digit")=33
+EXPONENT("exponent")=34
+COMPLEX("complex")=35
+DDOT("double dot")=36
+DOT("dot")=37

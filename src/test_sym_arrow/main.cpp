@@ -1,0 +1,95 @@
+/* 
+ *  This file is a part of sym_arrow library.
+ *
+ *  Copyright (c) Pawe³ Kowal 2017
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
+#include "timer.h"
+#include "test_set.h"
+#include "sym_arrow/sym_arrow.h"
+
+#include <iostream>
+//#include <vld.h>
+
+namespace sym_arrow { namespace testing
+{
+
+void test_sym_arrow();
+
+}};
+
+void break_func()
+{
+    std::cout << "break" << "\n";
+};
+
+int main(int argc, const char* argv[])
+{
+    using namespace sym_arrow::testing;
+
+    (void)argc;
+    (void)argv;    
+
+    // number of random trials
+    size_t n_rep = 100000;
+
+    // accurate messages
+    bool dodisp = false;
+
+    (void)n_rep;
+    (void)dodisp;
+
+    tic();
+
+    try
+    {
+        test_set::test_diff_context();
+        //test_sym_arrow();
+        test_set::test_diff();
+
+        test_set::test_special_cases();
+        test_set::test_visitor();        
+
+        test_set::test_random_diff(n_rep);
+        test_set::test_expression(n_rep);
+
+        std::cout << "\n";
+        //sym_dag::registered_dag_context::get().print_reuse_stats(std::cout);
+        //sym_dag::registered_dag_context::get().print_memory_stats(std::cout);
+        //sym_dag::registered_dag_context::get().print_collisions(std::cout);
+
+        sym_dag::registered_dag_context::get().clear_cache();
+        sym_dag::registered_dag_context::get().print_memory_leaks(std::cout);
+
+        #if 0        
+        //TODO
+        test_set::test_random_subs(n_rep, dodisp, std::cout, std::cout);        
+        #endif
+    }
+    catch(std::exception& ex)
+    {
+        std::cout << ex.what();
+    }
+    catch(sym_arrow::assert_exception& ex)
+    {
+        std::cout << ex.what();
+    }    
+
+    double d = toc();
+    std::cout << "time: " << d << "\n";
+    return 0;
+}

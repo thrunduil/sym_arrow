@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{0064c808-7e8c-41a2-8a4a-87dcde2a2467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\include">
+      <UniqueIdentifier>{f3a45f21-b4c1-4b22-9467-a07bee1089d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\dag">
+      <UniqueIdentifier>{09a1681c-ce19-4bbb-aeba-824aa4ea53da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\include\dag">
+      <UniqueIdentifier>{fd32733e-ac65-4e4f-a152-dcdce1e40fee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\include\dag\details">
+      <UniqueIdentifier>{503d137a-85b1-4da1-a944-1b791b6436a2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\config.h">
+      <Filter>Source Files\include\dag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\dag.h">
+      <Filter>Source Files\include\dag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\dag_context.h">
+      <Filter>Source Files\include\dag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\dag_item.h">
+      <Filter>Source Files\include\dag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\dag_ptr.h">
+      <Filter>Source Files\include\dag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\dag_visitor.h">
+      <Filter>Source Files\include\dag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\refptr.h">
+      <Filter>Source Files\include\dag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\allocator.h">
+      <Filter>Source Files\include\dag\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\dag_context_details.h">
+      <Filter>Source Files\include\dag\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\dag_header.h">
+      <Filter>Source Files\include\dag\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\global_objects.h">
+      <Filter>Source Files\include\dag\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\hash_equal.h">
+      <Filter>Source Files\include\dag\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\leak_detector.h">
+      <Filter>Source Files\include\dag\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\memory_manager.h">
+      <Filter>Source Files\include\dag\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\object_table.h">
+      <Filter>Source Files\include\dag\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\release_stack.h">
+      <Filter>Source Files\include\dag\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\dag\details\vector_provider.h">
+      <Filter>Source Files\include\dag\details</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\sym_arrow\include\dag\details\dag_context.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\dag_context_details.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\dag_item.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\dag_ptr.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\dag_visitor.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\global_objects.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\hash_equal.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\object_table.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\refptr.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\release_stack.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\dag\details\vector_provider.inl">
+      <Filter>Source Files\include\dag\details</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\sym_arrow\dag\dag_context.cpp">
+      <Filter>Source Files\dag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\dag\dag_item.cpp">
+      <Filter>Source Files\dag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\dag\global_objects.cpp">
+      <Filter>Source Files\dag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\dag\leak_detector.cpp">
+      <Filter>Source Files\dag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\dag\memory_manager.cpp">
+      <Filter>Source Files\dag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\dag\release_stack.cpp">
+      <Filter>Source Files\dag</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
