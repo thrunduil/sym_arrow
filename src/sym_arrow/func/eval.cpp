@@ -23,7 +23,7 @@
 #include "dag/dag.h"
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/ast/builder/vlist_add.h"
-#include "mmlib_internals/utils/stack_array.h"
+#include "sym_arrow/utils/stack_array.h"
 #include "sym_arrow/functions/contexts.h"
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/functions/expr_functions.h"
@@ -33,7 +33,7 @@
 namespace sym_arrow { namespace details
 {
 
-namespace md = mmlib::details;
+namespace sd = sym_arrow :: details;
 
 class do_eval_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_eval_vis>
 {
@@ -184,11 +184,11 @@ value do_eval_vis::eval(const ast::function_rep* h, const data_provider& dp)
 {
     size_t size = h->size();
 
-    using value_pod     =  md::pod_type<value>;
+    using value_pod     =  sd::pod_type<value>;
     int size_counter    = 0;
     value_pod::destructor_type d(&size_counter);
 
-    md::stack_array<value_pod> buff(size, &d);    
+    sd::stack_array<value_pod> buff(size, &d);    
 
     value* buff_ptr     = reinterpret_cast<value*>(buff.get());
 

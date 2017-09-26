@@ -145,7 +145,8 @@ class SYM_ARROW_EXPORT diff_context
 
         // construct partial derivative of a function 'func_name' with respect
         // to i-th argument (i = arg_num, index is 0-based), i.e. and substitute
-        // function arguments with n_args expressions given in the array args
+        // function arguments with n_args expressions given in the array args;
+        // return empty expression if appropriate diff rule is not defined
         expr            diff(const symbol& func_name, size_t arg_num, const expr* args,
                             size_t n_args);
 

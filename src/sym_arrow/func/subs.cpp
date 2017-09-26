@@ -23,7 +23,7 @@
 #include "dag/dag.h"
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/ast/builder/vlist_add.h"
-#include "mmlib_internals/utils/stack_array.h"
+#include "sym_arrow/utils/stack_array.h"
 #include "sym_arrow/functions/contexts.h"
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/func/symbol_functions.h"
@@ -34,7 +34,7 @@
 namespace sym_arrow { namespace details
 {
 
-namespace md = mmlib::details;
+namespace sd = sym_arrow :: details;
 
 class do_subs_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_subs_vis>
 {
@@ -92,9 +92,9 @@ expr do_subs_vis::eval(const ast::add_rep* h, const subs_context& sc)
     int size_counter        = 0;
     bool any                = false;
 
-    using expr_pod          =  md::pod_type<expr>;
+    using expr_pod          =  sd::pod_type<expr>;
     expr_pod::destructor_type d(&size_counter);
-    md::stack_array<expr_pod> buff(n, &d);    
+    sd::stack_array<expr_pod> buff(n, &d);    
 
     expr* buff_ptr          = reinterpret_cast<expr*>(buff.get());
 
@@ -154,10 +154,10 @@ expr do_subs_vis::eval(const ast::mult_rep* h, const subs_context& sc)
     int isize_counter       = 0;
     bool any                = false;
 
-    using expr_pod          =  md::pod_type<expr>;
+    using expr_pod          =  sd::pod_type<expr>;
 
     expr_pod::destructor_type id(&isize_counter);
-    md::stack_array<expr_pod> ibuff(in, &id);    
+    sd::stack_array<expr_pod> ibuff(in, &id);    
     expr* ibuff_ptr         = reinterpret_cast<expr*>(ibuff.get());
 
     for (size_t i = 0; i < h->isize(); ++i)
@@ -177,7 +177,7 @@ expr do_subs_vis::eval(const ast::mult_rep* h, const subs_context& sc)
     int rsize_counter       = 0;
 
     expr_pod::destructor_type rd(&rsize_counter);
-    md::stack_array<expr_pod> rbuff(rn, &rd);    
+    sd::stack_array<expr_pod> rbuff(rn, &rd);    
     expr* rbuff_ptr         = reinterpret_cast<expr*>(rbuff.get());
 
     for (size_t i = 0; i < h->rsize(); ++i)
@@ -251,9 +251,9 @@ expr do_subs_vis::eval(const ast::function_rep* h, const subs_context& sc)
     int size_counter        = 0;
     bool any                = false;
 
-    using expr_pod          =  md::pod_type<expr>;
+    using expr_pod          =  sd::pod_type<expr>;
     expr_pod::destructor_type d(&size_counter);
-    md::stack_array<expr_pod> buff(n, &d);    
+    sd::stack_array<expr_pod> buff(n, &d);    
 
     expr* buff_ptr          = reinterpret_cast<expr*>(buff.get());
 

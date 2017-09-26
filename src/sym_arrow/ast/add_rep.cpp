@@ -22,12 +22,12 @@
 #include "sym_arrow/ast/cannonization/cannonize.h"
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/details/scalar.inl"
-#include "mmlib_internals/utils/stack_array.h"
+#include "sym_arrow/utils/stack_array.h"
 
 namespace sym_arrow { namespace ast
 {
 
-namespace md = mmlib :: details;
+namespace sd = sym_arrow :: details;
 
 add_rep::~add_rep()
 {
@@ -111,7 +111,7 @@ value add_rep::add_scalar_normalize(const add_rep* h, value& add, expr& res)
 
     size_t n                = h->size();
 
-    md::stack_array<md::pod_type<item_handle>, ih_buffer_size> ih_array(n);
+    sd::stack_array<sd::pod_type<item_handle>, ih_buffer_size> ih_array(n);
     item_handle* ih = (item_handle*)ih_array.get();
     
     for (size_t i = 0; i < n; ++i)

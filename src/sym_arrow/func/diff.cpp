@@ -23,12 +23,14 @@
 #include "dag/dag.h"
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/ast/builder/vlist_add.h"
-#include "mmlib_internals/utils/stack_array.h"
+#include "sym_arrow/utils/stack_array.h"
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/func/symbol_functions.h"
 #include "sym_arrow/ast/cannonization/cannonize.h"
 #include "sym_arrow/func/diff_hash.h"
 #include "sym_arrow/functions/expr_functions.h"
+
+#include "sym_arrow/error/error_formatter.h"
 
 #include <sstream>
 #include <map>
@@ -36,7 +38,7 @@
 namespace sym_arrow { namespace details
 {
 
-namespace md = mmlib::details;
+namespace sd = sym_arrow :: details;
 
 class do_diff_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_diff_vis>
 {
@@ -65,6 +67,8 @@ class do_diff_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dif
     private:
         expr func_derivative(const symbol& func, size_t arg, const expr* args, 
                 size_t n_args, const symbol& sym);
+        void error_diff_rule_not_defined(const symbol& func_name, size_t n_args, 
+                size_t arg);
 };
 
 do_diff_vis::do_diff_vis(const diff_context& dc)
@@ -127,12 +131,12 @@ expr do_diff_vis::eval(const ast::add_rep* h, const symbol& sym)
     size_t n            = h->size();
 
     using item          = ast::build_item<value>;
-    using item_pod      = md::pod_type<item>;
+    using item_pod      = sd::pod_type<item>;
 
     int size_counter    = 0;
     size_t length       = n + 1;
     item_pod::destructor_type d(&size_counter);
-    md::stack_array<item_pod> sum_buff(length, &d);    
+    sd::stack_array<item_pod> sum_buff(length, &d);    
 
     item* sum_buff_ptr  = sum_buff.get_cast<item>();
 
@@ -184,12 +188,12 @@ expr do_diff_vis::eval(const ast::add_rep* h, const symbol& sym)
 
 expr do_diff_vis::eval(const ast::mult_rep* h, const symbol& sym)
 {
-    namespace md = mmlib::details;
+    namespace sd = sym_arrow :: details;
 
     using expr_handle   = ast::expr_handle;
     using iitem         = ast::build_item_handle<int>;
     using ritem         = ast::details::value_expr<value>;
-    using iitem_pod     = md::pod_type<iitem>;
+    using iitem_pod     = sd::pod_type<iitem>;
     using mult_build    = ast::mult_build_info<iitem, ritem>;
 
     ast::symbol_handle sh = sym.get_ptr().get();
@@ -212,7 +216,7 @@ expr do_diff_vis::eval(const ast::mult_rep* h, const symbol& sym)
     
     //form P = \prod_j IE(j)^IV(j)
 
-    md::stack_array<iitem_pod> ipow_buff(in + 2);
+    sd::stack_array<iitem_pod> ipow_buff(in + 2);
     iitem* ipow_arr     = ipow_buff.get_cast<iitem>();
 
     for (size_t i = 0; i < in; ++i)
@@ -231,12 +235,12 @@ expr do_diff_vis::eval(const ast::mult_rep* h, const symbol& sym)
     //------------------------------------------------------------------
 
     using item          = ast::build_item<value>;
-    using item_pod      = md::pod_type<item>;
+    using item_pod      = sd::pod_type<item>;
 
     int size_counter    = 0;
     size_t length       = in + rn + 1;
     item_pod::destructor_type d(&size_counter);
-    md::stack_array<item_pod> sum_buff(length, &d);    
+    sd::stack_array<item_pod> sum_buff(length, &d);    
 
     item* sum_buff_ptr  = sum_buff.get_cast<item>();
 
@@ -352,9 +356,9 @@ expr do_diff_vis::eval(const ast::function_rep* h, const symbol& sym)
         return hash;
 
     int size_counter        = 0;
-    using expr_pod          =  md::pod_type<expr>;
+    using expr_pod          =  sd::pod_type<expr>;
     expr_pod::destructor_type d(&size_counter);
-    md::stack_array<expr_pod> buff(n, &d);    
+    sd::stack_array<expr_pod> buff(n, &d);    
 
     expr* buff_ptr          = reinterpret_cast<expr*>(buff.get());
 
@@ -371,11 +375,11 @@ expr do_diff_vis::eval(const ast::function_rep* h, const symbol& sym)
     symbol func = symbol(ast::symbol_ptr::from_this(h->name()));
 
     using item          = ast::build_item<value>;
-    using item_pod      = md::pod_type<item>;
+    using item_pod      = sd::pod_type<item>;
 
     int sum_counter     = 0;
     item_pod::destructor_type d_sum(&sum_counter);
-    md::stack_array<item_pod> sum_buff(n, &d_sum);
+    sd::stack_array<item_pod> sum_buff(n, &d_sum);
     item* sum_buff_ptr  = sum_buff.get_cast<item>();
 
     value one           = value::make_one();
@@ -428,7 +432,32 @@ expr do_diff_vis::func_derivative(const symbol& func_name, size_t arg, const exp
 
     expr dif    = m_diff_context.diff(func_name, arg, args, n_args);
 
+    if (dif.is_null() == true)
+        error_diff_rule_not_defined(func_name, n_args, arg);
+
     return std::move(dif) * std::move(arg_dif);
+};
+
+void do_diff_vis::error_diff_rule_not_defined(const symbol& func_name, size_t n_args, 
+        size_t arg)
+{
+    error::error_formatter ef;
+    ef.head() << "differentiation rule not defined";
+
+    ef.new_info();
+    ef.line() << "unable to find differentiation rule d/dx" << arg + 1 << " ";
+        disp(ef.line(), func_name, false);
+
+    if (n_args == 0)
+        ef.line() << "[]";
+    else if (n_args == 1)
+        ef.line() << "[x1]";
+    else if (n_args == 2)
+        ef.line() << "[x1, x2]";
+    else
+        ef.line() << "[x1, ... x" << n_args << "]";
+
+    throw std::runtime_error(ef.str());
 };
 
 }};

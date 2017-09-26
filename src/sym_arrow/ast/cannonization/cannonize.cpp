@@ -35,8 +35,6 @@
 namespace sym_arrow { namespace ast
 {
 
-namespace md = mmlib :: details;
-
 //-------------------------------------------------------------------
 //                  cannonize
 //-------------------------------------------------------------------
@@ -88,7 +86,7 @@ expr_ptr cannonize::normalize(const add_rep* h, value& scal) const
     static const size_t ih_buffer_size = 20;
 
     //destructor is trivial
-    md::stack_array<md::pod_type<item_handle>,ih_buffer_size> 
+    sd::stack_array<sd::pod_type<item_handle>,ih_buffer_size> 
     ih_array(h->size() + 1);
 
     item_handle* ih = (item_handle*)ih_array.get();
@@ -533,8 +531,8 @@ expr cannonize::finalize_add(item_collector_add& ic, size_t n, value& ret_scal,
             if (can_modify_ic == false)
             {
                 static const size_t stack_size  = 20;
-                using stack_elem    = md::pod_type<item_handle>;
-                using item_array    = md::stack_array<stack_elem, stack_size>;
+                using stack_elem    = sd::pod_type<item_handle>;
+                using item_array    = sd::stack_array<stack_elem, stack_size>;
 
                 item_array loc_arr(n);
 

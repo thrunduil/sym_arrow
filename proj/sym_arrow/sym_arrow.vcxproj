@@ -77,6 +77,7 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\sym_arrow.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\pool_hash_map.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\sort.h" />
+    <ClInclude Include="..\..\src\sym_arrow\utils\stack_array.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp" />

@@ -25,18 +25,6 @@
 #include <iostream>
 //#include <vld.h>
 
-namespace sym_arrow { namespace testing
-{
-
-void test_sym_arrow();
-
-}};
-
-void break_func()
-{
-    std::cout << "break" << "\n";
-};
-
 int main(int argc, const char* argv[])
 {
     using namespace sym_arrow::testing;
@@ -47,18 +35,10 @@ int main(int argc, const char* argv[])
     // number of random trials
     size_t n_rep = 100000;
 
-    // accurate messages
-    bool dodisp = false;
-
-    (void)n_rep;
-    (void)dodisp;
-
-    tic();
-
     try
     {
         test_set::test_diff_context();
-        //test_sym_arrow();
+        test_set::test_harmonics();
         test_set::test_diff();
 
         test_set::test_special_cases();
@@ -68,17 +48,13 @@ int main(int argc, const char* argv[])
         test_set::test_expression(n_rep);
 
         std::cout << "\n";
+
         //sym_dag::registered_dag_context::get().print_reuse_stats(std::cout);
         //sym_dag::registered_dag_context::get().print_memory_stats(std::cout);
         //sym_dag::registered_dag_context::get().print_collisions(std::cout);
 
-        sym_dag::registered_dag_context::get().clear_cache();
+        sym_dag::registered_dag_context::get().close();
         sym_dag::registered_dag_context::get().print_memory_leaks(std::cout);
-
-        #if 0        
-        //TODO
-        test_set::test_random_subs(n_rep, dodisp, std::cout, std::cout);        
-        #endif
     }
     catch(std::exception& ex)
     {
@@ -89,7 +65,6 @@ int main(int argc, const char* argv[])
         std::cout << ex.what();
     }    
 
-    double d = toc();
-    std::cout << "time: " << d << "\n";
+    std::cout << "\n" << "finished" << "\n";
     return 0;
 }

@@ -23,7 +23,7 @@
 #include "dag/dag.h"
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/ast/builder/vlist_add.h"
-#include "mmlib_internals/utils/stack_array.h"
+#include "sym_arrow/utils/stack_array.h"
 #include "sym_arrow/functions/contexts.h"
 #include "sym_arrow/ast/cannonization/cannonize.h"
 #include "sym_arrow/ast/mult_rep.inl"
@@ -35,7 +35,7 @@
 namespace sym_arrow { namespace details
 {
 
-namespace md = mmlib::details;
+namespace sd = sym_arrow :: details;
 
 class do_check_rep_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, 
                                                         do_check_rep_vis>

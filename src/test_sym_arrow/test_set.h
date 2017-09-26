@@ -31,14 +31,14 @@ struct test_set
         static void     test_visitor();
         static void     test_special_cases();
         static void     test_diff_context();
+        static void     test_harmonics();
 
-	    static void     test_random_subs(size_t n_rep, bool dodisp, 
-                            std::ostream& log1, std::ostream& log2);
 	    static void     test_random_diff(size_t n_rep);
         static void     test_diff();
         static void     test_expression(size_t n_rep);        
 
     private:
+        static void     test_diff(const expr& ex, int n1, int n2, bool disp_stats);
         static void     init_genrand(size_t seed);
         static void     tic();
         static double   toc();
