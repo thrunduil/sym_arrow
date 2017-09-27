@@ -36,6 +36,7 @@ expr laguerre_poly(int n, const symbol & x)
 expr assoc_laguerre_poly(int n, int m, const symbol & x)
 {
     expr poly   = laguerre_poly(n, x);
+    poly        = simplify(poly);
     return diff(poly, x, m);
 }
 

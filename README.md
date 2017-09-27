@@ -25,6 +25,7 @@ expr laguerre_poly(int n, const symbol & x)
 expr assoc_laguerre_poly(int n, int m, const symbol & x)
 {
     expr poly   = laguerre_poly(n, x);
+    poly        = simplify(poly);
     return diff(poly, x, m);
 }
 void example()
@@ -37,10 +38,10 @@ void example()
 };
 
 Output:
-Elapsed time is 0.006622 seconds.
+Elapsed time is 0.003435 seconds.
 ```            
 
-For comparison Matlab needs 19.047018 sec to compute this polynomial, over 2800 times
+For comparison Matlab needs 19.047018 sec to compute this polynomial, over 5500 times
 longer.
 
 ## Licence
