@@ -33,3 +33,4 @@
 #include "sym_arrow/nodes/function_expr.h"
 #include "sym_arrow/functions/expr_functions.h"
 #include "sym_arrow/nodes/expr_visitor.h"
+#include "sym_arrow/utils/timer.h"

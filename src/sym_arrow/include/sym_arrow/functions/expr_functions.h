@@ -51,6 +51,10 @@ expr SYM_ARROW_EXPORT    parse(const std::string& expression_string);
 expr SYM_ARROW_EXPORT    diff(const expr& ex, const symbol& sym, 
                             const diff_context& dif = global_diff_context());
 
+// n-time differentiation with respect a symbol sym
+expr SYM_ARROW_EXPORT    diff(const expr& ex, const symbol& sym, int n,
+                            const diff_context& dif = global_diff_context());
+
 // substitute a symbol sym by an expression sub
 expr SYM_ARROW_EXPORT    subs(const expr& ex, const symbol& sym, const expr& sub);
 

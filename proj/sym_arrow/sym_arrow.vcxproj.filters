@@ -49,6 +49,9 @@
     <Filter Include="Source Files\include\sym_arrow\functions">
       <UniqueIdentifier>{bd3463bc-5dbf-491a-a07d-f787ad13a62d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\include\sym_arrow\utils">
+      <UniqueIdentifier>{3f08116b-bfce-43f1-8761-ca719e4c0ade}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\fast_sym\simplifications.txt">
@@ -228,6 +231,9 @@
     <ClInclude Include="..\..\src\sym_arrow\utils\stack_array.h">
       <Filter>Source Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\utils\timer.h">
+      <Filter>Source Files\include\sym_arrow\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp">
@@ -374,6 +380,9 @@
     <ClCompile Include="..\..\src\sym_arrow\grammar\output\parser_sym_arrow.cpp">
       <Filter>Source Files\grammar\output</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\utils\timer.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr.inl">
@@ -451,10 +460,19 @@
     <None Include="..\..\src\sym_arrow\utils\sort.inl">
       <Filter>Source Files\utils</Filter>
     </None>
+    <None Include="..\..\LICENSE">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\README.md">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\src\sym_arrow\grammar\output\sym_arrow_vocabularyTokenTypes.txt">
       <Filter>Source Files\grammar\output</Filter>
+    </Text>
+    <Text Include="..\..\INSTALL.txt">
+      <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>
 </Project>

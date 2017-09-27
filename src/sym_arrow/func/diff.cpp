@@ -475,4 +475,16 @@ expr sym_arrow::diff(const expr& ex, const symbol& sym, const diff_context& dc)
     return ret;
 };
 
+expr sym_arrow::diff(const expr& ex, const symbol& sym, int n, const diff_context& dc)
+{
+    ex.cannonize(false);
+
+    expr res    = ex;
+
+    for (int i = 0; i < n; ++i)
+        res     = diff(res, sym, dc);
+
+    return res;
+};
+
 };
