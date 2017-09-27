@@ -75,6 +75,7 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\symbol.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\sym_arrow.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\utils\timer.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\pool_hash_map.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\sort.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\stack_array.h" />
@@ -146,8 +147,11 @@
     <ClCompile Include="..\..\src\sym_arrow\nodes\scalar.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\symbol.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\value.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\utils\timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\LICENSE" />
+    <None Include="..\..\README.md" />
     <None Include="..\..\src\sym_arrow\ast\add_rep.inl" />
     <None Include="..\..\src\sym_arrow\ast\builder\add_build.inl" />
     <None Include="..\..\src\sym_arrow\ast\builder\build_item.inl" />
@@ -180,6 +184,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="..\..\INSTALL.txt" />
     <Text Include="..\..\src\sym_arrow\grammar\output\sym_arrow_vocabularyTokenTypes.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

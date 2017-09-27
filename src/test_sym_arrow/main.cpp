@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "timer.h"
+#include "sym_arrow/utils/timer.h"
 #include "test_set.h"
 #include "sym_arrow/sym_arrow.h"
 
@@ -37,9 +37,11 @@ int main(int argc, const char* argv[])
 
     try
     {
+        test_set::example();
+
+        test_set::test_diff();
         test_set::test_diff_context();
         test_set::test_harmonics();
-        test_set::test_diff();
 
         test_set::test_special_cases();
         test_set::test_visitor();        

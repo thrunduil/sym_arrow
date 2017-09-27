@@ -1,5 +1,5 @@
 #include "sym_arrow/sym_arrow.h"
-#include "timer.h"
+#include "sym_arrow/utils/timer.h"
 
 #include "../../sym_arrow/func/symbol_functions.h"
 #include "test_set.h"

@@ -28,6 +28,7 @@ namespace sym_arrow { namespace testing
 struct test_set
 {
     public:
+        static void     example();
         static void     test_visitor();
         static void     test_special_cases();
         static void     test_diff_context();

@@ -22,7 +22,7 @@
 
 #include "test_set.h"
 #include "expr_rand.h"
-#include "timer.h"
+#include "sym_arrow/utils/timer.h"
 #include "../../sym_arrow/func/symbol_functions.h"
 
 
@@ -131,7 +131,7 @@ void test_set::test_diff()
     symbol z("z");
 
     expr e1  = 1. * exp(-x*x + y*x + y*z) + x/ power_int(1.0 + x*x + y * x + z/x, 2);
-    expr e2 = parse("1/(1 + exp[-1/x^2])");
+    expr e2 = parse("1/(1 + exp[-1/x^2])");    
 
   #ifndef _DEBUG
     int n1  = 20;
@@ -142,7 +142,7 @@ void test_set::test_diff()
   #endif
 
     test_diff(e1, n1, n2, false);
-    test_diff(e2, n1, n2, false);
+    test_diff(e2, n1, n2, false);    
 }
 
 void test_set::test_diff(const expr& ex, int n1, int n2, bool disp_stats)
@@ -285,12 +285,12 @@ void test_set::init_genrand(size_t seed)
 
 void test_set::tic()
 {
-    return testing::tic();
+    return sym_arrow::tic();
 }
 
 double test_set::toc()
 {
-    return testing::toc();
+    return sym_arrow::toc();
 }
 
 struct num_syms : sym_arrow::expr_traversal_visitor<num_syms>

@@ -18,37 +18,42 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "timer.h"
+#include "test_set.h"
 
-#include <windows.h>
+#include "sym_arrow/sym_arrow.h"
 
-namespace sym_arrow { namespace testing 
+using namespace sym_arrow;
+
+// Laguerre Polynomial L_n(x) == exp(x) * (d/dx)^n [x^n * exp(-x)]
+expr laguerre_poly(int n, const symbol & x)
 {
-
-static bool tic_started = false;
-static __int64    tic_int64;
-
-void testing::tic(void)
-{
-    tic_started = true;
-    QueryPerformanceCounter((LARGE_INTEGER*) &tic_int64);
+    expr ker    = exp(-x);
+    expr poly   = power_int(x, n) * ker;
+    return diff(poly, x, n) / ker;
 }
 
-double testing::toc(void)
+// associated Laguerre Polynomial L_{n,m}(x) == (d/dx)^m [L_n(x)]
+expr assoc_laguerre_poly(int n, int m, const symbol & x)
 {
-    double t;
-    __int64 toc_int64, fr_int64;
+    expr poly   = laguerre_poly(n, x);
+    return diff(poly, x, m);
+}
 
-    if (tic_started)
-    {
-        tic_started = false;
-        QueryPerformanceCounter((LARGE_INTEGER*) &toc_int64);
-        QueryPerformanceFrequency((LARGE_INTEGER*) &fr_int64);
-        t = (double) (toc_int64 - tic_int64) / (double) fr_int64;
-        return t;
-    }
+void example()
+{    
+    tic();
 
-    return 0.;
+    expr poly   = assoc_laguerre_poly(100, 100, symbol("x"));
+
+    tocdisp();
+};
+
+namespace sym_arrow { namespace testing
+{
+
+void test_set::example()
+{
+    ::example();    
 }
 
 }};
