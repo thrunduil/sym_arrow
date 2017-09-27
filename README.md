@@ -35,7 +35,13 @@ void example()
 
     tocdisp();
 };
+
+Output:
+Elapsed time is 0.006622 seconds.
 ```            
+
+For comparison Matlab needs 19.047018 sec to compute this polynomial, over 2800 times
+longer.
 
 ## Licence
 
