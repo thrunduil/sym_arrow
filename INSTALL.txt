@@ -1,0 +1,30 @@
+==================================================================
+                Installation Instructions
+==================================================================
+
+------------------------------------------------------------------
+                Requirements
+------------------------------------------------------------------
+1. Visual Studio 2015 or later. Source code in principle can be 
+    compiled using other compilers, but compiler independent
+    build system is not available currently.    
+2. Boost library. Tested version: 1.62.
+3. DBS library available at https://bitbucket.org/thrunduil/dbs
+4. GSLI library available at https://bitbucket.org/thrunduil/gsli
+5. ANTLR version 2.7 for regenerating parser
+6. modified ANTLR version 2.7 C++ library and region library, which can
+    be found at https://bitbucket.org/thrunduil/arrow. Original ANTLR
+    C++ can also be used, but will cause memory leaks (and requires slight
+    modification of parser code).
+
+------------------------------------------------------------------
+                    BUILD
+------------------------------------------------------------------
+
+1. sym_arrow can be build from source using Visual Studio solution. 
+2. Project files must be modified in order to set up paths to
+    required external libraries
+
+
+Copyright (C) 2017  Pawe³ Kowal
+email: thrunduil@gmail.com
