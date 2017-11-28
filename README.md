@@ -48,6 +48,4 @@ longer.
 
 ## Licence
 
-Copyright (C) 2017  Paweł Kowal
-
 This library is published under GPL licence.
