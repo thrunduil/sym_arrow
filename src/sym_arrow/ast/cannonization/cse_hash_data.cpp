@@ -1,4 +1,5 @@
-/* 
+/*
+ *  Morfa programming language.
  *  This file is a part of sym_arrow library.
  *
  *  Copyright (c) Pawe³ Kowal 2017
