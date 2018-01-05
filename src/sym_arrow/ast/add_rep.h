@@ -120,14 +120,6 @@ class add_rep : public expr_symbols<add_rep>
         // return array of value-expression pairs
         const value_expr*   VE() const;
 
-      #if SYM_ARROW_NORMALIZE
-        // return true, if this expression is normalized
-        bool                is_normalized() const;
-
-        // mark this object as normalized
-        void                set_normalized();
-      #endif
-
     public:
         // form expression obtained by removing additive term
         // add is set to V0(), are res stores resulting expression

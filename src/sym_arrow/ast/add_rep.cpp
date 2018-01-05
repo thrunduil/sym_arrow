@@ -87,65 +87,15 @@ value add_rep::add_scalar_normalize(const add_rep* h, value& add, expr& res)
         return h->V(0);
     };
 
-    #if SYM_ARROW_NORMALIZE
-        value scal          = h->has_log() ? value::make_one()
-                                : cannonize::get_normalize_scaling(new_add, h->size(), h->VE());
+    bool has_log    = h->has_log();
+    size_t n        = h->size();
 
-        // check if resulting add_rep is normalized; maximum value of scalars must be 
-        // one and first nonzero scalar must be positive
-        bool is_norm    = scal.is_one();
+    add_rep_info<value_expr> ai(&new_add, n, h->m_data + 1, 
+                                has_log ? h->m_data : nullptr);
 
-        if (is_norm)
-        {
-            bool has_log    = h->has_log();
-            size_t n        = h->size();
-
-            add_rep_info<value_expr> ai(&new_add, n, h->m_data + 1, 
-                                        has_log ? h->m_data : nullptr);
-
-            expr_ptr res_ptr    = add_rep::make(ai);
-            res                 = expr(res_ptr);
-            return value::make_one();
-        };
-
-        //expression must be normalized
-
-        using item_handle       = build_item<value>::handle_type;
-        using pod_type          = sd::pod_type<item_handle>;
-
-        static const size_t ih_buffer_size = 20;
-
-        size_t n                = h->size();
-
-        static_assert(sd::is_effective_pod<item_handle>::value == true, "pod required");
-
-        sd::stack_array<sd::pod_type<item_handle>, ih_buffer_size> ih_array(n);
-        item_handle* ih         = (item_handle*)ih_array.get();
-    
-        using temp_value        = sd::temp_value<value, value::is_pod>;
-        temp_value tmp_vals;
-
-        for (size_t i = 0; i < n; ++i)
-            new(ih + i) item_handle(tmp_vals.make_handle(h->V(i) / scal), h->E(i));
-
-        value tmp           = new_add / scal;
-        add_rep_info<item_handle> ai(&tmp, n, ih, nullptr);
-
-         expr_ptr res_ptr    = add_rep::make(ai);
-         res                 = expr(res_ptr);
-         return scal;
-    #else
-
-        bool has_log    = h->has_log();
-        size_t n        = h->size();
-
-        add_rep_info<value_expr> ai(&new_add, n, h->m_data + 1, 
-                                    has_log ? h->m_data : nullptr);
-
-        expr_ptr res_ptr    = add_rep::make(ai);
-        res                 = expr(res_ptr);
-        return value::make_one();
-    #endif
+    expr_ptr res_ptr    = add_rep::make(ai);
+    res                 = expr(res_ptr);
+    return value::make_one();
 };
 
 void add_rep::remove_add_log(const add_rep* h, expr& res)

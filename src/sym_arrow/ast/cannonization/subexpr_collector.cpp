@@ -730,18 +730,7 @@ void subexpr_collector::finalize_sum(build_item<value>* it, size_t size, const v
         }
         else
         {
-            // this is just add + v * f;
-            #if SYM_ARROW_NORMALIZE
-                scal    = cannonize::get_normalize_scaling(add, 1, it);
-
-                if (scal.is_one() == false)
-                {
-                    add                     = add / scal;
-                    it[0].get_value_ref()   = it[0].get_value() / scal;
-                }
-            #else
-                scal    = value::make_one();
-            #endif
+            scal                = value::make_one();
 
             using item_type     = build_item<value>;
             add_rep_info<item_type> ai(&add, 1, it, nullptr);

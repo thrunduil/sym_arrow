@@ -80,23 +80,9 @@ class cannonize
         // add term is simple if has the form a + bx, where a = 0
         bool            is_simple(const add_rep* h) const;
 
-      #if SYM_ARROW_NORMALIZE
-        // return true if add expression is normalized
-        bool            is_normalized(const add_rep* h) const;
-
-        // normalize add expression
-        expr_ptr        normalize(const add_rep* h, value& scal) const;
-      #endif
-
         // return true is expression is cannonized
         bool            is_cannonized(const expr& ex) const;
         bool            is_cannonized(expr_handle ex) const;
-
-      #if SYM_ARROW_NORMALIZE
-        // get normalization scalar
-        template<class Item>
-        static value    get_normalize_scaling(const value& V0, size_t n, const Item* V);
-      #endif
 
     private:
         // implements cannonization        
@@ -118,7 +104,7 @@ class cannonize
 
         // build final add expression
         expr            finalize_add(item_collector_add& ic, size_t n, value& ret_scal, 
-                            bool normalize, bool can_modify_ic);
+                            bool normalize);
 
         // calculate number of elements in build expressions
         void            calc_size(const mult_build* h, item_collector_size& ic) const;

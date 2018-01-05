@@ -157,16 +157,4 @@ inline const add_rep::value_expr* add_rep::VE() const
     return m_data + 1; 
 };
 
-#if SYM_ARROW_NORMALIZE
-    inline bool add_rep::is_normalized() const
-    { 
-        return base_type::get_user_flag<ast_flags::normalized>(); 
-    }
-
-    inline void add_rep::set_normalized()
-    { 
-        base_type::set_user_flag<ast_flags::normalized>(true); 
-    }
-#endif
-
 };};

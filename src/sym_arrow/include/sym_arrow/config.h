@@ -61,5 +61,3 @@
 //      perf(mp_Float) < perf(gsli_double) <= perf(double)
 #define SYM_ARROW_VALUE_TYPE SYM_ARROW_VALUE_GSLI
 
-//TODO
-#define SYM_ARROW_NORMALIZE 0
