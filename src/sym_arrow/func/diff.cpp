@@ -30,6 +30,7 @@
 #include "sym_arrow/ast/cannonization/cannonize.h"
 #include "sym_arrow/func/diff_hash.h"
 #include "sym_arrow/functions/expr_functions.h"
+#include "sym_arrow/functions/sym_functions.h"
 
 #include "sym_arrow/error/error_formatter.h"
 
@@ -131,7 +132,7 @@ expr do_diff_vis::eval(const ast::add_rep* h, const symbol& sym)
 
     size_t n            = h->size();
 
-    using item          = ast::build_item<value>;
+    using item          = ast::build_item_ptr<value>;
     using item_pod      = sd::pod_type<item>;
 
     int size_counter    = 0;
@@ -144,7 +145,6 @@ expr do_diff_vis::eval(const ast::add_rep* h, const symbol& sym)
     for (size_t j = 0; j < n; ++j)
     {
         expr deriv      = make(h->E(j), sym);
-        const value& b  = h->V(j);   
 
         if (deriv.get_ptr()->isa<ast::scalar_rep>() == true)
         {
@@ -152,7 +152,7 @@ expr do_diff_vis::eval(const ast::add_rep* h, const symbol& sym)
                 continue;
         };
 
-        new (sum_buff_ptr + size_counter) item(b, std::move(deriv));
+        new (sum_buff_ptr + size_counter) item(&h->V(j), std::move(deriv));
         ++size_counter;
     };
 
@@ -171,12 +171,13 @@ expr do_diff_vis::eval(const ast::add_rep* h, const symbol& sym)
         {
             expr log_d  = std::move(deriv) / expr(h->Log());
 
-            new (sum_buff_ptr + size_counter) item(one, std::move(log_d));
+            new (sum_buff_ptr + size_counter) item(&one, std::move(log_d));
             ++size_counter;
         };
     };
 
-    ast::add_build_info2<item> bi(value::make_zero(), size_counter, sum_buff_ptr, nullptr);
+    value zero  = value::make_zero();
+    ast::add_build_info2<item> bi(&zero, size_counter, sum_buff_ptr, nullptr);
     ast::expr_ptr diff_all = ast::add_build::make(bi);
 
     expr ret    = expr(std::move(diff_all));
@@ -217,6 +218,7 @@ expr do_diff_vis::eval(const ast::mult_rep* h, const symbol& sym)
     
     //form P = \prod_j IE(j)^IV(j)
 
+    static_assert(is_effective_pod<iitem>::value == true, "pod required");
     sd::stack_array<iitem_pod> ipow_buff(in + 2);
     iitem* ipow_arr     = ipow_buff.get_cast<iitem>();
 
@@ -251,7 +253,7 @@ expr do_diff_vis::eval(const ast::mult_rep* h, const symbol& sym)
 
         for (size_t i = 0; i < in; ++i)
         {
-            expr_handle ex  = ipow_arr[i].m_expr;
+            expr_handle ex  = ipow_arr[i].get_expr_handle();
             expr tmp_deriv  = make(ex, sym);
 
             if (tmp_deriv.get_ptr()->isa<ast::scalar_rep>() == true)
@@ -263,7 +265,7 @@ expr do_diff_vis::eval(const ast::mult_rep* h, const symbol& sym)
             ipow_arr[in]    = iitem(-1, ex);
             ipow_arr[in + 1]= iitem(1, tmp_deriv.get_ptr().get());
 
-            int k           = ipow_arr[i].m_value;
+            int k           = ipow_arr[i].get_value();
 
             mult_build build_info(in+2, ipow_arr, h->rsize(), h->RVE(), exp_h);
 
@@ -332,7 +334,8 @@ expr do_diff_vis::eval(const ast::mult_rep* h, const symbol& sym)
         }
     };
 
-    ast::add_build_info2<item> bi(value::make_zero(), size_counter, sum_buff_ptr, nullptr);
+    value vzero  = value::make_zero();
+    ast::add_build_info2<item> bi(&vzero, size_counter, sum_buff_ptr, nullptr);
     ast::expr_ptr diff_all = ast::add_build::make(bi);
 
     expr ret    = expr(std::move(diff_all));
@@ -375,7 +378,7 @@ expr do_diff_vis::eval(const ast::function_rep* h, const symbol& sym)
     //build symbol
     symbol func = symbol(ast::symbol_ptr::from_this(h->name()));
 
-    using item          = ast::build_item<value>;
+    using item          = ast::build_item_ptr<value>;
     using item_pod      = sd::pod_type<item>;
 
     int sum_counter     = 0;
@@ -399,12 +402,13 @@ expr do_diff_vis::eval(const ast::function_rep* h, const symbol& sym)
 
         if (is_zero == false)
         {
-            new (sum_buff_ptr + sum_counter) item(one, std::move(deriv));
+            new (sum_buff_ptr + sum_counter) item(&one, std::move(deriv));
             ++sum_counter;
         }
     };
 
-    ast::add_build_info2<item> bi(value::make_zero(), sum_counter, sum_buff_ptr, nullptr);
+    value zero  = value::make_zero();
+    ast::add_build_info2<item> bi(&zero, sum_counter, sum_buff_ptr, nullptr);
     ast::expr_ptr diff_all = ast::add_build::make(bi);
 
     expr ret    = expr(std::move(diff_all));

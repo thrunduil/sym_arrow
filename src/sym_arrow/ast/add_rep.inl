@@ -44,7 +44,7 @@ add_rep::add_rep(const add_rep_info<item_type>& pi)
     if (has_log == true)
     {
         expr_handle h   = pi.log_expr->get_expr_handle();
-        new(m_data+0) value_expr(pi.scal0, h);
+        new(m_data+0) value_expr(*pi.scal0, h);
 
         add_symbols(h);
 
@@ -53,7 +53,7 @@ add_rep::add_rep(const add_rep_info<item_type>& pi)
     }
     else
     {
-        new(m_data+0) value_expr(pi.scal0);
+        new(m_data+0) value_expr(*pi.scal0);
     };
 
     for (size_t i = 0; i < m_size; ++i)
@@ -71,7 +71,7 @@ size_t add_rep::eval_hash(const add_rep_info<item_type>& pi)
     if (pi.m_hash_add != 0)
         return pi.m_hash_add;
 
-    size_t seed = pi.scal0.hash_value(); 
+    size_t seed = pi.scal0->hash_value(); 
 
     for (size_t i = 0; i < pi.n; ++i)
     {
@@ -91,7 +91,7 @@ size_t add_rep::eval_hash(const add_rep_info<item_type>& pi)
 template<class item_type>
 bool add_rep::equal(const add_rep_info<item_type>& pi) const
 {
-    if (V0() != pi.scal0)
+    if (V0() != *pi.scal0)
         return false;
 
     size_t elem_size = size();
@@ -157,14 +157,16 @@ inline const add_rep::value_expr* add_rep::VE() const
     return m_data + 1; 
 };
 
-inline bool add_rep::is_normalized() const
-{ 
-    return base_type::get_user_flag<ast_flags::normalized>(); 
-}
+#if SYM_ARROW_NORMALIZE
+    inline bool add_rep::is_normalized() const
+    { 
+        return base_type::get_user_flag<ast_flags::normalized>(); 
+    }
 
-inline void add_rep::set_normalized()
-{ 
-    base_type::set_user_flag<ast_flags::normalized>(true); 
-}
+    inline void add_rep::set_normalized()
+    { 
+        base_type::set_user_flag<ast_flags::normalized>(true); 
+    }
+#endif
 
 };};

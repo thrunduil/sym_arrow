@@ -65,13 +65,13 @@ class vlist_stack
 // of increasing sizes; 
 // Item_type       - type of stored values;
 // Derived_type    - type of derived class
-template<class Item_type, class Derived_type>
+// Init_size       - initial size of the array; sizes of next arrays are
+//                   two times higher than previous ones
+template<class Item_type, class Derived_type, int Init_size = 3>
 class vlist_base
 {
     private:
-        // initial size of the array; sizes of next arrays are
-        // two times higher than previous ones
-        static const int init_size = 3;        
+        static const int init_size = Init_size;
 
     protected:
         // type of value assigned to expressions in stored elements
@@ -151,6 +151,9 @@ class vlist_base
 
         // insert new special item
         void                    push_back_special(const value_type& val, expr_handle ex);
+
+        // insert new item and return a pointer to newly inserted value
+        Item_type*              insert(const Item_type& it);
 
     private:
         // cast to derived type

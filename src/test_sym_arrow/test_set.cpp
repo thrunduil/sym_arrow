@@ -47,9 +47,9 @@ void test_set::test_random_diff(size_t n_rep)
 
     init_genrand(204);
 
-    //int n_sym           = 6;
+    int n_sym           = 2;
+    rand_state r(n_sym, 12, false, false);
     //rand_state r(n_sym, 12, false, false);
-    rand_state r(6, 12, false, false);
 
     bool show           = false;
 
@@ -90,6 +90,7 @@ void test_set::test_random_diff(size_t n_rep)
             disp_nocannonize(std::cout, ex_dif);
         }
 
+        //TODO
         //#ifdef _DEBUG
             bool is_valid = check_expression(ex_dif);
 
@@ -138,11 +139,11 @@ void test_set::test_diff()
     int n2  = 40;
   #else
     int n1  = 10;
-    int n2  = 30;
+    int n2  = 20;
   #endif
 
     test_diff(e1, n1, n2, false);
-    test_diff(e2, n1, n2, false);    
+    test_diff(e2, n1, n2, false);
 }
 
 void test_set::test_diff(const expr& ex, int n1, int n2, bool disp_stats)
@@ -169,6 +170,7 @@ void test_set::test_diff(const expr& ex, int n1, int n2, bool disp_stats)
     ed2     = simplify(ed2);
 
     std::cout << "diff time 1: " << t1 << "\n";
+
     tic();
 
     for (int i = n1 + 1; i < n2; ++i)
@@ -210,9 +212,9 @@ void test_set::test_expression(size_t n_rep)
     init_genrand(203);
 
     //int n_sym         = 1000000;
-    int n_sym           = 6;
+    int n_sym           = 3;
+    //rand_state r(n_sym, 12, false, false);
     rand_state r(n_sym, 12, false, false);
-    //rand_state r(1, 2, false, false);
 
     bool show           = false;
     size_t stop_index   = (size_t)-1;

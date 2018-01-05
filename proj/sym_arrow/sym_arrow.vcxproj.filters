@@ -234,6 +234,24 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\utils\timer.h">
       <Filter>Source Files\include\sym_arrow\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value_gsli.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value_mp.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\sym_functions.h">
+      <Filter>Source Files\include\sym_arrow\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\utils\tests.h">
+      <Filter>Source Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\utils\temp_value.h">
+      <Filter>Source Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value_double.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp">
@@ -371,9 +389,6 @@
     <ClCompile Include="..\..\src\sym_arrow\nodes\symbol.cpp">
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\sym_arrow\nodes\value.cpp">
-      <Filter>Source Files\nodes</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\sym_arrow\grammar\output\lexer_sym_arrow.cpp">
       <Filter>Source Files\grammar\output</Filter>
     </ClCompile>
@@ -382,6 +397,21 @@
     </ClCompile>
     <ClCompile Include="..\..\src\sym_arrow\utils\timer.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\value_gsli.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\value_mp.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\taylor.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\utils\temp_value.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\value_double.cpp">
+      <Filter>Source Files\nodes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -392,9 +422,6 @@
       <Filter>Source Files\include\sym_arrow\details</Filter>
     </None>
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\scalar.inl">
-      <Filter>Source Files\include\sym_arrow\details</Filter>
-    </None>
-    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value.inl">
       <Filter>Source Files\include\sym_arrow\details</Filter>
     </None>
     <None Include="..\..\src\sym_arrow\ast\add_rep.inl">
@@ -465,6 +492,15 @@
     </None>
     <None Include="..\..\README.md">
       <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_gsli.inl">
+      <Filter>Source Files\include\sym_arrow\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_mp.inl">
+      <Filter>Source Files\include\sym_arrow\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_double.inl">
+      <Filter>Source Files\include\sym_arrow\details</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

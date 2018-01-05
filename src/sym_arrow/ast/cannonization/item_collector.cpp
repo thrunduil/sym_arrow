@@ -28,9 +28,9 @@ namespace sym_arrow { namespace ast
 //----------------------------------------------------------------
 //                  item_collector_add
 //----------------------------------------------------------------
-item_collector_add::item_collector_add(size_t size)
+item_collector_add::item_collector_add(size_t size, temp_value& temp_vals)
     : m_size(size), m_add(value::make_zero()), m_ih_array(size + 1 + buf_reserve)
-    , m_capacity(size + buf_reserve)
+    , m_capacity(size + buf_reserve), m_temp_vals(&temp_vals)
 {
     m_ih       = (item_handle*)m_ih_array.get();
     m_ih_tmp   = m_ih;
@@ -83,7 +83,7 @@ void item_collector_add::remove_empty()
 
     while (cur < last)
     {
-        if (cur->m_expr == nullptr)
+        if (cur->get_expr_handle() == nullptr)
         {
             std::swap(*cur, *last);
             --last;
@@ -95,7 +95,7 @@ void item_collector_add::remove_empty()
         };
     };
 
-    if (last->m_expr == nullptr)
+    if (last->get_expr_handle() == nullptr)
         --n;
 
     set_size(n);
@@ -113,8 +113,8 @@ item_collector_mult_arrays::item_collector_mult_arrays(const collector_size& siz
 //                  item_collector_mult
 //----------------------------------------------------------------
 item_collector_mult::item_collector_mult(collector_size& size, 
-                            item_collector_mult_arrays& arr)
-    : m_scal(value::make_one()), m_size(size)
+                            item_collector_mult_arrays& arr, temp_value& temp_vals)
+    : m_scal(value::make_one()), m_size(size), m_temp_vals(&temp_vals)
 {
     m_rih       = (ritem_handle*)arr.get_ritem_array().get();
     m_iih       = (iitem_handle*)arr.get_iitem_array().get();
@@ -126,8 +126,8 @@ item_collector_mult::item_collector_mult(collector_size& size,
 };
 
 item_collector_mult::item_collector_mult(collector_size& size, iitem_handle* ih, 
-                    ritem_handle* rh)
-    : m_scal(value::make_one()), m_size(size)
+                    ritem_handle* rh, temp_value& temp_vals)
+    : m_scal(value::make_one()), m_size(size), m_temp_vals(&temp_vals)
 {
     m_rih       = rh;
     m_iih       = ih;
@@ -173,7 +173,7 @@ void item_collector_mult::collect(const mult_rep* am, const value& pow)
         for (size_t i = 0; i < n; ++i)
         {
             expr_handle tmp_ex  = am->IE(i);
-            auto tmp_pow        = pow*value::make_value(am->IV(i));
+            auto tmp_pow        = pow * value::make_value(am->IV(i));
 
             add(std::move(tmp_pow), tmp_ex);
         };
@@ -298,13 +298,14 @@ void item_collector_mult::collect_base()
             pow_1       = pow_i - 1;
         };
 
-        m_rih[pos_r].m_value = m_rih[pos_r].m_value + value::make_value(pow_1);
+        m_rih[pos_r].get_value_ref()    = m_temp_vals->make_handle(m_rih[pos_r].get_value()
+                                            + value::make_value(pow_1));
 
-        if(m_rih[pos_r].m_value.is_zero() == true)
+        if(m_rih[pos_r].get_value().is_zero() == true)
             process_r_ptr[vec_pos_r++]  = pos_r;
 
-        int pow_sum             = m_iih[pos_i].m_value - pow_1;
-        m_iih[pos_i].m_value    = pow_sum;
+        int pow_sum                     = m_iih[pos_i].get_value() - pow_1;
+        m_iih[pos_i].get_value_ref()    = pow_sum;
 
         if (pow_sum == 0)
             process_i_ptr[vec_pos_i++]  = pos_i;

@@ -29,6 +29,7 @@
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/func/symbol_functions.h"
 #include "sym_arrow/functions/expr_functions.h"
+#include "sym_arrow/functions/sym_functions.h"
 
 #include <sstream>
 

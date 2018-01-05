@@ -23,9 +23,50 @@
 
 #include "sym_arrow/fwd_decls.h"
 #include "sym_arrow/nodes/value.h"
+#include "sym_arrow/utils/tests.h"
 
 namespace sym_arrow { namespace ast
 {
+
+namespace sd = sym_arrow::details;
+
+template<class Type>
+struct value_handle_type
+{};
+
+template<bool Is_pod = value::is_pod>
+struct value_handle_value_impl;
+
+template<>
+struct value_handle_value_impl<false>
+{
+    using type  = const value*;
+
+    static const value& get_value(const value* ptr) { return *ptr;}
+    static const value* make_handle(const value& v) { return &v; }
+};
+
+template<>
+struct value_handle_value_impl<true>
+{
+    using type  = value;
+
+    static const value& get_value(const value& ptr) { return ptr;}
+    static value        make_handle(value v)        { return v; }
+};
+
+template<>
+struct value_handle_type<value> : value_handle_value_impl<>
+{};
+
+template<>
+struct value_handle_type<int>
+{
+    using type  = int;
+
+    static const int&   get_value(const int& h)     { return h;}
+    static int          make_handle(int v)          { return v; }
+};
 
 // handle to item stored in vlist (in add_build and mult_build nodes)
 template<class Value_type>
@@ -33,11 +74,19 @@ class build_item_handle
 {
     public:
         // type of value assigned to term
-        using value_type            = Value_type;
+        using value_type        = Value_type;
 
-    public:
+        using value_traits      = value_handle_type<value_type>;
+
+        // type of value handle, value handle is a POD type
+        using value_handle      = typename value_traits::type;
+
+        static_assert(std::is_pod<value_handle>::value || sd::is_effective_pod<value_handle>::value, 
+                        "pod required");
+
+    private:
         // value assigned to this item
-        value_type              m_value;
+        value_handle            m_value;
 
         // handle to expression
         expr_handle             m_expr;
@@ -47,19 +96,25 @@ class build_item_handle
 
     public:
         // constructor of regular item; set expression handle to nullptr
-        build_item_handle(const Value_type&);
+        build_item_handle(value_handle p);
 
         // constructor of regular item
-        build_item_handle(const Value_type& p, expr_handle e);
+        build_item_handle(value_handle p, expr_handle e);
 
         // return true is this is a special item
         bool                    is_special() const;
 
         // return value assigned to term
-        const Value_type&       get_value() const                   { return m_value;};
+        const Value_type&       get_value() const                   { return value_traits::get_value(m_value);};
+
+        // return value assigned to term
+        value_handle&           get_value_ref()                     { return m_value;};
 
         // return expression handle
         expr_handle             get_expr_handle() const             { return m_expr; };
+
+        // return expression handle
+        expr_handle&            get_expr_ref()                      { return m_expr; };
 
         // arrow operator; return this object
         const build_item_handle*    
@@ -129,6 +184,44 @@ class build_item
 
         // compare two items; values are ignored:
         bool                    compare(const build_item& other) const;
+};
+
+template<class Value_type>
+class build_item_ptr
+{
+    public:
+        // type of value assigned to term
+        using value_type        = Value_type;
+
+    private:
+        // value assigned to this item (power or multiplication scalar)
+        const value_type*       m_value;
+
+        // expression
+        expr_ptr                m_expr;
+
+    public:
+        // create a regular item
+        build_item_ptr(const value_type* scal, expr_handle expr);
+        build_item_ptr(const value_type* scal, const expr& expr);
+        build_item_ptr(const value_type* scal, expr&& expr);
+
+    public:
+        // return value assigned to term
+        const value_type&       get_value() const;
+
+        // return value assigned to term; value can be modified
+        value_type&             get_value_ref();
+
+        // return handle to expression
+        expr_handle             get_expr_handle() const;
+
+    private:
+        build_item_ptr(const build_item_ptr& other) = delete;
+        build_item_ptr(build_item_ptr&& other) = delete;
+
+        build_item_ptr& operator=(const build_item_ptr& other) = delete;
+        build_item_ptr& operator=(build_item_ptr&& other) = delete;
 };
 
 };};

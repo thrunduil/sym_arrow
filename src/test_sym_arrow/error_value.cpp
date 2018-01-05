@@ -118,7 +118,7 @@ error_value testing::abs(const error_value& v1)
 error_value testing::exp(const error_value& v1)
 {
     value v     = exp(v1.get_value());
-    double err  = std::abs(v1.get_value().get_value()) * v1.get_error();
+    double err  = std::abs(v1.get_value().get_double()) * v1.get_error();
     
     if (v1.get_value().is_zero() == false)
         err     = err + 0.5;
@@ -134,7 +134,7 @@ error_value testing::log(const error_value& v1)
     if (v1.get_value().is_one() == false)
         err     = err + 0.5;
 
-    return error_value(v, err.get_value());
+    return error_value(v, err.get_double());
 };
 
 error_value testing::operator*(const error_value& v1, const error_value& v2)
@@ -206,7 +206,7 @@ error_value testing::operator+(const error_value& v1, const error_value& v2)
         err     = err + 0.5;
     }
 
-    return error_value(v, err.get_value());
+    return error_value(v, err.get_double());
 };
 
 error_value testing::operator-(const error_value& v1, const error_value& v2)
@@ -230,7 +230,7 @@ error_value testing::operator-(const error_value& v1, const error_value& v2)
         err     = err + 0.5;
     }
 
-    return error_value(v, err.get_value());
+    return error_value(v, err.get_double());
 };
 
 error_value testing::operator-(const error_value& v1, const value& v2)
@@ -253,7 +253,7 @@ error_value testing::operator-(const error_value& v1, const value& v2)
         err     = err + 0.5;
     }
 
-    return error_value(v, err.get_value());
+    return error_value(v, err.get_double());
 };
 
 error_value testing::operator-(const value& v1, const error_value& v2)
@@ -276,7 +276,7 @@ error_value testing::operator-(const value& v1, const error_value& v2)
         err     = err + 0.5;
     }
 
-    return error_value(v, err.get_value());
+    return error_value(v, err.get_double());
 };
 
 error_value testing::power_int(const error_value& v1, int v2)
@@ -288,7 +288,7 @@ error_value testing::power_int(const error_value& v1, int v2)
             && v1.get_value().is_one() == false)
     {
         value base  = abs(log(abs(v1.get_value())) * double(v2));
-        err         = err + base.get_value() * 1.0 + 0.5;
+        err         = err + base.get_double() * 1.0 + 0.5;
     }
 
     return error_value(v, err);
@@ -307,7 +307,7 @@ error_value testing::power_real(const error_value& v1, const error_value& v2)
         err         = err + base * 1.0 + 0.5;
     }
 
-    return error_value(v, err.get_value());
+    return error_value(v, err.get_double());
 };
 
 };};

@@ -181,14 +181,19 @@ void mult_build::insert_ielem(int vpow, expr_handle expr)
     }
     else if (expr->isa<add_rep>() == true)
     {
-        value scal = value::make_one();
-        expr_ptr tmp = cannonize().normalize(expr->static_cast_to<add_rep>(), scal);
+        #if SYM_ARROW_NORMALIZE
+            value scal = value::make_one();
+            expr_ptr tmp = cannonize().normalize(expr->static_cast_to<add_rep>(), scal);
 
-        if (scal.is_one() == false)
-            make_scal(power_int(scal,vpow));
+            if (scal.is_one() == false)
+                make_scal(power_int(scal,vpow));
 
-        ipush_back(vpow, tmp.get());
-        return;
+            ipush_back(vpow, tmp.get());
+            return;
+        #else
+            ipush_back(vpow, expr);
+            return;
+        #endif
     };
 
     ipush_back(vpow, expr);
@@ -235,14 +240,19 @@ void mult_build::insert_relem(const value& pow, expr_handle expr)
     }
     else if (expr->isa<add_rep>() == true)
     {
-        value scal   = value::make_one();
-        expr_ptr tmp = cannonize().normalize(expr->static_cast_to<add_rep>(), scal);
+        #if SYM_ARROW_NORMALIZE
+            value scal   = value::make_one();
+            expr_ptr tmp = cannonize().normalize(expr->static_cast_to<add_rep>(), scal);
 
-        if (scal.is_one() == false)
-            make_scal(power_real(scal, pow));
+            if (scal.is_one() == false)
+                make_scal(power_real(scal, pow));
 
-        rpush_back(pow, tmp.get());
-        return;
+            rpush_back(pow, tmp.get());
+            return;
+        #else
+            rpush_back(pow, expr);
+            return;
+        #endif
     };
 
     rpush_back(pow, expr);

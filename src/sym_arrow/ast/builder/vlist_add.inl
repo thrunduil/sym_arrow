@@ -45,10 +45,10 @@ inline void vlist_add::make_add(const value& add)
     m_add        = m_add + add;
 };
 
-inline void vlist_add::set_default_values()
+inline void vlist_add::init_with_default_values()
 {
-    m_scal      = value::make_one();
-    m_add       = value::make_zero();
+    new(&m_scal) value(value::make_one());
+    new(&m_add) value(value::make_zero());
 };
 
 inline const value& vlist_add::get_add() const

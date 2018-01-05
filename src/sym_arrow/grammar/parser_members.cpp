@@ -63,18 +63,12 @@ expr parser_sym_arrow::make_power(expr&& x, expr&& p)
 
     if (p.get_ptr()->isa<ast::scalar_rep>() == true)
     {
-        double val      = p.get_ptr()->static_cast_to<ast::scalar_rep>()
-                            ->get_data().get_value();
-        double val_r    = ::floor(val);
-        int val_ri      = static_cast<int>(val_r);
+        value val       = p.get_ptr()->static_cast_to<ast::scalar_rep>()->get_data();
+        bool is_int     = val.is_int();
 
-        if (std::abs(val - val_r) < tol * std::abs(val))
+        if (is_int == true)
         {
-            return power_int(std::move(x), val_ri);
-        }
-        else if (std::abs(val - val_r - 1.) < tol * std::abs(val))
-        {
-            return power_int(std::move(x),val_ri + 1);
+            return power_int(std::move(x), val.convert_int());
         }
         else
         {
@@ -89,23 +83,28 @@ expr parser_sym_arrow::make_power(expr&& x, expr&& p)
 
 expr parser_sym_arrow::get_number(const std::string& s)
 {
-    double val;
-    to_number(s, false, val);
+    #if SYM_ARROW_VALUE_TYPE == SYM_ARROW_VALUE_MP
+        value val   = value::make_from_string(s);
+        return expr(val);
+    #else
+        double val;
+        to_number(s, false, val);
 
-    return expr(val);
+        return expr(val);
+    #endif
 };
 
 void parser_sym_arrow::to_number(const std::string& value_str0, bool is_complex, double& ret)
 {
-    size_t str_size    = (value_str0.size()==0)?0 : value_str0.size()-1;
-    const std::string& value_str = (is_complex==false)? value_str0 : value_str0.substr(0,str_size);
+    size_t str_size              = (value_str0.size() == 0) ? 0 : value_str0.size() - 1;
+    const std::string& value_str = (is_complex == false) ? value_str0 : value_str0.substr(0,str_size);
 
     size_t radix;
     long exp;
     get_precission(value_str,radix,exp);
 
     size_t prec_d = std::numeric_limits<double>::digits10;
-    if (radix>prec_d)
+    if (radix > prec_d)
     {
         std::string msg = "too many significant digits, precision is lost";
         reportWarning(msg);

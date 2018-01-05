@@ -19,40 +19,18 @@
 *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "sym_arrow/nodes/value.h"
-#include "gsli/gsli.h"
+#include "sym_arrow/config.h"
 
+#if SYM_ARROW_VALUE_TYPE == SYM_ARROW_VALUE_MP
+
+#include "sym_arrow/nodes/value_mp.h"
 #include <boost/functional/hash.hpp>
-
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include "sym_arrow/functions/expr_functions.h"
 
 #include <iostream>
 
 namespace sym_arrow
 {
-
-inline sli::gsli_double& cast(double& val)
-{ 
-    return reinterpret_cast<sli::gsli_double&>( val); 
-};
-
-inline const sli::gsli_double& cast(const double& val)
-{ 
-    return reinterpret_cast<const sli::gsli_double&>( val); 
-};
-
-inline double& cast(sli::gsli_double&& val)
-{ 
-    return reinterpret_cast<double&>( val); 
-};
-
-inline const double& cast(const sli::gsli_double& val)
-{ 
-    return reinterpret_cast<const double&>( val); 
-};
-
-using impl_type = sli::gsli_double;
 
 value::value()
     :m_data(0.0)
@@ -62,8 +40,8 @@ value::value(double v)
     :value(impl_type(v))
 {}
 
-value::value(const impl_type& val)
-    :m_data(cast(val))
+value::value(const mp_float& v)
+    :m_data(v)
 {};
 
 value value::make_value(double val)
@@ -71,110 +49,118 @@ value value::make_value(double val)
     return value(impl_type(val));
 };
 
-size_t value::eval_hash(double val)
+value value::make_value(const matcl::mp_float& val)
 {
-    return eval_hash(value::make_value(val));
+    return value(impl_type(val));
 };
+
+value value::make_from_string(const std::string& s)
+{
+    return value(impl_type(s));
+}
+
+const value::impl_type& value::get_rep() const
+{
+    return m_data;
+}
+
+double value::get_double() const
+{ 
+    return m_data.cast_float();
+};
+
+const mp_float& value::get_mp_float() const
+{ 
+    return m_data;
+};
+
+value value::make_nan()
+{
+    return value(matcl::constants::mp_nan());
+};
+
+value value::make_inf_plus()
+{
+    return value(matcl::constants::mp_inf());
+};
+
+value value::make_inf_minus()
+{
+    return value(-matcl::constants::mp_inf());
+};
+
+value value::make_one()
+{
+    return value(matcl::mp_float(1.0));
+};
+
+value value::make_minus_one()
+{
+    return value(matcl::mp_float(-1.0));
+};
+
+value value::make_zero()
+{
+    return value(matcl::mp_float(0.0));
+};
+
+bool value::is_nan() const
+{ 
+    return matcl::is_nan(m_data);
+};
+
+bool value::is_inf() const
+{
+    return matcl::is_inf(m_data);
+};
+
+bool value::is_inf_plus() const
+{
+    return matcl::is_inf(m_data) && m_data > 0.0;
+};
+
+bool value::is_inf_minus() const
+{
+    return matcl::is_inf(m_data) && m_data < 0.0;
+};
+
+bool value::is_finite() const
+{
+    return matcl::is_finite(m_data);
+};
+
+bool value::is_int() const
+{
+    return matcl::is_int(m_data);
+};
+
+int value::convert_int() const
+{
+    return m_data.cast_int(matcl::round_mode::nearby);
+}
 
 size_t value::eval_hash(const value& val)
 {
-    const size_t* tmp = reinterpret_cast<const size_t*>(&val.m_data);
+    //TODO
+    double vd           = val.get_double();
+    const size_t* tmp   = reinterpret_cast<const size_t*>(&vd);
 
     size_t seed = 0;
 
-    for(size_t i = 0; i < sizeof(impl_type) / sizeof(size_t); ++i)
+    for(size_t i = 0; i < sizeof(double) / sizeof(size_t); ++i)
         boost::hash_combine(seed,tmp[i]);
 
     return seed;
 };
 
-const value::impl_type& value::get_rep() const
-{
-    return cast(m_data);
-}
-
-double value::get_value() const
-{ 
-    return cast(m_data).get_value();
-};
-
-value value::make_nan()
-{
-    return value(impl_type::make_nan());
-};
-
-value value::make_inf_plus()
-{
-    return value(impl_type::make_infinity(false));
-};
-
-value value::make_inf_minus()
-{
-    return value(impl_type::make_infinity(true));
-};
-
-value value::make_one()
-{
-    return value(impl_type(1.0, impl_type::float_rep()));
-};
-
-value value::make_minus_one()
-{
-    return value(impl_type(-1.0, impl_type::float_rep()));
-};
-
-value value::make_zero()
-{
-    return value(impl_type::make_zero());
-};
-
 bool value::is_e() const
 { 
-    return m_data == M_PI;
+    return m_data == matcl::constants::mp_e(m_data.get_precision());
 }
-
-bool value::is_nan() const
-{ 
-    return sli::is_nan(cast(m_data));
-};
-
-bool value::is_inf() const
-{
-    return sli::is_inf(cast(m_data));
-};
-
-bool value::is_inf_plus() const
-{
-    return sli::is_inf(cast(m_data)) && this->is_positive();
-};
-
-bool value::is_inf_minus() const
-{
-    return sli::is_inf(cast(m_data)) && this->is_negative();
-};
-
-bool value::is_finite() const
-{
-    return sli::is_finite(cast(m_data));
-};
 
 //---------------------------------------------------------------------
 //                  functions defined for value
 //---------------------------------------------------------------------
-void sym_arrow::disp(std::ostream& os, const value& v, bool add_nl)
-{
-    os << v.get_rep();
-
-    if (add_nl)
-        os << "\n";
-}
-
-void sym_arrow::disp(const value& v, bool add_nl)
-{
-    disp(std::cout, v, add_nl);
-};
-
-
 value sym_arrow::operator+(const value& v1, const value& v2)
 {
     return value(v1.get_rep() + v2.get_rep());
@@ -220,27 +206,34 @@ value sym_arrow::operator/(const double& v1, const value& v2)
     return value(v1 / v2.get_rep());
 };
 
-value sym_arrow::power_int(const value& v1, int v2)
+value sym_arrow::operator-(const value& v1, const value& v2)
 { 
-    return value(sli::pow_int(v1.get_rep(), v2));
+    return value(v1.get_rep() - v2.get_rep());
 };
 
-value sym_arrow::power_real(const value& v1, const value& v2)
-{
-    return value(sli::pow_abs(v1.get_rep(), v2.get_rep()));
+value sym_arrow::operator-(const value& v1, const double& v2)
+{ 
+    return value(v1.get_rep() - v2);
+};
+
+value sym_arrow::operator-(const double& v1, const value& v2)
+{ 
+    return value(v1 - v2.get_rep());
+};
+
+value sym_arrow::operator-(const value& v1)
+{ 
+    return value(-v1.get_rep());
 };
 
 bool sym_arrow::operator==(const value& v1,const value& v2)
 { 
-    if (v1.is_nan() == true && v2.is_nan() == true)
-        return true;
-
-    return v1.get_rep() == v2.get_rep();
+    return eeq_nan(v1.get_rep(), v2.get_rep());
 };
 
 bool sym_arrow::operator!=(const value& v1,const value& v2)
 {
-    return (v1 == v2) == false;
+    return neq_nan(v1.get_rep(), v2.get_rep());
 };
 
 bool sym_arrow::operator>(const value& v1,const value& v2)
@@ -269,24 +262,14 @@ bool sym_arrow::operator>=(const value& v1,const value& v2)
     return (v1 < v2) == false;
 };    
 
-value sym_arrow::operator-(const value& v1, const value& v2)
+value sym_arrow::power_int(const value& v1, int v2)
 { 
-    return value(v1.get_rep() - v2.get_rep());
+    return value(pow(v1.get_rep(), v2));
 };
 
-value sym_arrow::operator-(const value& v1, const double& v2)
-{ 
-    return value(v1.get_rep() - v2);
-};
-
-value sym_arrow::operator-(const double& v1, const value& v2)
-{ 
-    return value(v1 - v2.get_rep());
-};
-
-value sym_arrow::operator-(const value& v1)
-{ 
-    return value(-v1.get_rep());
+value sym_arrow::power_real(const value& v1, const value& v2)
+{
+    return value(pow(abs(v1.get_rep()), v2.get_rep()));
 };
 
 value sym_arrow::inv(const value& v1)
@@ -301,7 +284,7 @@ value sym_arrow::exp(const value& v1)
 
 value sym_arrow::log(const value& v1)
 { 
-    return value(log_abs(v1.get_rep()));
+    return value(log(abs(v1.get_rep())));
 };
 
 value sym_arrow::abs(const value& v1)
@@ -309,9 +292,41 @@ value sym_arrow::abs(const value& v1)
     return value(abs(v1.get_rep()));
 };
 
+void sym_arrow::disp(const value& v, bool add_nl)
+{
+    disp(std::cout, v, add_nl);
+};
+
+void sym_arrow::disp(std::ostream& os, const value& v, bool add_nl)
+{
+    int prec    = get_disp_precision();
+
+    if (prec < 0)
+        os << v.get_rep().to_string();
+    else if (prec == 0)
+        os << v.get_rep();
+    else
+        os << v.get_rep().to_string(matcl::precision(prec));
+
+    if (add_nl)
+        os << "\n";
+}
+
 double sym_arrow::float_distance(const value& v1, const value& v2)
 {
-    return float_distance(v1.get_rep(), v2.get_rep());
+    return matcl::ulp_distance(v1.get_rep(), v2.get_rep()).cast_float();
+}
+
+int sym_arrow::get_default_precision()
+{
+    return (int)matcl::mp_float::get_default_precision().get();
+}
+
+void sym_arrow::set_default_precision(int prec)
+{
+    matcl::mp_float::set_default_precision(matcl::precision(prec));
 }
 
 };
+
+#endif

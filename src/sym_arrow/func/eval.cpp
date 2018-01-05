@@ -28,6 +28,7 @@
 #include "sym_arrow/functions/contexts.h"
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/functions/expr_functions.h"
+#include "sym_arrow/functions/sym_functions.h"
 
 #include <sstream>
 
@@ -188,7 +189,6 @@ value do_eval_vis::eval(const ast::function_rep* h, const data_provider& dp)
     using value_pod     =  sd::pod_type<value>;
     int size_counter    = 0;
     value_pod::destructor_type d(&size_counter);
-
     sd::stack_array<value_pod> buff(size, &d);    
 
     value* buff_ptr     = reinterpret_cast<value*>(buff.get());

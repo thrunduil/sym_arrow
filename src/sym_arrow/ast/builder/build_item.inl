@@ -124,13 +124,12 @@ inline bool build_item<Value_type>::compare(const build_item& b) const
 //                      ITEM_HANDLE
 //-------------------------------------------------------------------
 template<class Value_type>
-inline build_item_handle<Value_type>::build_item_handle(const Value_type& v)
+inline build_item_handle<Value_type>::build_item_handle(value_handle v)
     :m_is_special(false), m_expr(nullptr), m_value(v)
 {};
 
 template<class Value_type>
-inline build_item_handle<Value_type>::build_item_handle(const Value_type& p, 
-                                           expr_handle e)    
+inline build_item_handle<Value_type>::build_item_handle(value_handle p, expr_handle e)    
     :m_value(p), m_expr(e), m_is_special(false)
 {};
 
@@ -144,6 +143,42 @@ template<class Value_type>
 inline bool build_item_handle<Value_type>::compare(const build_item_handle& b) const
 {
     return this->m_expr < b.m_expr;
+}
+
+//-------------------------------------------------------------------
+//                      build_item_ptr
+//-------------------------------------------------------------------
+template<class Value_type>
+build_item_ptr<Value_type>::build_item_ptr(const value_type* scal, expr_handle expr)
+    : m_value(scal), m_expr(expr)
+{};
+
+template<class Value_type>
+build_item_ptr<Value_type>::build_item_ptr(const value_type* scal, const expr& expr)
+    : m_value(scal), m_expr(expr.get_ptr())
+{};
+
+template<class Value_type>
+build_item_ptr<Value_type>::build_item_ptr(const value_type* scal, expr&& expr)
+    : m_value(scal), m_expr(std::move(expr.get_ptr()))
+{};
+
+template<class Value_type>
+const Value_type& build_item_ptr<Value_type>::get_value() const
+{
+    return *m_value;
+}
+
+template<class Value_type>
+Value_type& build_item_ptr<Value_type>::get_value_ref()
+{
+    return *m_value;
+}
+
+template<class Value_type>
+expr_handle build_item_ptr<Value_type>::get_expr_handle() const
+{
+    return m_expr.get();
 }
 
 };};

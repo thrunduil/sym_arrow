@@ -32,6 +32,7 @@
 
 #include "sym_arrow/ast/cannonization/subexpr_collector.h"
 #include "dag/details/vector_provider.h"
+#include "sym_arrow/utils/tests.h"
 
 namespace sym_arrow { namespace ast
 {
@@ -40,7 +41,7 @@ namespace sym_arrow { namespace ast
 //                  cannonize
 //-------------------------------------------------------------------
 cannonize::cannonize()
-    :m_expr_stack(nullptr)
+    :m_expr_stack(nullptr), m_temp_vals()
 {};
 
 cannonize::~cannonize()
@@ -65,50 +66,57 @@ bool cannonize::is_simple(const add_rep* h) const
         return false;
 };
 
-bool cannonize::is_normalized(const add_rep* h) const
-{
-    return h->is_normalized();
-};
-
-expr_ptr cannonize::normalize(const add_rep* h, value& scal) const
-{
-    if (h->is_normalized() == true)
-        return expr_ptr(h, sym_dag::copy_t());
-
-    scal = get_normalize_scaling(h->V0(), h->size(), h->VE());
-
-    if (scal.is_one() == true)
+#if SYM_ARROW_NORMALIZE
+    bool cannonize::is_normalized(const add_rep* h) const
     {
-        const_cast<add_rep*>(h)->set_normalized();
-        return expr_ptr(h, sym_dag::copy_t());
-    }
+        return h->is_normalized();
+    };
 
-    using item_handle   = build_item<value>::handle_type;
-    static const size_t ih_buffer_size = 20;
+    expr_ptr cannonize::normalize(const add_rep* h, value& scal) const
+    {
+        if (h->is_normalized() == true)
+            return expr_ptr(h, sym_dag::copy_t());
 
-    //destructor is trivial
-    sd::stack_array<sd::pod_type<item_handle>,ih_buffer_size> 
-    ih_array(h->size() + 1);
+        scal = get_normalize_scaling(h->V0(), h->size(), h->VE());
 
-    item_handle* ih = (item_handle*)ih_array.get();
+        if (scal.is_one() == true)
+        {
+            const_cast<add_rep*>(h)->set_normalized();
+            return expr_ptr(h, sym_dag::copy_t());
+        }
 
-    for (size_t i = 0; i < h->size(); ++i)
-        new(ih + i) item_handle(h->V(i) / scal, h->E(i));
+        using item_handle   = build_item<value>::handle_type;
+        using pod_type      = sd::pod_type<item_handle>;
 
-    bool has_log = h->has_log();
+        static const size_t ih_buffer_size = 20;
 
-    if (has_log == true)
-        new(ih + h->size()) item_handle(value::make_one(), h->Log());
+        static_assert(sd::is_effective_pod<item_handle>::value == true, "pod required");
 
-    add_rep_info<item_handle> ai(h->V0() / scal, h->size(), ih, 
-                                 has_log ? ih + h->size() : nullptr);
+        sd::stack_array<pod_type,ih_buffer_size> 
+        ih_array(h->size() + 1);
 
-    using add_rep_ptr = sym_dag::dag_ptr<add_rep>;
+        item_handle* ih     = (item_handle*)ih_array.get();
 
-    add_rep_ptr res = add_rep::make(ai);
-    const_cast<add_rep*>(res.get())->set_normalized();
-    return res;
-};
+        for (size_t i = 0; i < h->size(); ++i)
+            new(ih + i) item_handle(m_temp_vals.make_handle(h->V(i) / scal), h->E(i));
+
+        bool has_log    = h->has_log();
+        value one       = value::make_one();
+
+        if (has_log == true)
+            new(ih + h->size()) item_handle(value_handle_type<value>::make_handle(one), h->Log());
+
+        value tmp   = h->V0() / scal;
+        add_rep_info<item_handle> ai(&tmp, h->size(), ih, 
+                                     has_log ? ih + h->size() : nullptr);
+
+        using add_rep_ptr = sym_dag::dag_ptr<add_rep>;
+
+        add_rep_ptr res = add_rep::make(ai);
+        const_cast<add_rep*>(res.get())->set_normalized();
+        return res;
+    };
+#endif
 
 expr cannonize::make(const expr& ex, bool do_cse) 
 {    
@@ -224,7 +232,7 @@ expr cannonize::make_add_impl(const add_build* h, value& ret_scal, bool normaliz
     size_t n            = calc_size_add(h->get_vlist());
     value scal          = value::make_one();
 
-    item_collector_add ic(n);    
+    item_collector_add ic(n, m_temp_vals);    
     collect_items_root(h->get_vlist(), ic, scal);
 
     return process_add(n, ic, ret_scal, normalize, do_cse);
@@ -235,7 +243,7 @@ expr cannonize::make_add_impl(const add_rep* h)
     size_t n            = h->size();
     value scal          = value::make_one();
 
-    item_collector_add ic(n);    
+    item_collector_add ic(n, m_temp_vals);    
     collect_items(h, ic, scal);
 
     value ret_scal;
@@ -245,14 +253,11 @@ expr cannonize::make_add_impl(const add_rep* h)
 expr cannonize::make_normalize(const value& add, size_t size, 
                     const build_item<value>* h, value& ret_scal, bool do_cse)
 {
-    using item          = build_item<value>;
-    using item_handle   = item::handle_type;
-
     size_t n            = 0;
     for (size_t i = 0; i < size; ++i)
         n               += calc_size_add(h[i]);    
 
-    item_collector_add ic(n);
+    item_collector_add ic(n, m_temp_vals);
 
     ic.add_add(add);
 
@@ -274,7 +279,7 @@ expr cannonize::process_add(size_t n, item_collector_add& ic, value& ret_scal,
     item_handle* ih     = ic.get_ih();
     ic.test();    
 
-    simplify_expr<item_handle>::make(ih, n);
+    simplify_expr<item_handle, temp_value>::make(ih, n, m_temp_vals);
 
     if (n < 2 || do_cse == false)
         return finalize_add(ic, n, ret_scal, normalize, true);
@@ -321,7 +326,7 @@ expr cannonize::process_add(size_t n, item_collector_add& ic, value& ret_scal,
         expr fact;
         value scal;
 
-        bool succ       = subexpr_collector().make(n, ih, fact, scal);
+        bool succ       = subexpr_collector().make(n, ih, fact, scal, m_temp_vals);
         factorized      |= succ;
 
         if (succ == false)
@@ -405,14 +410,11 @@ void cannonize::process_add_factorization(const expr& fact, item_collector_add& 
     item_handle* ih     = ic.get_ih();
     ic.test();    
 
-    simplify_expr<item_handle>::make(ih, n);
+    simplify_expr<item_handle, temp_value>::make(ih, n, m_temp_vals);
 };
 
 void cannonize::process_log(item_collector_add& ic, bool do_cse)
 {
-    using item          = build_item<value>;
-    using item_handle   = item::handle_type;
-
     bool has_log        = ic.has_log();
 
     if (has_log == false)
@@ -486,9 +488,10 @@ expr cannonize::finalize_add(item_collector_add& ic, size_t n, value& ret_scal,
     {
         if (has_log == true)
         {
-            item_handle ih_log(value::make_one(), ex_log.get_ptr().get());
+            value one   = value::make_one();
+            item_handle ih_log(value_handle_type<value>::make_handle(one), ex_log.get_ptr().get());
 
-            add_rep_info<item_handle> ci(add, 0, nullptr, &ih_log);
+            add_rep_info<item_handle> ci(&add, 0, nullptr, &ih_log);
             return expr(add_rep::make(ci));
         }
         else
@@ -502,11 +505,13 @@ expr cannonize::finalize_add(item_collector_add& ic, size_t n, value& ret_scal,
 
     if (has_log == true)
     {
-        // add_rep must be created; last element can always be modified
-        ih[n].m_value   = value::make_one();
-        ih[n].m_expr    = ex_log.get_ptr().get();
+        value one   = value::make_one();
 
-        add_rep_info<item_handle> ai(add, n, ih, ih + n);
+        // add_rep must be created; last element can always be modified
+        ih[n].get_value_ref()   = value_handle_type<value>::make_handle(one);
+        ih[n].get_expr_ref()    = ex_log.get_ptr().get();
+
+        add_rep_info<item_handle> ai(&add, n, ih, ih + n);
         ret = expr(add_rep::make(ai));
         return ret;
     };
@@ -515,74 +520,81 @@ expr cannonize::finalize_add(item_collector_add& ic, size_t n, value& ret_scal,
     {
         if (normalize == true)
         {
-            ret_scal = ih[0].m_value;
-            return expr(ih[0].m_expr);
+            ret_scal = ih[0].get_value();
+            return expr(ih[0].get_expr_handle());
         };
 
-        if (ih[0].m_value.is_one() == true)
-            return expr(ih[0].m_expr);
+        if (ih[0].get_value().is_one() == true)
+            return expr(ih[0].get_expr_handle());
     };
 
     if (normalize == true)
     {
-        ret_scal = get_normalize_scaling(add, n, ih);
+        #if SYM_ARROW_NORMALIZE
+            ret_scal = get_normalize_scaling(add, n, ih);
 
-        if (ret_scal.is_one() == false)
-        {
-            if (can_modify_ic == false)
+            if (ret_scal.is_one() == false)
             {
-                static const size_t stack_size  = 20;
-                using stack_elem    = sd::pod_type<item_handle>;
-                using item_array    = sd::stack_array<stack_elem, stack_size>;
+                if (can_modify_ic == false)
+                {
+                    static const size_t stack_size  = 20;
+                    using stack_elem    = sd::pod_type<item_handle>;
 
-                item_array loc_arr(n);
+                    static_assert(sd::is_effective_pod<item_handle>::value == true, "pod required");
+                    using item_array    = sd::stack_array<stack_elem, stack_size>;
 
-                item_handle* loc_ih = (item_handle*)loc_arr.get();
+                    item_array loc_arr(n);
 
+                    item_handle* loc_ih = (item_handle*)loc_arr.get();                
+
+                    for (size_t i = 0; i < n; ++i)
+                    {
+                        new (loc_ih +i) item_handle(m_temp_vals.make_handle(ih[i].get_value() / ret_scal), 
+                                                    ih[i].get_expr_handle());
+                    }
+
+                    add = add / ret_scal;
+
+                    add_rep_info<item_handle> ci(&add, n, loc_ih, nullptr);
+
+                    using add_rep_ptr   = sym_dag::dag_ptr<add_rep>;
+                    add_rep_ptr res     = add_rep::make(ci);
+
+                    return expr(std::move(res));
+                };
+
+                //scal items
                 for (size_t i = 0; i < n; ++i)
-                    new (loc_ih +i) item_handle(ih[i].m_value / ret_scal, ih[i].m_expr);
+                    ih[i].get_value_ref() = m_temp_vals.make_handle(ih[i].get_value() / ret_scal);
 
                 add = add / ret_scal;
-
-                add_rep_info<item_handle> ci(add, n, loc_ih, nullptr);
-
-                using add_rep_ptr   = sym_dag::dag_ptr<add_rep>;
-                add_rep_ptr res     = add_rep::make(ci);
-
-                return expr(std::move(res));
             };
-
-            //scal items
-            for (size_t i = 0; i < n; ++i)
-                ih[i].m_value = ih[i].m_value / ret_scal;
-
-            add = add / ret_scal;
-        };
+        #else
+            ret_scal    = value::make_one();
+            (void)can_modify_ic;
+        #endif
     };
 
-    add_rep_info<item_handle> ci(add, n, ih, nullptr);
+    add_rep_info<item_handle> ci(&add, n, ih, nullptr);
 
     using add_rep_ptr   = sym_dag::dag_ptr<add_rep>;
     add_rep_ptr res     = add_rep::make(ci);
 
-    if (normalize == true)
-        const_cast<add_rep*>(res.get())->set_normalized();
+    #if SYM_ARROW_NORMALIZE
+        if (normalize == true)
+            const_cast<add_rep*>(res.get())->set_normalized();
+    #endif
 
     return expr(std::move(res));    
 };
 
 expr cannonize::make_mult_impl(const mult_build* h, bool do_cse)
 {
-    using iitem             = build_item<int>;
-    using ritem             = build_item<value>;
-    using iitem_handle      = iitem::handle_type;
-    using ritem_handle      = ritem::handle_type;
-
     item_collector_size ic_size;
     calc_size(h, ic_size);
 
     item_collector_mult_arrays arr(ic_size);
-    item_collector_mult ic(ic_size, arr);
+    item_collector_mult ic(ic_size, arr, m_temp_vals);
 
     ic.add_scal(h->get_scal());
 
@@ -614,7 +626,8 @@ expr cannonize::make_mult_impl(const mult_build* h, bool do_cse)
 
         val_expr data           = {&scal, ep.get()};
 
-        add_rep_info<val_expr> ai2(value::make_zero(), 1, &data, nullptr);
+        value zero              = value::make_zero();
+        add_rep_info<val_expr> ai2(&zero, 1, &data, nullptr);
         expr_ptr ep2 = add_rep::make(ai2);
 
         return expr(std::move(ep2));
@@ -655,8 +668,11 @@ expr cannonize::process_mult(item_collector_mult& ic, value& scal, bool do_cse)
     size_t in       = ic.isize();
     size_t rn       = ic.rsize();
 
-    simplify_expr<ritem_handle>::make(rih, rn);
-    simplify_expr<iitem_handle>::make(iih, in);
+    using temp_value_int    = sd::temp_value<int,true>;
+    temp_value_int dum;
+
+    simplify_expr<ritem_handle, temp_value>::make(rih, rn, m_temp_vals);
+    simplify_expr<iitem_handle, temp_value_int>::make(iih, in, dum);
 
     if (in == 0 && rn == 0)
     {
@@ -681,14 +697,14 @@ expr cannonize::process_mult(item_collector_mult& ic, value& scal, bool do_cse)
 
     if (has_exp_term)
     {
-        iih[in].m_value     = 1;
-        iih[in].m_expr      = ex_term.get_ptr().get();
+        iih[in].get_value_ref() = 1;
+        iih[in].get_expr_ref()  = ex_term.get_ptr().get();
     };
 
-    if (in == 1 && rn == 0 && has_exp_term == false && iih[0].m_value == 1)
+    if (in == 1 && rn == 0 && has_exp_term == false && iih[0].get_value() == 1)
     {
         //promote
-        ep  = expr_ptr(iih[0].m_expr, sym_dag::copy_t());
+        ep  = expr_ptr(iih[0].get_expr_handle(), sym_dag::copy_t());
     }
     else
     {
@@ -748,20 +764,15 @@ expr cannonize::make_mult(size_t isize, size_t rsize, bool has_exp,
                     build_item_handle<int>* ih, build_item_handle<value>* rh, 
                     value& scal, bool do_cse)
 {
-    using iitem         = build_item<int>;
-    using ritem         = build_item<value>;
-    using iitem_handle  = iitem::handle_type;
-    using ritem_handle  = ritem::handle_type;
-
     item_collector_size ic_size(isize, rsize);
 
-    item_collector_mult ic(ic_size, ih, rh);
+    item_collector_mult ic(ic_size, ih, rh, m_temp_vals);
 
     ic.add_scal(scal);
 
     if (has_exp)
     {
-        expr exp        = expr(expr_ptr::from_this(ih[isize].m_expr));
+        expr exp        = expr(expr_ptr::from_this(ih[isize].get_expr_handle()));
         ic.add_exp(exp);
     }
 

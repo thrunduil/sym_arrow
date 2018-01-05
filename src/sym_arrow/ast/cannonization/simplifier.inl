@@ -27,8 +27,8 @@
 namespace sym_arrow { namespace ast
 {
 
-template<class Item>
-void simplify_expr<Item>::sort(Item* ptr, size_t size)
+template<class Item, class Value_handle_builder>
+void simplify_expr<Item, Value_handle_builder>::sort(Item* ptr, size_t size)
 {
     struct expr_comp
     {
@@ -41,8 +41,9 @@ void simplify_expr<Item>::sort(Item* ptr, size_t size)
     sym_arrow::utils::sort_q(ptr, size, expr_comp());
 };
 
-template<class Item>
-void simplify_expr<Item>::make(Item* ptr, size_t& size)
+template<class Item, class Value_handle_builder>
+void simplify_expr<Item, Value_handle_builder>::make(Item* ptr, size_t& size, 
+                                            Value_handle_builder& handle_builder)
 {
     if (size < 2)
         return;
@@ -50,7 +51,7 @@ void simplify_expr<Item>::make(Item* ptr, size_t& size)
     sort(ptr, size);
 
     bool any_simpl = false;
-    simplify(ptr, size, any_simpl);
+    simplify(ptr, size, any_simpl, handle_builder);
 
     if (any_simpl == true)
     {
@@ -69,11 +70,12 @@ void simplify_expr<Item>::make(Item* ptr, size_t& size)
     };
 };
 
-template<class Item>
-void simplify_expr<Item>::simplify(Item* x, size_t size, bool& any_simpl)
+template<class Item, class Value_handle_builder>
+void simplify_expr<Item, Value_handle_builder>::simplify(Item* x, size_t size, bool& any_simpl,
+                                                    Value_handle_builder& handle_builder)
 {
-    using value_type    = decltype(x[0].m_value);
-    using  expr_type    = decltype(x[0].m_expr);    
+    using value_type    = decltype(x[0].get_value());
+    using  expr_type    = decltype(x[0].get_expr_handle());    
 
     for (size_t i = 1; i < size; ++i)
     {
@@ -82,15 +84,15 @@ void simplify_expr<Item>::simplify(Item* x, size_t size, bool& any_simpl)
 
         if (x_current == x_last)
         {
-            value_type tmp_s = std::move(x[i-1].m_value) + std::move(x[i].m_value);
+            value_type tmp_s = std::move(x[i-1].get_value()) + std::move(x[i].get_value());
 
             if (is_value_zero(tmp_s) == true)
-                x[i].m_expr     = expr_type();
+                x[i].get_expr_ref()     = expr_type();
             else
-                x[i].m_value    = tmp_s;
+                x[i].get_value_ref()    = handle_builder.make_handle(tmp_s);
           
-            x[i-1].m_expr       = expr_type();
-            any_simpl           = true;
+            x[i-1].get_expr_ref()       = expr_type();
+            any_simpl                   = true;
         };
     };
 };

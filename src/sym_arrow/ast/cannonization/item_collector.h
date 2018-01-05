@@ -25,6 +25,8 @@
 #include "sym_arrow/ast/helpers/utils.h"
 #include "sym_arrow/nodes/expr.h"
 #include "sym_arrow/utils/stack_array.h"
+#include "sym_arrow/utils/tests.h"
+#include "sym_arrow/utils/temp_value.h"
 
 namespace sym_arrow { namespace ast
 {
@@ -44,7 +46,10 @@ class item_collector_add
 
         static const size_t stack_size  = 10 + buf_reserve;        
 
+        using temp_value    = sd::temp_value<value, value::is_pod>;
         using stack_elem    = details::pod_type<item_handle>;
+
+        static_assert(sd::is_effective_pod<item_handle>::value == true, "pod required");
         using item_array    = sd::stack_array<stack_elem, stack_size>;
 
     private:
@@ -56,9 +61,10 @@ class item_collector_add
         item_array          m_ih_array;
         item_handle*        m_ih;
         item_handle*        m_ih_tmp;
+        temp_value*         m_temp_vals;
 
     public:
-        explicit item_collector_add(size_t size);
+        explicit item_collector_add(size_t size, temp_value& temp_vals);
 
         void                test() const;
 
@@ -122,11 +128,14 @@ class item_collector_mult_arrays
         using ritem_handle      = build_item_handle<value>;
         using collector_size    = item_collector_size;
 
+        static_assert(sd::is_effective_pod<iitem_handle>::value == true, "pod required");
+        static_assert(sd::is_effective_pod<ritem_handle>::value == true, "pod required");
+
         using ritem_array       = sd::stack_array<details::pod_type<ritem_handle>>;
         using iih_array         = sd::stack_array<details::pod_type<iitem_handle>>;
 
     private:
-        ritem_array         m_rih_array;        
+        ritem_array         m_rih_array;
         iih_array           m_iih_array;        
 
     public:
@@ -143,15 +152,15 @@ class item_collector_mult
         using ritem_handle      = build_item_handle<value>;
         using collector_size    = item_collector_size;
 
-        using ritem_array       = sd::stack_array<details::pod_type<ritem_handle>>;
-        using iih_array         = sd::stack_array<details::pod_type<iitem_handle>>;
-        using value_type        = typename ritem_array::value_type;
+        using value_type        = details::pod_type<ritem_handle>;
         using arrays            = item_collector_mult_arrays;
+        using temp_value        = sd::temp_value<value, value::is_pod>;
 
     private:
         ritem_handle*       m_rih_tmp;
         iitem_handle*       m_iih_tmp;
 
+        temp_value*         m_temp_vals;
         collector_size&     m_size;
         value               m_scal;
         expr                m_exp;
@@ -160,10 +169,11 @@ class item_collector_mult
         iitem_handle*       m_iih;
 
     public:
-        item_collector_mult(collector_size& size, item_collector_mult_arrays& arr);
+        item_collector_mult(collector_size& size, item_collector_mult_arrays& arr,
+                temp_value& temp_vals);
 
         item_collector_mult(collector_size& size, iitem_handle* ih, 
-                            ritem_handle* rh);
+                ritem_handle* rh, temp_value& temp_vals);
 
         void                test() const;
 
@@ -174,9 +184,8 @@ class item_collector_mult
 
         iitem_handle*       get_iih()                       { return m_iih; };
         ritem_handle*       get_rih()                       { return m_rih; };
-        value               get_scal()                      { return m_scal; };
+        const value&        get_scal()                      { return m_scal; };
         const expr&         get_exp()                       { return m_exp; };
-
 
         void                add_scal(const value& s)        { m_scal = m_scal * s; };
         void                add_exp(const expr& v);

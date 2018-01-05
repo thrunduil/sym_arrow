@@ -31,6 +31,10 @@ class release_stack;
 template<class Item>
 class release_stack_handle;
 
+// swap contents of two vectors
+template<class Item>
+void    swap(release_stack<Item>& h1, release_stack<Item>& h2);
+
 template<class Item>
 class release_stack
 {

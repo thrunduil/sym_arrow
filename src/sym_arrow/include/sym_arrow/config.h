@@ -42,3 +42,24 @@
     // are enabled
     #define SYM_ARROW_DEBUG_MEMORY
 #endif
+
+#define SYM_ARROW_VALUE_DOUBLE  0
+#define SYM_ARROW_VALUE_GSLI    1
+#define SYM_ARROW_VALUE_MP      2
+
+// if this macro is set to SYM_ARROW_VALUE_DOUBLE, then value is represented 
+// by the double type; 
+// if this macro is set to SYM_ARROW_VALUE_GSLI, then value is represented 
+// by the gsli_double type
+// if this macro is set to SYM_ARROW_VALUE_MP, then value is represented 
+// by the mp_float type (multiprecision floating point type)
+// precision ordering: 
+//      precision(gsli_double) <= precision(double) < precision(mp_float)
+// exponent range ordering: 
+//      exp(double) < exp(mp_float) < exp(gsli_double)
+// performance ordering: 
+//      perf(mp_Float) < perf(gsli_double) <= perf(double)
+#define SYM_ARROW_VALUE_TYPE SYM_ARROW_VALUE_GSLI
+
+//TODO
+#define SYM_ARROW_NORMALIZE 0

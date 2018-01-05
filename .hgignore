@@ -29,3 +29,5 @@ msvs
 *.db
 *.opendb
 *.vspx
+*.db-shm
+*.db-wal

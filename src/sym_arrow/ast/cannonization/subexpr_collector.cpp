@@ -27,6 +27,7 @@
 #include "sym_arrow/utils/stack_array.h"
 #include "sym_arrow/utils/sort.h"
 #include "sym_arrow/ast/cannonization/simplifier.inl"
+#include "sym_arrow/utils/tests.h"
 
 namespace sym_arrow { namespace ast
 {
@@ -180,11 +181,12 @@ bool factor_group_stats::operator<(const factor_group_stats& other) const
 //                  subexpr_collector
 //-------------------------------------------------------------------
 bool subexpr_collector::make(size_t n, add_item_handle* ih, expr& res, 
-                             value& scal)
+                             value& scal, temp_value& temp_vals)
 {
     if (n < 2)
         return false;
 
+    m_temp_vals = &temp_vals;
     subs_counter counter;
     
     for (size_t i = 0; i < n; ++i)
@@ -199,14 +201,20 @@ bool subexpr_collector::make(size_t n, add_item_handle* ih, expr& res,
     // collect subexpressions
     static const size_t buffer_size = 10;
 
+    static_assert(sd::is_effective_pod<ipow_item>::value == true, "pod required");
     sd::stack_array<sd::pod_type<ipow_item>, buffer_size> ipow_array(counter.n_ipow);
     ipow_item* ibuf = (ipow_item*)ipow_array.get();
 
-    sd::stack_array<sd::pod_type<rpow_item>, buffer_size> rpow_array(counter.n_rpow);
-    rpow_item* rbuf = (rpow_item*)rpow_array.get();
-
+    static_assert(sd::is_effective_pod<exp_item>::value == true, "pod required");
     sd::stack_array<sd::pod_type<exp_item>, buffer_size> epow_array(counter.n_exp);
     exp_item* ebuf = (exp_item*)epow_array.get();
+
+    using rpow_pod  = sd::pod_type<rpow_item>;
+    int count_rpow  = (int)counter.n_rpow;
+    rpow_pod::destructor_type d(&count_rpow);
+
+    sd::stack_array<rpow_pod, buffer_size> rpow_array(counter.n_rpow, &d);
+    rpow_item* rbuf = (rpow_item*)rpow_array.get();
 
     {
         size_t pos_ipow = 0;
@@ -282,8 +290,9 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
     size_t length       = sub_types[0].factor_length();    
 
     using iitem         = build_item<int>;
-    using ritem         = build_item<value>;
     using iitem_handle  = iitem::handle_type;
+
+    using ritem         = build_item<value>;
     using ritem_handle  = ritem::handle_type;
 
     using item          = build_item<value>;
@@ -302,8 +311,8 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
                             ipow_arr, rpow_arr,exp_arr);
 
         // this is not a special node (special nodes are not collected)
-        const value* v  = &ih[add_pos].m_value;
-        expr_handle eh  = ih[add_pos].m_expr;
+        const value* v  = &ih[add_pos].get_value();
+        expr_handle eh  = ih[add_pos].get_expr_handle();
 
         if (eh->isa<mult_rep>() == false)
         {
@@ -311,7 +320,7 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
             add             = add + *v;
 
             // remove factored item
-            ih[add_pos].m_expr  = nullptr;
+            ih[add_pos].get_expr_ref()  = nullptr;
             continue;
         };
 
@@ -325,11 +334,15 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
         //destructor is trivial
         static const size_t buffer_size = 20;
         
+        static_assert(sd::is_effective_pod<iitem_handle>::value == true, "pod required");
         sd::stack_array<sd::pod_type<iitem_handle>, buffer_size> ih_array(isize + 1);
         iitem_handle* imh = (iitem_handle*)ih_array.get();
 
-        sd::stack_array<sd::pod_type<ritem_handle>, buffer_size> rh_array(rsize + 1);
-        ritem_handle* rmh = (ritem_handle*)rh_array.get();
+        using ritem_pod     = sd::pod_type<ritem_handle>;
+
+        static_assert(sd::is_effective_pod<ritem_handle>::value == true, "pod required");
+        sd::stack_array<ritem_pod, buffer_size> rh_array(rsize + 1);
+        ritem_handle* rmh   = (ritem_handle*)rh_array.get();
 
         for (size_t i2 = 0; i2 < isize; ++i2)
             new(imh + i2) iitem_handle(mh->IV(i2), mh->IE(i2));
@@ -338,7 +351,7 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
             new(imh + isize) iitem_handle(0, mh->Exp());
 
         for (size_t i2 = 0; i2 < rsize; ++i2)
-            new(rmh + i2) ritem_handle(mh->RV(i2), mh->RE(i2));
+            new(rmh + i2) ritem_handle(value_handle_type<value>::make_handle(mh->RV(i2)), mh->RE(i2));
 
         // remove factored subexpressions
 
@@ -370,7 +383,7 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
         };
 
         // remove factored item
-        ih[add_pos].m_expr  = nullptr;
+        ih[add_pos].get_expr_ref()  = nullptr;
     };
 
     expr sum;
@@ -400,11 +413,15 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
     //destructor is trivial
     static const size_t buffer_size = 10;
         
+    static_assert(sd::is_effective_pod<iitem_handle>::value == true, "pod required");
     sd::stack_array<sd::pod_type<iitem_handle>, buffer_size> ih_array(isize + 1);
     iitem_handle* imh = (iitem_handle*)ih_array.get();
 
-    sd::stack_array<sd::pod_type<ritem_handle>, buffer_size> rh_array(rsize + 1);
-    ritem_handle* rmh = (ritem_handle*)rh_array.get();
+    using ritem_pod     = sd::pod_type<ritem_handle>;
+
+    static_assert(sd::is_effective_pod<ritem_handle>::value == true, "pod required");
+    sd::stack_array<ritem_pod, buffer_size> rh_array(rsize + 1);
+    ritem_handle* rmh   = (ritem_handle*)rh_array.get();
 
     size_t ipow_size    = 0;
     size_t rpow_size    = 0;
@@ -585,7 +602,8 @@ void subexpr_collector::add_factor_to_mult(size_t isize, size_t& ipow_size, size
             value pow           = rpow_arr[pos_arr].m_pow;
             expr_handle base    = factor.get_base();
 
-            new(rh + rpow_size) build_item_handle<value>(pow, base);
+            //TODO: can we use rpow_arr[pos_arr].m_pow ?
+            new(rh + rpow_size) build_item_handle<value>(m_temp_vals->make_handle(pow), base);
             ++rpow_size;
             return;
         }
@@ -620,7 +638,8 @@ void subexpr_collector::add_factor_to_mult(size_t isize, size_t& ipow_size, size
 
     for (size_t i = 0; i < h_rsize; ++i)
     {
-        new (rh + rpow_size) build_item_handle<value>(mh->RV(i), mh->RE(i));
+        new (rh + rpow_size) build_item_handle<value>(value_handle_type<value>::make_handle(mh->RV(i)), 
+                                                    mh->RE(i));
         ++rpow_size;
     };
 
@@ -683,9 +702,11 @@ size_t subexpr_collector::get_mult_pos(const mult_subexpr& factor, size_t pos_ar
     };
 };
 
-void subexpr_collector::finalize_sum(build_item<value>* it, size_t size, value add,
+void subexpr_collector::finalize_sum(build_item<value>* it, size_t size, const value& add0,
                     expr& res, value& scal)
 {
+    value add  = add0;
+
     if (size == 0)
     {
         // this is just add;
@@ -710,17 +731,20 @@ void subexpr_collector::finalize_sum(build_item<value>* it, size_t size, value a
         else
         {
             // this is just add + v * f;
-            
-            scal    = cannonize::get_normalize_scaling(add, 1, it);
+            #if SYM_ARROW_NORMALIZE
+                scal    = cannonize::get_normalize_scaling(add, 1, it);
 
-            if (scal.is_one() == false)
-            {
-                add                     = add / scal;
-                it[0].get_value_ref()   = it[0].get_value() / scal;
-            }
+                if (scal.is_one() == false)
+                {
+                    add                     = add / scal;
+                    it[0].get_value_ref()   = it[0].get_value() / scal;
+                }
+            #else
+                scal    = value::make_one();
+            #endif
 
             using item_type     = build_item<value>;
-            add_rep_info<item_type> ai(add, 1, it, nullptr);
+            add_rep_info<item_type> ai(&add, 1, it, nullptr);
 
             expr_ptr res_ptr    = add_rep::make(ai);
             res                 = expr(res_ptr);
@@ -749,17 +773,17 @@ void subexpr_collector::reduce_mult(size_t pos_mult, build_item_handle<int>* ih,
     {
         case mult_subexpr_type::ipow:
         {
-            assertion(ih[pos_mult].m_expr == factor.get_base(), "reduce_mult");
-            assertion(ih[pos_mult].m_value == factor.get_int_power(), "reduce_mult");
+            assertion(ih[pos_mult].get_expr_handle() == factor.get_base(), "reduce_mult");
+            assertion(ih[pos_mult].get_value() == factor.get_int_power(), "reduce_mult");
 
-            ih[pos_mult].m_expr = nullptr;
+            ih[pos_mult].get_expr_ref() = nullptr;
             return;
         }
         case mult_subexpr_type::rpow:
         {
-            assertion(rh[pos_mult].m_expr == factor.get_base(), "reduce_mult");
+            assertion(rh[pos_mult].get_expr_handle() == factor.get_base(), "reduce_mult");
 
-            rh[pos_mult].m_expr = nullptr;
+            rh[pos_mult].get_expr_ref() = nullptr;
             return;
         }
         case mult_subexpr_type::exp:
@@ -770,13 +794,13 @@ void subexpr_collector::reduce_mult(size_t pos_mult, build_item_handle<int>* ih,
         case mult_subexpr_type::ipow_horner:
         {
             int pow = factor.get_int_power();
-            ih[pos_mult].m_value    -= pow;
+            ih[pos_mult].get_value_ref()    -= pow;
 
-            assertion(ih[pos_mult].m_expr == factor.get_base(), "reduce_mult");
-            assertion(ih[pos_mult].m_value >= 0, "reduce_mult");
+            assertion(ih[pos_mult].get_expr_handle() == factor.get_base(), "reduce_mult");
+            assertion(ih[pos_mult].get_value() >= 0, "reduce_mult");
 
-            if (ih[pos_mult].m_value == 0)
-                ih[pos_mult].m_expr = nullptr;
+            if (ih[pos_mult].get_value() == 0)
+                ih[pos_mult].get_expr_ref() = nullptr;
 
             return;
         }
@@ -798,7 +822,7 @@ expr subexpr_collector::build_reduced_mult(size_t isize, size_t rsize, build_ite
     isize           = 0;
     for (size_t i = 0; i < last; ++i)
     {        
-        if (ih[i].m_expr != nullptr)
+        if (ih[i].get_expr_handle() != nullptr)
         {
             ih[isize]   = ih[i];
             ++isize;
@@ -810,7 +834,7 @@ expr subexpr_collector::build_reduced_mult(size_t isize, size_t rsize, build_ite
 
     for (size_t i = 0; i < last; ++i)
     {
-        if (rh[i].m_expr != nullptr)
+        if (rh[i].get_expr_handle() != nullptr)
         {
             rh[rsize]   = rh[i];
             ++rsize;
@@ -822,8 +846,8 @@ expr subexpr_collector::build_reduced_mult(size_t isize, size_t rsize, build_ite
         if (isize == 0)
             return scalar_rep::make_one();
 
-        if (isize == 1 && ih[0].m_value == 1)
-            return expr(expr_ptr::from_this(ih[0].m_expr));
+        if (isize == 1 && ih[0].get_value() == 1)
+            return expr(expr_ptr::from_this(ih[0].get_expr_handle()));
     }
 
     using mult_info     = mult_rep_info<iitem_handle,ritem_handle>;
@@ -1433,10 +1457,10 @@ size_t subexpr_collector::longest_equal_sequence_real(const rpow_item* arr, size
 void subexpr_collector::calc_size(const add_item_handle& it, subs_counter& count)
 {
     //ignore log item
-    if (it.m_is_special == true)
+    if (it.is_special() == true)
         return;
 
-    expr_handle eh      = it.m_expr;
+    expr_handle eh      = it.get_expr_handle();
 
     //add item can be a mul_rep or an atom
     if (eh->isa<mult_rep>() == false)
@@ -1465,10 +1489,10 @@ void subexpr_collector::collect_mult_ipow(const add_item_handle& it, size_t pos,
                                           ipow_item* arr, size_t& arr_pos)
 {
     //ignore log item
-    if (it.m_is_special == true)
+    if (it.is_special() == true)
         return;
 
-    expr_handle eh      = it.m_expr;
+    expr_handle eh      = it.get_expr_handle();
 
     //add item can be a mul_rep or an atom
     if (eh->isa<mult_rep>() == false)
@@ -1528,10 +1552,10 @@ void subexpr_collector::collect_mult_rpow(const add_item_handle& it, size_t pos,
                                           rpow_item* arr, size_t& arr_pos)
 {
     //ignore log item
-    if (it.m_is_special == true)
+    if (it.is_special() == true)
         return;
 
-    expr_handle eh      = it.m_expr;
+    expr_handle eh      = it.get_expr_handle();
 
     if (eh->isa<mult_rep>() == false)
         return;
@@ -1568,10 +1592,10 @@ void subexpr_collector::collect_mult_epow(const add_item_handle& it, size_t pos,
                                           exp_item* arr, size_t& arr_pos)
 {
     //ignore log item
-    if (it.m_is_special == true)
+    if (it.is_special() == true)
         return;
 
-    expr_handle eh      = it.m_expr;
+    expr_handle eh      = it.get_expr_handle();
 
     if (eh->isa<mult_rep>() == false)
         return;

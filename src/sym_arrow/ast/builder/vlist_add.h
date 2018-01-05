@@ -74,7 +74,7 @@ class vlist_add : public vlist_base<build_item<value>, vlist_add>
         bool                    is_simple_add() const;
 
     private:
-        void                    set_default_values();
+        void                    init_with_default_values();
 };
 
 };};

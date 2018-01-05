@@ -65,36 +65,39 @@ struct get_value<build_item<value>>
         return v.get_value();
     };
 };
-template<class Item>
-value cannonize::get_normalize_scaling(const value& V0, size_t n, const Item* V)
-{
-    value max   = abs(V0);
 
-    for (size_t i = 0; i < n; ++i)
+#if SYM_ARROW_NORMALIZE
+    template<class Item>
+    value cannonize::get_normalize_scaling(const value& V0, size_t n, const Item* V)
     {
-        value loc   = abs(get_value<Item>::eval(V[i]));
-    
-        if (loc > max)
-            max = loc;
-    };
-    
-    if (max.is_finite() == false)
-        return value::make_one();
+        value max   = abs(V0);
 
-    if (V0.is_zero() == false)
-    {
-        if (V0.is_positive() == true)
-            return max;
+        for (size_t i = 0; i < n; ++i)
+        {
+            value loc   = abs(get_value<Item>::eval(V[i]));
+    
+            if (loc > max)
+                max = loc;
+        };
+    
+        if (max.is_finite() == false)
+            return value::make_one();
+
+        if (V0.is_zero() == false)
+        {
+            if (V0.is_positive() == true)
+                return max;
+            else
+                return -max;
+        }
         else
-            return -max;
-    }
-    else
-    {
-        if (get_value<Item>::eval(V[0]).is_positive() == true)
-            return max;
-        else
-            return -max;
+        {
+            if (get_value<Item>::eval(V[0]).is_positive() == true)
+                return max;
+            else
+                return -max;
+        };
     };
-};
+#endif
 
 };};

@@ -38,7 +38,7 @@ class add_build_info
 {
     private:
         // free scalar
-        value               m_a;
+        const value*        m_a;
 
         // number of subterms
         size_t              n;
@@ -54,13 +54,13 @@ class add_build_info
 
     public:
         // constructor
-        add_build_info(const value& a, size_t n_, const value* val, 
+        add_build_info(const value* a, size_t n_, const value* val, 
                             const Item* ex, const Item* log)
             :m_a(a), n(n_), m_val(val), m_ex(ex), m_log(log)
         {};
 
         // get free scalar
-        const value&        get_const() const           { return m_a; };
+        const value&        get_const() const           { return *m_a; };
 
         // number of subterms
         size_t              size() const                { return n; };
@@ -100,7 +100,7 @@ class add_build_info2
 {
     private:
         // free scalar
-        value               m_a;
+        const value*        m_a;
 
         // number of subterms
         size_t              n;
@@ -113,12 +113,12 @@ class add_build_info2
 
     public:
         // constructor
-        add_build_info2(const value& a, size_t n_, const Item* ex, const Item* log)
+        add_build_info2(const value* a, size_t n_, const Item* ex, const Item* log)
             :m_a(a), n(n_), m_ex(ex), m_log(log)
         {};
 
         // get free scalar
-        const value&        get_const() const           { return m_a; };
+        const value&        get_const() const           { return *m_a; };
 
         // number of subterms
         size_t              size() const                { return n; };

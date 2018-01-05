@@ -30,6 +30,7 @@
 #include "sym_arrow/ast/cannonization/cannonize.h"
 #include "sym_arrow/utils/pool_hash_map.h"
 #include "sym_arrow/functions/expr_functions.h"
+#include "sym_arrow/functions/sym_functions.h"
 
 #include <sstream>
 #include <map>
@@ -149,7 +150,7 @@ expr do_simplify_vis::eval(const ast::add_rep* h)
 
     size_t n            = h->size();
 
-    using item          = ast::build_item<value>;
+    using item          = ast::build_item_ptr<value>;
     using item_pod      = sd::pod_type<item>;
 
     int size_counter    = 0;
@@ -162,9 +163,8 @@ expr do_simplify_vis::eval(const ast::add_rep* h)
     for (size_t j = 0; j < n; ++j)
     {
         expr simpl      = make(h->E(j));
-        const value& b  = h->V(j);   
 
-        new (sum_buff_ptr + size_counter) item(b, std::move(simpl));
+        new (sum_buff_ptr + size_counter) item(&h->V(j), std::move(simpl));
         ++size_counter;
     };
 
@@ -187,15 +187,17 @@ expr do_simplify_vis::eval(const ast::add_rep* h)
 
     ast::expr_ptr simpl;
 
+    value one   = value::make_one();
+
     if (log_term.is_null() == true)
     {
-        ast::add_build_info2<item> bi(add, size_counter, sum_buff_ptr, nullptr);
+        ast::add_build_info2<item> bi(&add, size_counter, sum_buff_ptr, nullptr);
         simpl = ast::add_build::make(bi);
     }
     else
     {
-        item log_it = item(value(1.0), log_term);
-        ast::add_build_info2<item> bi(add, size_counter, sum_buff_ptr, &log_it);
+        item log_it(&one, log_term);
+        ast::add_build_info2<item> bi(&add, size_counter, sum_buff_ptr, &log_it);
         simpl = ast::add_build::make(bi);
     };
 
@@ -219,7 +221,7 @@ expr do_simplify_vis::eval(const ast::mult_rep* h)
     size_t rn           = h->rsize();
 
     using iitem         = ast::build_item<int>;
-    using ritem         = ast::build_item<value>;
+    using ritem         = ast::build_item_ptr<value>;
     using iitem_pod     = sd::pod_type<iitem>;
     using ritem_pod     = sd::pod_type<ritem>;
 
@@ -247,9 +249,8 @@ expr do_simplify_vis::eval(const ast::mult_rep* h)
     for (size_t i = 0; i < rn; ++i)
     {
         expr simpl      = make(h->RE(i));
-        value pow       = h->RV(i);   
 
-        new (rpow_ptr + rpow_counter) ritem(pow, std::move(simpl));
+        new (rpow_ptr + rpow_counter) ritem(&h->RV(i), std::move(simpl));
         ++rpow_counter;
     };
 

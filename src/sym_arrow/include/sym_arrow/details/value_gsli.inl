@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "sym_arrow/nodes/value.h"
+#include "sym_arrow/nodes/value_gsli.h"
 #include <limits>
 
 namespace sym_arrow
@@ -30,6 +30,15 @@ namespace sym_arrow
 //---------------------------------------------------------------------
 //                  value
 //---------------------------------------------------------------------
+
+inline value::value()
+    :m_data(0.0)
+{};
+
+inline value::value(double val, internal_rep_tag)
+    : m_data(val)
+{};
+
 inline size_t value::hash_value() const
 { 
     return eval_hash(*this); 
@@ -40,9 +49,19 @@ inline bool value::equal(const value& val) const
     return operator==(*this,val); 
 };
 
-inline bool value::equal(double val) const
-{ 
-    return operator==(*this, make_value(val)); 
+inline value value::make_one()
+{
+    return value(1.0, value::internal_rep_tag());
+};
+
+inline value value::make_minus_one()
+{
+    return value(-1.0, value::internal_rep_tag());
+};
+
+inline value value::make_zero()
+{
+    return value(0.0, value::internal_rep_tag());
 };
 
 inline value& value::operator*=(const value& v)
@@ -54,11 +73,6 @@ inline value& value::operator+=(const value& v)
 { 
     return *this = operator+(*this, v); 
 };
-
-inline double value::get_value_abs() const
-{
-    return ::abs(this->get_value());
-}
 
 inline bool value::is_zero() const
 { 

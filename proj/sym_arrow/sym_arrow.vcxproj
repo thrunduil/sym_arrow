@@ -65,6 +65,7 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\exception.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\contexts.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\expr_functions.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\sym_functions.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\fwd_decls.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\add_expr.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\expr.h" />
@@ -74,11 +75,16 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\scalar.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\symbol.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value_double.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value_gsli.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value_mp.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\sym_arrow.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\utils\timer.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\pool_hash_map.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\sort.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\stack_array.h" />
+    <ClInclude Include="..\..\src\sym_arrow\utils\temp_value.h" />
+    <ClInclude Include="..\..\src\sym_arrow\utils\tests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp" />
@@ -118,6 +124,7 @@
     <ClCompile Include="..\..\src\sym_arrow\func\simplify.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\subs.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\symbol_functions.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\taylor.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\unary.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\grammar\output\lexer_sym_arrow.cpp">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TurnOffAllWarnings</WarningLevel>
@@ -146,7 +153,10 @@
     <ClCompile Include="..\..\src\sym_arrow\nodes\mult_expr.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\scalar.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\symbol.cpp" />
-    <ClCompile Include="..\..\src\sym_arrow\nodes\value.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\value_double.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\value_mp.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\value_gsli.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\utils\temp_value.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\utils\timer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,7 +183,9 @@
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr.inl" />
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr_visitor.inl" />
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\scalar.inl" />
-    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value.inl" />
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_double.inl" />
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_mp.inl" />
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_gsli.inl" />
     <None Include="..\..\src\sym_arrow\nodes\symbol.inl" />
     <None Include="..\..\src\sym_arrow\utils\pool_hash_map.inl" />
     <None Include="..\..\src\sym_arrow\utils\sort.inl" />
@@ -263,7 +275,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;C:\Program Files %28x86%29\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;C:\Program Files %28x86%29\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -278,13 +290,13 @@
       <SubSystem>Windows</SubSystem>
       <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;matcl-mp-$(Platform)-$(Configuration).lib;matcl-core-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration);..\..\..\matcl\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN64;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -299,13 +311,13 @@
       <SubSystem>Windows</SubSystem>
       <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;matcl-mp-$(Platform)-$(Configuration).lib;matcl-core-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration);..\..\..\matcl\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -325,13 +337,13 @@
     <Link>
       <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;matcl-mp-$(Platform)-$(Configuration).lib;matcl-core-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration);..\..\..\matcl\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -349,8 +361,8 @@
     <Link>
       <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;matcl-mp-$(Platform)-$(Configuration).lib;matcl-core-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration);..\..\..\matcl\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

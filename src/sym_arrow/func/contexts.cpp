@@ -24,6 +24,7 @@
 #include "sym_arrow/nodes/symbol.inl"
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/functions/expr_functions.h"
+#include "sym_arrow/functions/sym_functions.h"
 #include "sym_arrow/error/error_formatter.h"
 
 #include <sstream>
@@ -179,12 +180,16 @@ expr subs_context::subs(const symbol& sh) const
         return expr();
 
     size_t code = pos->second;
-    expr ex     = m_impl->m_buffer[code];
 
-    if (ex.is_null() == true && m_impl->m_bind == nullptr)
+    if (m_impl->m_bind == nullptr)
+    {
+        expr ex     = m_impl->m_buffer[code];
         return ex;
+    }
     else
+    {
         return m_impl->m_bind[code];
+    };
 };
 
 void subs_context::visit_substitutions(substitution_vis& info) const

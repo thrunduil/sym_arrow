@@ -41,7 +41,7 @@ class mult_build_info_int
 {
     private:
         // multiplication constant
-        value               m_a;
+        const value*        m_a;
 
         // number of items
         size_t              m_in;
@@ -54,12 +54,12 @@ class mult_build_info_int
 
     public:
         // constructor
-        mult_build_info_int(const value& a, size_t n_, const int* pow, const Item* ex)
+        mult_build_info_int(const value* a, size_t n_, const int* pow, const Item* ex)
             :m_a(a), m_in(n_), m_ipow(pow), m_iex(ex)
         {};
 
         // return multiplication constant
-        const value&        get_const() const           { return m_a; };
+        const value&        get_const() const           { return *m_a; };
 
         // return number of subterms
         size_t              isize() const               { return m_in; };

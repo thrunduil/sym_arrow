@@ -54,10 +54,8 @@ class scalar_rep : public sym_dag::dag_item<scalar_rep, term_tag, true>
 
         // evaluate hash function
         static size_t   eval_hash(const value& val)     { return value::eval_hash(val);};
-        static size_t   eval_hash(double val)           { return value::eval_hash(val);};
 
         // test for equality
-        bool            equal(double val) const         { return get_data().equal(val); };
         bool            equal(const value& val) const   { return get_data().equal(val); };        
 
         // return true when this value is equal to 0

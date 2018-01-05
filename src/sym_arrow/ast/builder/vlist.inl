@@ -41,8 +41,8 @@ inline void vlist_stack::push_back(expr_handle ex)
 //-------------------------------------------------------------------
 //                        vlist_base
 //-------------------------------------------------------------------
-template<class Item_type, class Derived_type>
-inline vlist_base<Item_type,Derived_type>::vlist_base()
+template<class Item_type, class Derived_type, int Init_size>
+inline vlist_base<Item_type,Derived_type, Init_size>::vlist_base()
     :m_header(init_size, 0U, 0U)
 {
     using context_type  = sym_dag::dag_context<term_tag>;
@@ -51,21 +51,21 @@ inline vlist_base<Item_type,Derived_type>::vlist_base()
     m_vector = (Item_type*)c.malloc(sizeof(Item_type) * init_size);
 };
 
-template<class Item_type, class Derived_type>
-inline vlist_base<Item_type,Derived_type>::vlist_base(vlist_base&& other)
+template<class Item_type, class Derived_type, int Init_size>
+inline vlist_base<Item_type,Derived_type, Init_size>::vlist_base(vlist_base&& other)
     :m_header(other.m_header), m_vector(other.m_vector)
 {
     other.m_vector = nullptr;
 };
 
-template<class Item_type, class Derived_type>
-inline vlist_base<Item_type,Derived_type>::~vlist_base()
+template<class Item_type, class Derived_type, int Init_size>
+inline vlist_base<Item_type,Derived_type, Init_size>::~vlist_base()
 {
     close();
 };
 
-template<class Item_type, class Derived_type>
-void vlist_base<Item_type,Derived_type>::close()
+template<class Item_type, class Derived_type, int Init_size>
+void vlist_base<Item_type,Derived_type, Init_size>::close()
 {
     if (m_vector == nullptr)
         return;
@@ -105,15 +105,15 @@ void vlist_base<Item_type,Derived_type>::close()
     };
 };
 
-template<class Item_type, class Derived_type>
-void vlist_base<Item_type,Derived_type>::close(stack_type& stack)
+template<class Item_type, class Derived_type, int Init_size>
+void vlist_base<Item_type,Derived_type, Init_size>::close(stack_type& stack)
 {
     vlist_stack st(stack);
     close(st);
 };
 
-template<class Item_type, class Derived_type>
-void vlist_base<Item_type,Derived_type>::close(vlist_stack& stack)
+template<class Item_type, class Derived_type, int Init_size>
+void vlist_base<Item_type,Derived_type, Init_size>::close(vlist_stack& stack)
 {    
     if (m_vector == nullptr)
         return;
@@ -153,44 +153,44 @@ void vlist_base<Item_type,Derived_type>::close(vlist_stack& stack)
     };
 };
 
-template<class Item_type, class Derived_type>
-inline Item_type& vlist_base<Item_type,Derived_type>::elem(size_t pos)
+template<class Item_type, class Derived_type, int Init_size>
+inline Item_type& vlist_base<Item_type,Derived_type, Init_size>::elem(size_t pos)
 {
     return m_vector[pos];
 };
 
-template<class Item_type, class Derived_type>
-inline const Item_type& vlist_base<Item_type,Derived_type>::elem(size_t pos) const
+template<class Item_type, class Derived_type, int Init_size>
+inline const Item_type& vlist_base<Item_type,Derived_type, Init_size>::elem(size_t pos) const
 {
     return m_vector[pos];
 };
 
-template<class Item_type, class Derived_type>
-inline size_t vlist_base<Item_type,Derived_type>::current_size() const
+template<class Item_type, class Derived_type, int Init_size>
+inline size_t vlist_base<Item_type,Derived_type, Init_size>::current_size() const
 {
     return m_header.m_pos;
 };
 
-template<class Item_type, class Derived_type>
-inline bool vlist_base<Item_type,Derived_type>::empty() const
+template<class Item_type, class Derived_type, int Init_size>
+inline bool vlist_base<Item_type,Derived_type, Init_size>::empty() const
 {
     return current_size() == 0 && has_previous() == false;
 };
 
-template<class Item_type, class Derived_type>
-bool vlist_base<Item_type,Derived_type>::is_null() const
+template<class Item_type, class Derived_type, int Init_size>
+bool vlist_base<Item_type,Derived_type, Init_size>::is_null() const
 {
     return m_vector == nullptr;
 }
 
-template<class Item_type, class Derived_type>
-inline bool vlist_base<Item_type,Derived_type>::has_previous() const
+template<class Item_type, class Derived_type, int Init_size>
+inline bool vlist_base<Item_type,Derived_type, Init_size>::has_previous() const
 {
     return m_header.m_has_prev != 0U;
 };
 
-template<class Item_type, class Derived_type>
-inline void vlist_base<Item_type,Derived_type>::push_back(const value_type& val, 
+template<class Item_type, class Derived_type, int Init_size>
+inline void vlist_base<Item_type,Derived_type, Init_size>::push_back(const value_type& val, 
                                                 expr_handle ex)
 {
     if (m_header.m_pos >= m_header.m_capacity)
@@ -200,8 +200,8 @@ inline void vlist_base<Item_type,Derived_type>::push_back(const value_type& val,
     ++m_header.m_pos;
 };
 
-template<class Item_type, class Derived_type>
-inline void vlist_base<Item_type,Derived_type>::push_back(const Item_type& it)
+template<class Item_type, class Derived_type, int Init_size>
+inline void vlist_base<Item_type,Derived_type, Init_size>::push_back(const Item_type& it)
 {
     if (m_header.m_pos >= m_header.m_capacity)
         finish_this();
@@ -210,8 +210,22 @@ inline void vlist_base<Item_type,Derived_type>::push_back(const Item_type& it)
     ++m_header.m_pos;
 };
 
-template<class Item_type, class Derived_type>
-inline void vlist_base<Item_type,Derived_type>::push_back_special(const value_type& val, 
+template<class Item_type, class Derived_type, int Init_size>
+inline Item_type* vlist_base<Item_type,Derived_type, Init_size>::insert(const Item_type& it)
+{
+    if (m_header.m_pos >= m_header.m_capacity)
+        finish_this();
+
+    Item_type* pos  = m_vector + m_header.m_pos;
+
+    new(pos) Item_type(it);
+    ++m_header.m_pos;
+
+    return pos;
+};
+
+template<class Item_type, class Derived_type, int Init_size>
+inline void vlist_base<Item_type,Derived_type, Init_size>::push_back_special(const value_type& val, 
                                                         expr_handle ex)
 {
     if (m_header.m_pos >= m_header.m_capacity)
@@ -221,24 +235,24 @@ inline void vlist_base<Item_type,Derived_type>::push_back_special(const value_ty
     ++m_header.m_pos;
 };
 
-template<class Item_type, class Derived_type>
-inline const typename vlist_base<Item_type,Derived_type>::vlist_type* 
-    vlist_base<Item_type,Derived_type>::get_previous() const
+template<class Item_type, class Derived_type, int Init_size>
+inline const typename vlist_base<Item_type,Derived_type, Init_size>::vlist_type* 
+    vlist_base<Item_type,Derived_type, Init_size>::get_previous() const
 {
     const Derived_type** tmp = reinterpret_cast<const Derived_type**>(m_vector);
     return tmp[-1];
 };
 
-template<class Item_type, class Derived_type>
-inline typename vlist_base<Item_type,Derived_type>::vlist_type* 
-vlist_base<Item_type,Derived_type>::get_previous()
+template<class Item_type, class Derived_type, int Init_size>
+inline typename vlist_base<Item_type,Derived_type, Init_size>::vlist_type* 
+vlist_base<Item_type,Derived_type, Init_size>::get_previous()
 {
     Derived_type** tmp = reinterpret_cast<Derived_type**>(m_vector);
     return tmp[-1];
 };
 
-template<class Item_type, class Derived_type>
-void vlist_base<Item_type,Derived_type>::finish_this()
+template<class Item_type, class Derived_type, int Init_size>
+void vlist_base<Item_type,Derived_type, Init_size>::finish_this()
 {
     using context_type  = sym_dag::dag_context<term_tag>;
     context_type& c     = context_type::get();
@@ -259,17 +273,17 @@ void vlist_base<Item_type,Derived_type>::finish_this()
     
     m_vector            = (Item_type*)tmp;
 
-    get_derived()->set_default_values();
+    get_derived()->init_with_default_values();
 };
 
-template<class Item_type, class Derived_type>
-inline Derived_type* vlist_base<Item_type,Derived_type>::get_derived()
+template<class Item_type, class Derived_type, int Init_size>
+inline Derived_type* vlist_base<Item_type,Derived_type, Init_size>::get_derived()
 {
     return static_cast<Derived_type*>(this);
 };
 
-template<class Item_type, class Derived_type>
-inline bool vlist_base<Item_type,Derived_type>::is_simple() const
+template<class Item_type, class Derived_type, int Init_size>
+inline bool vlist_base<Item_type,Derived_type, Init_size>::is_simple() const
 {
     if (current_size() == 1 && has_previous() == false 
         && elem(0).is_special() == false)

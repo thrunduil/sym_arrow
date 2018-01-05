@@ -52,14 +52,14 @@ mult_rep::mult_rep(const mult_rep_info<Iitem_type, Ritem_type>& pi)
     for (size_t i = 0; i < m_int_size; ++i)
     {
         expr_handle h   = pi.iexpr[i].get_expr_handle();
-        new(m_int_data + i) int_expr(pi.iexpr[i].m_value, h);
+        new(m_int_data + i) int_expr(pi.iexpr[i].get_value(), h);
         add_symbols(h);
     }
 
     for (size_t i = 0; i < m_real_size; ++i)
     {
         expr_handle h   = pi.rexpr[i].get_expr_handle();
-        new(m_real_data+i) value_expr(pi.rexpr[i].m_value, h);
+        new(m_real_data+i) value_expr(pi.rexpr[i].get_value(), h);
         add_symbols(h);
     }
 
@@ -83,7 +83,7 @@ size_t mult_rep::eval_hash(const mult_rep_info<Iitem_type, Ritem_type>& pi)
 
     for (size_t i = 0; i < pi.in; ++i)
     {
-        boost::hash_combine(seed, size_t(pi.iexpr[i].m_value));
+        boost::hash_combine(seed, size_t(pi.iexpr[i].get_value()));
         boost::hash_combine(seed,pi.iexpr[i].get_expr_handle());
     };
 
@@ -94,7 +94,7 @@ size_t mult_rep::eval_hash(const mult_rep_info<Iitem_type, Ritem_type>& pi)
     
     for (size_t i = 0; i < pi.rn; ++i)
     {
-        boost::hash_combine(seed, pi.rexpr[i].m_value.hash_value());
+        boost::hash_combine(seed, pi.rexpr[i].get_value().hash_value());
         boost::hash_combine(seed, pi.rexpr[i].get_expr_handle());
     };
 
@@ -124,7 +124,7 @@ bool mult_rep::equal(const mult_rep_info<Iitem_type,Ritem_type>& pi) const
     for (size_t i = 0; i < m_isize; ++i)
     {
         if (pi.iexpr[i].get_expr_handle() != this->IE(i) 
-            || pi.iexpr[i].m_value != this->IV(i))
+            || pi.iexpr[i].get_value() != this->IV(i))
         {
             return false;
         };
@@ -133,7 +133,7 @@ bool mult_rep::equal(const mult_rep_info<Iitem_type,Ritem_type>& pi) const
     for (size_t i = 0; i < m_rsize; ++i)
     {
         if (pi.rexpr[i].get_expr_handle() != this->RE(i) 
-            || pi.rexpr[i].m_value != this->RV(i))
+            || pi.rexpr[i].get_value() != this->RV(i))
         {
             return false;
         };
@@ -189,12 +189,12 @@ inline const value& mult_rep::RV(size_t i) const
 
 inline const mult_rep::int_expr* mult_rep::IVE() const
 { 
-    return m_int_data + 1; 
+    return m_int_data; 
 };
 
 inline const mult_rep::value_expr* mult_rep::RVE() const
 { 
-    return m_real_data + 1; 
+    return m_real_data; 
 };
 
 };};

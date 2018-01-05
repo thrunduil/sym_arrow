@@ -59,7 +59,7 @@ void compound::plus_build(expr& ret, const value& a, const value& b,
             return get_add_build_temp(s)->update(ret, a, be);
     };
 
-    ast::add_build_info<ast::expr_handle> ai(a, 1, &be, &s, nullptr);
+    ast::add_build_info<ast::expr_handle> ai(&a, 1, &be, &s, nullptr);
 
     ret = expr(ast::add_build::make(ai));
 };
@@ -98,7 +98,7 @@ void compound::plus_build(expr& ret, const value& a, const value& b1,
     value v[]               = {b1_e,b2_e};
     ast::expr_handle ex[]   = {s1,s2};
 
-    ast::add_build_info<ast::expr_handle> ai(a, 2, v, ex, nullptr);
+    ast::add_build_info<ast::expr_handle> ai(&a, 2, v, ex, nullptr);
 
     ret = expr(ast::add_build::make(ai));
 };
@@ -159,7 +159,7 @@ void compound::mult_build(expr& ret, const value& a, ast::expr_handle x1,  int b
             return get_mult_build_temp(x1)->update(ret, a, b1);
     };
 
-    ast::mult_build_info_int<ast::expr_handle> ai(a, 1, &b1, &x1);
+    ast::mult_build_info_int<ast::expr_handle> ai(&a, 1, &b1, &x1);
 
     ret = expr(ast::mult_build::make(ai));
 };
@@ -205,7 +205,8 @@ void compound::mult_build(expr& ret, ast::expr_handle x1,  int b1,
     const int  v[]          = {b1,b2};
     ast::expr_handle ex[]   = {x1,x2};
 
-    ast::mult_build_info_int<ast::expr_handle> ai(value::make_one(), 2, v, ex);
+    value one   = value::make_one();
+    ast::mult_build_info_int<ast::expr_handle> ai(&one, 2, v, ex);
 
     ret = expr(ast::mult_build::make(ai));
 };

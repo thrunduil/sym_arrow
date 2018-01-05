@@ -124,7 +124,8 @@ inline void item_collector_add::set_add(const value& add)
 
 inline void item_collector_add::add(const value& scal, expr_handle tmp_ex)
 {
-    new(m_ih_tmp) item_handle(scal, tmp_ex);
+    //TODO
+    new(m_ih_tmp) item_handle(m_temp_vals->make_handle(scal), tmp_ex);
     ++m_ih_tmp;
 };
 
@@ -185,7 +186,8 @@ inline void item_collector_mult::add(const value& pow, expr_handle ex)
         return;
     };
 
-    new(m_rih_tmp) ritem_handle(pow, ex);
+    //TODO
+    new(m_rih_tmp) ritem_handle(m_temp_vals->make_handle(pow), ex);
     ++m_rih_tmp;
 };
 

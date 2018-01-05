@@ -25,11 +25,14 @@
 #include "sym_arrow/ast/builder/build_item.h"
 #include "sym_arrow/ast/cannonization/subexpr_ordering.h"
 #include "dbs/dbs.h"
+#include "sym_arrow/utils/temp_value.h"
 
 #include <map>
 
 namespace sym_arrow { namespace ast
 {
+
+namespace sd = sym_arrow ::details;
 
 enum class reduce_type
 {
@@ -98,7 +101,7 @@ struct rpow_item
     value           m_pow;
     bool            m_can_deep_simpl;
 
-    rpow_item(size_t add_pos, size_t mult_pos, value it_pow, expr_handle it_e,
+    rpow_item(size_t add_pos, size_t mult_pos, const value& it_pow, expr_handle it_e,
               bool can_deep_simpl)
         : m_add_pos(add_pos), m_mult_pos(mult_pos) , m_pow(it_pow)
         , m_expr(it_e), m_can_deep_simpl(can_deep_simpl)
@@ -195,12 +198,17 @@ class subexpr_collector
         using add_item_handle   = build_item_handle<value>;
         using sub_type_vector   = std::vector<mult_subexpr>;
         using dbs               = dbs_lib::dbs;
+        using temp_value        = sd::temp_value<value, value::is_pod>;
+
+    private:
+        temp_value*     m_temp_vals;
 
     public:
         // return true if some of items was factored; 
         // if true is returned, then factored items are removed 
         // from the array ih (i.e. expr handle is set to nullptr);
-        bool            make(size_t n, add_item_handle* ih, expr& res, value& scal);
+        bool            make(size_t n, add_item_handle* ih, expr& res, value& scal,
+                            temp_value& temp_vals);
 
     private:
         // count number of subterms (ipow, rpow, exp subexpressions)
@@ -276,7 +284,7 @@ class subexpr_collector
                             rpow_item* rpow_arr, exp_item* exp_arr, sub_type_vector& sub_types,
                             size_t group_size, expr& res, value& scal);
 
-        void            finalize_sum(build_item<value>* it, size_t size, value add,
+        void            finalize_sum(build_item<value>* it, size_t size, const value& add,
                             expr& res, value& scal);
 
         // get size parameters of final mult expression

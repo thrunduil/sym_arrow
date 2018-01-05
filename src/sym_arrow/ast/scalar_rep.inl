@@ -31,8 +31,7 @@ namespace sym_arrow { namespace ast
 //                          scalar_rep
 //--------------------------------------------------------------------
 inline scalar_rep::scalar_rep(double val)
-    :base_type(this), m_hash(value::eval_hash(val))
-    ,m_data(value::make_value(val))
+    : scalar_rep(value::make_value(val))
 {};
 
 inline scalar_rep::scalar_rep(const value& val)
@@ -41,6 +40,5 @@ inline scalar_rep::scalar_rep(const value& val)
 
 inline scalar_rep::~scalar_rep()
 {}
-
 
 };};

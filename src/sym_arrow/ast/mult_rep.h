@@ -133,12 +133,10 @@ class mult_rep : public expr_symbols<mult_rep>
         // return a handle to i-th real power subterm 
         const value&        RV(size_t i) const;
 
-        // return array of value-expression pairs for integer
-        // powers
+        // return array of value-expression pairs for integer powers
         const int_expr*     IVE() const;
 
-        // return array of value-expression pairs for real
-        // powers
+        // return array of value-expression pairs for real powers
         const value_expr*   RVE() const;
 
     public:

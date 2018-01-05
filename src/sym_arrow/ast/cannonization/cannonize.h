@@ -23,9 +23,12 @@
 
 #include "sym_arrow/nodes/expr.h"
 #include "sym_arrow/ast/builder/build_item.h"
+#include "sym_arrow/utils/temp_value.h"
 
 namespace sym_arrow { namespace ast
 {
+
+namespace sd = sym_arrow :: details;
 
 // transformation of the expression to the canonical form
 class cannonize
@@ -35,9 +38,11 @@ class cannonize
         using collect_stack_type    = std::vector<aab_value>;
         using add_item_handle       = build_item_handle<value>;
         using expr_stack            = std::vector<expr>;
+        using temp_value            = sd::temp_value<value, value::is_pod>;
 
     private:
         expr_stack*                 m_expr_stack;
+        mutable temp_value          m_temp_vals;
 
     private:
         cannonize(const cannonize&) = delete;
@@ -75,19 +80,23 @@ class cannonize
         // add term is simple if has the form a + bx, where a = 0
         bool            is_simple(const add_rep* h) const;
 
+      #if SYM_ARROW_NORMALIZE
         // return true if add expression is normalized
         bool            is_normalized(const add_rep* h) const;
 
         // normalize add expression
         expr_ptr        normalize(const add_rep* h, value& scal) const;
+      #endif
 
         // return true is expression is cannonized
         bool            is_cannonized(const expr& ex) const;
         bool            is_cannonized(expr_handle ex) const;
 
+      #if SYM_ARROW_NORMALIZE
         // get normalization scalar
         template<class Item>
         static value    get_normalize_scaling(const value& V0, size_t n, const Item* V);
+      #endif
 
     private:
         // implements cannonization        

@@ -76,6 +76,12 @@ inline void vlist_mult<Value_t,Derived>::set_pow(const Value_t& p)
 };
 
 template<class Value_t, class Derived>
+inline void vlist_mult<Value_t,Derived>::init_with_default_values(const Value_t& p)
+{
+    new(&m_pow) Value_t(p);
+};
+
+template<class Value_t, class Derived>
 inline bool vlist_mult<Value_t,Derived>::is_simple_mult() const
 {
     if (vlist_base::is_simple() && is_value_one(elem(0).get_value()) == true)
@@ -100,9 +106,9 @@ inline void ilist_mult::make_pow(int p)
     vlist_mult::make_pow(p);
 };
 
-inline void ilist_mult::set_default_values()
+inline void ilist_mult::init_with_default_values()
 {
-    vlist_mult::set_pow(1);
+    vlist_mult::init_with_default_values(1);
 };
 
 //--------------------------------------------------------------
@@ -121,9 +127,9 @@ inline void rlist_mult::make_pow(const value& p)
     vlist_mult::make_pow(p);
 };
 
-inline void rlist_mult::set_default_values()
+inline void rlist_mult::init_with_default_values()
 {
-    vlist_mult::set_pow(value::make_one());
+    vlist_mult::init_with_default_values(value::make_one());
 };
 
 inline void rlist_mult::make_pow(int p)

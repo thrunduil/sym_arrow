@@ -19,23 +19,21 @@
 *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#pragma once
+#include "sym_arrow/utils/temp_value.h"
+#include "sym_arrow/ast/ast.h"
 
-//#include "root/fwd_decl.h"
-
-namespace sym_arrow { namespace ast
+namespace sym_arrow { namespace details
 {
 
-template<class Item, class Handle_builder>
-class simplify_expr
+value_stack* temp_value<value, false>::get_stack()
 {
-    public:
-        static void     make(Item* ptr, size_t& size, Handle_builder& handle_builder);
-        static void     sort(Item* ptr, size_t size);
+    //TODO
+    return new value_stack();
+}
+void temp_value<value, false>::release_stack(value_stack* st)
+{
+    //TODO
+    delete st;
+}
 
-    private:
-        static void     simplify(Item* ptr, size_t size, bool& any_simpl, 
-                            Handle_builder& handle_builder);
-};
-
-};};
+}};

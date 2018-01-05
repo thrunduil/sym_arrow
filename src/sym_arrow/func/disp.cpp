@@ -499,3 +499,15 @@ std::string sym_arrow::to_string(const expr& ex)
 
     return os.str();
 };
+
+static int g_disp_precision = 0;
+
+int sym_arrow::get_disp_precision()
+{
+    return g_disp_precision;
+}
+
+void sym_arrow::set_disp_precision(int prec)
+{
+    g_disp_precision = prec;
+}

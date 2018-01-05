@@ -66,7 +66,10 @@ class do_check_rep_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool real_power_check_rep(const value&);
 
         bool is_cannonized(ast::expr_handle h);
+
+      #if SYM_ARROW_NORMALIZE
         bool is_normalized(const ast::add_rep* h);
+      #endif
 
         bool is_add_free(ast::expr_handle h);
         bool is_atom(ast::expr_handle h);
@@ -308,8 +311,10 @@ bool do_check_rep_vis::atom_mult_check_rep_expr(const ast::mult_rep* h)
         if (is_simple(e->static_cast_to<ast::add_rep>()) == true)
             return false;
 
-        if (is_normalized(e->static_cast_to<ast::add_rep>()) == false)
-            return false;
+        #if SYM_ARROW_NORMALIZE
+            if (is_normalized(e->static_cast_to<ast::add_rep>()) == false)
+                return false;
+        #endif
 
         if (visit(e) == false)
             return false;
@@ -333,8 +338,10 @@ bool do_check_rep_vis::atom_mult_check_rep_expr(const ast::mult_rep* h)
         if (is_simple(e->static_cast_to<ast::add_rep>()) == true)
             return false;
 
-        if (is_normalized(e->static_cast_to<ast::add_rep>()) == false)
-            return false;
+        #if SYM_ARROW_NORMALIZE
+            if (is_normalized(e->static_cast_to<ast::add_rep>()) == false)
+                return false;
+        #endif
 
         if (visit(e) == false)
             return false;
@@ -403,14 +410,16 @@ bool do_check_rep_vis::is_cannonized(ast::expr_handle h)
     return ast::cannonize().is_cannonized(h);
 };
 
-bool do_check_rep_vis::is_normalized(const ast::add_rep* h)
-{
-    if (h->has_log() == true)
-        return true;
+#if SYM_ARROW_NORMALIZE
+    bool do_check_rep_vis::is_normalized(const ast::add_rep* h)
+    {
+        if (h->has_log() == true)
+            return true;
 
-    value scal = ast::cannonize().get_normalize_scaling(h->V0(), h->size(), h->VE());
-    return (scal.is_one() == true);
-};
+        value scal = ast::cannonize().get_normalize_scaling(h->V0(), h->size(), h->VE());
+        return (scal.is_one() == true);
+    };
+#endif
 
 bool do_check_rep_vis::is_simple(const ast::add_rep* h)
 {

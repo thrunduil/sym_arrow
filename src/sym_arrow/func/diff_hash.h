@@ -74,7 +74,7 @@ class diff_hash_data_base : protected ast::vlist_base<symbol_wrap, diff_hash_dat
         void                release(stack_type& st);
 
     public:
-        void                set_default_values(){};
+        void                init_with_default_values(){};
 };
 
 class diff_hash_data

@@ -39,7 +39,7 @@ struct add_rep_info
     size_t          n;
 
     // free scalar
-    value           scal0;
+    const value*    scal0;
 
     // handles to subterms (storing a value and a term)
     Item_type*      elems;
@@ -52,7 +52,7 @@ struct add_rep_info
 
     // constructor; data must satisfy cannonization requirement
     // of add_rep
-    add_rep_info(const value& a0, size_t n_expr, Item_type* expr, 
+    add_rep_info(const value* a0, size_t n_expr, Item_type* expr, 
                     Item_type* log_expr_)
         : scal0(a0), n(n_expr), elems(expr), log_expr(log_expr_)
         , m_hash_add(0) 
@@ -120,11 +120,13 @@ class add_rep : public expr_symbols<add_rep>
         // return array of value-expression pairs
         const value_expr*   VE() const;
 
+      #if SYM_ARROW_NORMALIZE
         // return true, if this expression is normalized
         bool                is_normalized() const;
 
         // mark this object as normalized
         void                set_normalized();
+      #endif
 
     public:
         // form expression obtained by removing additive term

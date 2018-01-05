@@ -21,21 +21,61 @@
 
 #pragma once
 
-//#include "root/fwd_decl.h"
+#include "sym_arrow/config.h"
+#include "sym_arrow/fwd_decls.h"
+#include "sym_arrow/ast/builder/build_item.h"
 
 namespace sym_arrow { namespace ast
 {
+    struct ipow_item;
+    struct exp_item;
 
-template<class Item, class Handle_builder>
-class simplify_expr
+    template<class Value_type>
+    class build_item_handle;
+
+}}
+
+namespace sym_arrow { namespace details
 {
-    public:
-        static void     make(Item* ptr, size_t& size, Handle_builder& handle_builder);
-        static void     sort(Item* ptr, size_t size);
 
-    private:
-        static void     simplify(Item* ptr, size_t size, bool& any_simpl, 
-                            Handle_builder& handle_builder);
+template<class Type>
+struct is_effective_pod
+{};
+
+template<class Val>
+struct is_effective_pod<ast::build_item_handle<Val>>
+{
+    static const bool value = true;
 };
 
-};};
+template<>
+struct is_effective_pod<ast::ipow_item>
+{
+    static const bool value = true;
+};
+
+template<>
+struct is_effective_pod<ast::exp_item>
+{
+    static const bool value = true;
+};
+
+template<>
+struct is_effective_pod<value>
+{
+    static const bool value = value::is_pod;
+};
+
+template<class Val>
+struct is_effective_pod<Val*>
+{
+    static const bool value = true;
+};
+
+template<>
+struct is_effective_pod<int>
+{
+    static const bool value = true;
+};
+
+}};

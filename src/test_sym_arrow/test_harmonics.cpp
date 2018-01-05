@@ -103,10 +103,11 @@ void test_set::test_harmonics()
     expr ret_y   = diff(ret, y);
     expr ret_z   = diff(ret, z);
 
-    sym_arrow::ast::details::expr_complexity stats;
+    //sym_arrow::ast::details::expr_complexity stats;
 
     ret.cannonize();
-    sym_arrow::ast::details::measure_complexity(ret.get_ptr().get(), stats);
+
+    //sym_arrow::ast::details::measure_complexity(ret.get_ptr().get(), stats);
 
     double d = toc();
     
@@ -114,7 +115,7 @@ void test_set::test_harmonics()
 
     std::cout << "\n";
     std::cout << "expr stast: " << "\n";
-    stats.disp();    
+    //stats.disp();    
 
     //disp(ret);
 

@@ -68,6 +68,8 @@ class vlist_mult : public vlist_base<build_item<Value_t>,Derived>
 
         // set power scalar 
         void                set_pow(const Value_t& v);
+
+        void                init_with_default_values(const Value_t& v);
 };
 
 // return true is a value is equal to 1
@@ -112,7 +114,7 @@ class ilist_mult : public vlist_mult<int, ilist_mult>
         friend vlist_base;
 
         // set power scalar to 1
-        void                set_default_values();
+        void                init_with_default_values();
 };
 
 // container for real items stored in mult_build
@@ -147,7 +149,7 @@ class rlist_mult : public vlist_mult<value, rlist_mult>
         void                make_pow(int p);        
 
         // set power scalar to 1
-        void                set_default_values();
+        void                init_with_default_values();
 };
 
 };};
