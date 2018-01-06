@@ -39,6 +39,11 @@ inline value::value(double val, internal_rep_tag)
     : m_data(val)
 {};
 
+inline value::handle_type value::get_handle() const
+{
+    return *this;
+}
+
 inline size_t value::hash_value() const
 { 
     return eval_hash(*this); 

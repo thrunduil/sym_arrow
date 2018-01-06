@@ -21,6 +21,7 @@
 
 #include "sym_arrow/functions/sym_functions.h"
 #include "sym_arrow/functions/expr_functions.h"
+#include "sym_arrow/ast/ast_tags.h"
 
 namespace sym_arrow
 {

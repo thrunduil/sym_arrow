@@ -93,6 +93,11 @@ inline double value::get_double() const
     return m_data;
 };
 
+inline value::handle_type value::get_handle() const
+{
+    return *this;
+}
+
 inline value value::make_one()
 {
     return value(1.0);

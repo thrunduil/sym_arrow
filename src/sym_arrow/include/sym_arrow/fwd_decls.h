@@ -47,6 +47,8 @@ namespace sym_arrow { namespace details
 class subs_context_impl;
 class diff_context_impl;
 
+class value_mp;
+
 }};
 
 namespace sym_arrow { namespace ast 
@@ -54,6 +56,9 @@ namespace sym_arrow { namespace ast
 
 // dag item tag for terms
 struct term_tag{};
+
+// dag item tag for values
+struct value_tag{};
 
 template<class Derived>
 class expr_symbols;

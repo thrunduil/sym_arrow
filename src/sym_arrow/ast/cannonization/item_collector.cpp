@@ -257,7 +257,7 @@ void item_collector_mult::collect_base()
             m_process_vec.get()[vec_pos++] = &in;
         };
 
-        int pow             = m_iih[ipos]->get_value();
+        int pow             = m_iih[ipos]->get_value_handle();
         in.pow_i            += pow;
 
         ++ipos;
@@ -298,14 +298,14 @@ void item_collector_mult::collect_base()
             pow_1       = pow_i - 1;
         };
 
-        m_rih[pos_r].get_value_ref()    = m_temp_vals->make_handle(m_rih[pos_r].get_value()
+        m_rih[pos_r].get_value_handle_ref() = m_temp_vals->make_handle(m_rih[pos_r].get_value()
                                             + value::make_value(pow_1));
 
         if(m_rih[pos_r].get_value().is_zero() == true)
             process_r_ptr[vec_pos_r++]  = pos_r;
 
         int pow_sum                     = m_iih[pos_i].get_value() - pow_1;
-        m_iih[pos_i].get_value_ref()    = pow_sum;
+        m_iih[pos_i].get_value_handle_ref()    = pow_sum;
 
         if (pow_sum == 0)
             process_i_ptr[vec_pos_i++]  = pos_i;

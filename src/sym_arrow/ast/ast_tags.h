@@ -35,11 +35,8 @@ struct ast_flags
     // flag used to mark presence of log/exp terms
     static const size_t special     = 0;
 
-    // flag used by add_rep to mark normalization
-    static const size_t normalized  = 1;
-
     // temporary flag
-    static const size_t work        = 2;
+    static const size_t work        = 1;
 };
 
 }};
@@ -134,6 +131,31 @@ template<>
 struct dag_node_to_code<sym_arrow::ast::term_tag, sym_arrow::ast::function_rep>
 {
     static const size_t code    = (size_t)sym_arrow::ast::term_types::function_rep;
+};
+
+//-------------------------------------------------------------
+//              value_tag
+//-------------------------------------------------------------
+// type of additional data stored in the dag_context for value_tag
+template<>
+struct dag_context_data<sym_arrow::ast::value_tag>
+{    
+    // no context data
+    using context_data_type = sym_dag::context_data_base;
+};
+
+// define mapping from code to type for value_tag
+template<>
+struct dag_code_to_node<sym_arrow::ast::value_tag, (size_t)sym_arrow::ast::value_types::mp_float>
+{
+    using type = sym_arrow::details::value_mp;
+};
+
+// define mapping from type to code for value_tag
+template<>
+struct dag_node_to_code<sym_arrow::ast::value_tag, sym_arrow::details::value_mp>
+{
+    static const size_t code    = (size_t)sym_arrow::ast::value_types::mp_float;
 };
 
 };

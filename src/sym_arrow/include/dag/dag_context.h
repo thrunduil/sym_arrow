@@ -119,6 +119,9 @@ class dag_context : public details::dag_context_base
         template<class Node_type>
         void                    unregister(Node_type* h);
 
+        template<class Node_type>
+        void                    unregister_without_stack(Node_type* h);
+
         // destroy previously created object; ptr != nullptr
         template<class Node_type>
         void                    unregister(Node_type* h, stack_type& stack);
@@ -166,7 +169,9 @@ class dag_context : public details::dag_context_base
         details::object_table<dag_ptr<Node_type>, details::symbolic_allocator<Tag>>&      
                                 get_object_table();
         void                    remove_assigned_data(handle_type h, stack_type& st);
+        void                    remove_assigned_data(handle_type h);
         void                    call_track_functions(handle_type h, stack_type& st);
+        void                    call_track_functions(handle_type h);
         void                    remove_weak_ptr(handle_type h);
 };
 

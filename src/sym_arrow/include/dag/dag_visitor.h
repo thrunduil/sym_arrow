@@ -24,8 +24,19 @@
 namespace sym_dag
 {
 
-template<class Tag, class Derived>
+template<class Tag, class Derived, 
+        int Num_nodes = dag_tag_traits<Tag>::number_codes>
 class dag_visitor
+{
+    public:
+        template<class ... Args>
+        auto visit(const sym_dag::dag_item_base<Tag>* ast, Args&& ... args)
+            -> decltype(std::declval<Derived>().eval(ast, std::forward<Args>(args)...)); 
+};
+
+// optimized version of dag_visitor when only one node exists
+template<class Tag, class Derived>
+class dag_visitor<Tag, Derived, 1>
 {
     public:
         template<class ... Args>

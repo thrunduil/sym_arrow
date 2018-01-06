@@ -116,7 +116,6 @@ void dag_context<Tag>::unregister(Node_type* h)
 {
     stack_handle sh = this->get_stack();
     unregister(h, sh.get());
-    release_stack(sh.get())
 };
 
 template<class Tag>
@@ -136,6 +135,22 @@ inline void dag_context<Tag>::unregister(Node_type* h, stack_type& stack)
 };
 
 template<class Tag>
+template<class Node_type>
+inline void dag_context<Tag>::unregister_without_stack(Node_type* h)
+{
+    using alloc     = details::symbolic_allocator<Tag>;
+    using ptr_type  = dag_ptr<Node_type>;
+    using table     = details::object_table<ptr_type, alloc>;
+
+    table& t        = get_object_table<Node_type>();
+
+    if (h->has_assigned_data() == true)
+        remove_assigned_data(h);
+
+    t.unregister_obj(h);
+};
+
+template<class Tag>
 inline void dag_context<Tag>::remove_assigned_data(handle_type h, stack_type& st)
 {
     if (h->is_tracked() == true)
@@ -146,10 +161,27 @@ inline void dag_context<Tag>::remove_assigned_data(handle_type h, stack_type& st
 }
 
 template<class Tag>
+inline void dag_context<Tag>::remove_assigned_data(handle_type h)
+{
+    if (h->is_tracked() == true)
+        call_track_functions(h);
+
+    if (h->has_weak_ptr() == true)
+        remove_weak_ptr(h);
+}
+
+template<class Tag>
 void dag_context<Tag>::call_track_functions(handle_type h, stack_type& st)
 {
     for (const auto& elem : m_track_functions)
         elem.second(h, st);
+}
+
+template<class Tag>
+void dag_context<Tag>::call_track_functions(handle_type h)
+{
+    for (const auto& elem : m_track_functions)
+        elem.second(h);
 }
 
 template<class Tag>

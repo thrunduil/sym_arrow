@@ -40,10 +40,10 @@ struct value_handle_value_impl;
 template<>
 struct value_handle_value_impl<false>
 {
-    using type  = const value*;
+    using type  = typename value::handle_type;
 
-    static const value& get_value(const value* ptr) { return *ptr;}
-    static const value* make_handle(const value& v) { return &v; }
+    static value        get_value(type ptr)         { return value(ptr); }
+    static type         make_handle(const value& v) { return v.get_handle(); }
 };
 
 template<>
@@ -105,10 +105,13 @@ class build_item_handle
         bool                    is_special() const;
 
         // return value assigned to term
-        const Value_type&       get_value() const                   { return value_traits::get_value(m_value);};
+        Value_type              get_value() const                   { return value_traits::get_value(m_value);};
 
         // return value assigned to term
-        value_handle&           get_value_ref()                     { return m_value;};
+        value_handle            get_value_handle() const            { return m_value;};
+
+        // return value assigned to term
+        value_handle&           get_value_handle_ref()              { return m_value;};
 
         // return expression handle
         expr_handle             get_expr_handle() const             { return m_expr; };

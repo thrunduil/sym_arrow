@@ -117,10 +117,15 @@ branch_predictor& cse_hash::get_predictor(int level)
 
 bool cse_hash::check_hash()
 {
+    //TODO
+    ++m_nest_level;
+    return false;
+    /*
     bool pred   = get_predictor(m_nest_level).get_prediction();
     ++m_nest_level;
 
     return pred;
+    */
 }
 
 void cse_hash::add_observation(bool obs, bool pred)

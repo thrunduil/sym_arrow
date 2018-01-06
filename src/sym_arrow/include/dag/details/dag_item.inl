@@ -165,7 +165,7 @@ inline bool dag_item_base<Tag>::has_assigned_data() const
     static const size_t track_flag  = header_type::track_flag;
     static const size_t weak_flag   = header_type::weak_flag;
 
-    static const size_t flags   = (1U << track_flag) + (1U << weak_flag);
+    static const size_t flags   = (1U << track_flag) | (1U << weak_flag);
 
     size_t has = m_data.m_flags & flags;
     return has != 0U;

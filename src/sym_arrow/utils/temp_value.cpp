@@ -25,15 +25,21 @@
 namespace sym_arrow { namespace details
 {
 
-value_stack* temp_value<value, false>::get_stack()
+temp_value<value, false>::value_stack* 
+temp_value<value, false>::get_stack()
 {
-    //TODO
-    return new value_stack();
+    using vector_provider   = sym_dag::vector_provider<value>;
+    
+    vector_provider& vp     = vector_provider::get_global();
+    return vp.get_vector_ptr();
 }
+
 void temp_value<value, false>::release_stack(value_stack* st)
 {
-    //TODO
-    delete st;
+    using vector_provider   = sym_dag::vector_provider<value>;
+    vector_provider& vp     = vector_provider::get_global();
+
+    return vp.release_vector(st);
 }
 
 }};

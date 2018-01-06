@@ -23,6 +23,9 @@
 
 #include "sym_arrow/config.h"
 #include "matcl-mp/matcl_mp.h"
+#include "dag/dag.h"
+#include "sym_arrow/fwd_decls.h"
+#include "sym_arrow/details/dag_traits.h"
 
 #include <iosfwd>
 
@@ -43,14 +46,18 @@ using matcl::mp_float;
 class SYM_ARROW_EXPORT value
 {
     public:
-        using impl_type         = matcl::mp_float;
+        using item_type         = details::value_mp;
+        using ptr_type          = sym_dag::dag_ptr<item_type, ast::value_tag>;
+
+        // value handle type
+        using handle_type       = const item_type*;
 
         // value storing mp_float is not (effectively) a POD type
         static const 
         bool is_pod             = false;
 
     private:        
-        impl_type               m_data;
+        ptr_type                m_ptr;
 
     public:     
         // initialization with 0.0
@@ -62,6 +69,20 @@ class SYM_ARROW_EXPORT value
         // convert from mp_float to value
         value(const mp_float& v);
 
+        // convert from handle_type; internal use only
+        explicit value(handle_type h);
+
+        // copy and move constructor
+        value(const value& other);
+        value(value&& other);
+
+        // destructor
+        ~value();
+
+        // copy assign and move assign
+        value&                  operator=(const value& other);
+        value&                  operator=(value&& other);
+
         // calculate hash of value object
         static size_t           eval_hash(const value& val);
 
@@ -70,6 +91,17 @@ class SYM_ARROW_EXPORT value
 
         // return hash of this object
         size_t                  hash_value() const;
+
+    public:
+
+        // access to internal pointer; internal use only
+        handle_type             get_handle() const;
+
+        // convert this value to double
+        double                  get_double() const;
+
+        // convert this value to mp_float
+        const mp_float&         get_mp_float() const;
 
     public:        
         // make object of class value from a double scalar
@@ -98,15 +130,6 @@ class SYM_ARROW_EXPORT value
 
         // make -1 value; can faster than make_value(-1)
         static value            make_minus_one();        
-
-        // return internal representation
-        const impl_type&        get_rep() const;
-
-        // convert this value to double
-        double                  get_double() const;
-
-        // convert this value to mp_float
-        const mp_float&         get_mp_float() const;
 
         // return true if this value represents NaN
         bool                    is_nan() const;

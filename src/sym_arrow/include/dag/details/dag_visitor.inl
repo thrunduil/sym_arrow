@@ -76,9 +76,9 @@ case code:                                                  \
 #define SYM_DAG_VISITOR_CASE_M(i1, code, i2)                \
 SYM_DAG_VISITOR_CASE(code)
 
-template<class Tag, class Derived>
+template<class Tag, class Derived, int Num_codes>
 template<class ... Args>
-auto dag_visitor<Tag, Derived>::visit(const sym_dag::dag_item_base<Tag>* ast, Args&& ... args)
+auto dag_visitor<Tag, Derived, Num_codes>::visit(const sym_dag::dag_item_base<Tag>* ast, Args&& ... args)
     -> decltype(std::declval<Derived>().eval(ast, std::forward<Args>(args)...)) 
 {
     using ret_type = decltype(std::declval<Derived>().eval(ast, std::forward<Args>(args)...));
@@ -86,9 +86,23 @@ auto dag_visitor<Tag, Derived>::visit(const sym_dag::dag_item_base<Tag>* ast, Ar
     switch (ast->get_code())
     {
         BOOST_PP_REPEAT(SYM_DAG_MAX_NUMBER_CODES, SYM_DAG_VISITOR_CASE_M, 0)
-    };
 
-    throw std::runtime_error("invalid term code");
+        default:
+            // throw exception
+            return details::case_eval<ret_type, Tag, Derived, 0, false>
+                ::make(static_cast<Derived*>(this), ast, std::forward<Args>(args)...); 
+    };
+};
+
+template<class Tag, class Derived>
+template<class ... Args>
+auto dag_visitor<Tag, Derived, 1>::visit(const sym_dag::dag_item_base<Tag>* ast, Args&& ... args)
+    -> decltype(std::declval<Derived>().eval(ast, std::forward<Args>(args)...))
+{
+    using ret_type = decltype(std::declval<Derived>().eval(ast, std::forward<Args>(args)...));
+
+    return details::case_eval<ret_type, Tag, Derived, 0>
+        ::make(static_cast<Derived*>(this), ast, std::forward<Args>(args)...); 
 };
 
 };

@@ -66,15 +66,19 @@ struct dag_code_to_node
 // configure dag type with given tag Tag; this template must be specialized
 // by the user;
 // user_flag_bits - number of bits if the user flag in dag_item; this number
-//     should be small, at most three
+//      should be small, at most three
 // number_codes - number of possible codes associated to nodes of dag type with
-//     given Tag; number_codes = last_code + 1
+//      given Tag; number_codes = last_code + 1
+// need_release_stack - if true, then release stack is provided to the release
+//      function; in this way it is possible to delay destruction of referenced
+//      objects (and possible stack overflow errors)
 template<class Tag>
 struct dag_tag_traits
 {
     // must implement:
     // static const size_t number_codes    = [some value]
     // static const size_t user_flag_bits  = [some value]
+    // static const bool need_release_stack= [some value]
 };
 
 // configure additional data stored in dag_context for given tag Tag; 
@@ -96,6 +100,23 @@ struct dag_node_data
 {
     // additional data stored in the dag_item
     using type = dag_data_base;
+};
+
+// type of tracking functions
+template<class Tag, 
+        bool Need_stack = dag_tag_traits<Tag>::need_release_stack>
+struct tract_function_type
+{
+    // type of the release stack
+    using stack_type    = details::release_stack<dag_item_base<Tag>>;
+
+    using type = std::function<void (const dag_item_base<Tag>*, stack_type& st)>;
+};
+
+template<class Tag>
+struct tract_function_type<Tag, false>
+{
+    using type = std::function<void (const dag_item_base<Tag>*)>;
 };
 
 // base class of all nodes, that can be used in a DAG representation
@@ -122,7 +143,7 @@ class dag_item_base
         using context_type  = dag_context<Tag>;
 
         // type of tracking functions
-        using track_function = std::function<void (const dag_item_base*, stack_type& st)>;
+        using track_function = typename tract_function_type<Tag>::type;
 
     private:
         using header_type   = details::dag_item_header<Tag, user_data>;

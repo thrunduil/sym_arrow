@@ -45,6 +45,12 @@ enum class term_types : size_t
     number_codes
 };
 
+enum class value_types : size_t
+{
+    mp_float  = 0,
+    number_codes
+};
+
 }};
 
 namespace sym_dag
@@ -58,7 +64,17 @@ template<>
 struct dag_tag_traits<sym_arrow::ast::term_tag>
 {
     static const size_t number_codes    = (size_t)sym_arrow::ast::term_types::number_codes;
-    static const size_t user_flag_bits  = 3;
+    static const size_t user_flag_bits  = 2;
+    static const bool need_release_stack= true;
+};
+
+// configure dag_item for value_tag
+template<>
+struct dag_tag_traits<sym_arrow::ast::value_tag>
+{
+    static const size_t number_codes    = (size_t)sym_arrow::ast::value_types::number_codes;
+    static const size_t user_flag_bits  = 0;
+    static const bool need_release_stack= false;
 };
 
 };

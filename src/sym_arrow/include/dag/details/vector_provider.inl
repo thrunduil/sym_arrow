@@ -47,7 +47,6 @@ inline vector_handle<Type>::~vector_handle()
     if (!m_vector)
         return;
 
-    m_vector->clear();
     m_owner->release_vector(m_vector);
 }
 
@@ -64,6 +63,8 @@ vector_handle<Type>::get()
 template<class Type>
 inline void vector_provider<Type>::release_vector(vector_type* vec)
 {
+    vec->clear();
+
     if (m_pool.size() < max_pool_size && vec->size() < max_vec_size)
         m_pool.push_back(vec);
     else
@@ -73,14 +74,22 @@ inline void vector_provider<Type>::release_vector(vector_type* vec)
 template<class Type>
 inline vector_handle<Type> vector_provider<Type>::get_vector()
 {
+    vector_type* vec  = get_vector_ptr();
+    return vector_handle<Type>(this, vec);
+};
+
+template<class Type>
+inline
+typename vector_provider<Type>::vector_type* 
+vector_provider<Type>::get_vector_ptr()
+{
     if (m_pool.empty() == true)
         append_pool();
 
     vector_type* vec  = m_pool.back();
     m_pool.pop_back();
-
-    return vector_handle<Type>(this, vec);
-};
+    return vec;
+}
 
 template<class Type>
 inline vector_provider<Type>& vector_provider<Type>::get_global()

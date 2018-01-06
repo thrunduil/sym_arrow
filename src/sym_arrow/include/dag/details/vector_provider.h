@@ -29,8 +29,8 @@ namespace sym_dag
 template<class Type>
 class vector_handle;
 
-// a singleton class that provides working vectors for
-// cannonize class; this class is intended to reuse working
+// a singleton class that provides work vectors for
+// cannonize class; this class is intended to reuse work
 // vectors instead of costly allocation and deallocation vectors
 // on demand
 template<class Type>
@@ -52,9 +52,7 @@ class vector_provider
         static vector_provider*     m_global;
         vector_pool                 m_pool;
 
-    private:
-        void                        release_vector(vector_type* vec);
-
+    private:        
         friend vector_handle<Type>;
 
         vector_provider();
@@ -70,10 +68,21 @@ class vector_provider
         ~vector_provider();
 
         static vector_provider&     get_global();
+
+        // return a handle to vector; this handle is responsible for releasing
+        // memory; release_vector function cannot be called on a work vector stored
+        // in the handle
         vector_handle<Type>         get_vector();
+
+        // return pointer to a vector; this vector must be released
+        // later by calling release_vector function
+        vector_type*                get_vector_ptr();
+
+        // release memory
+        void                        release_vector(vector_type* vec);
 };
 
-// a RAII class that wraps a working vector; at destructor stored
+// a RAII class that wraps a work vector; at destructor stored
 // working vector is cleared and returned to vector_provider
 template<class Type>
 class vector_handle
@@ -90,8 +99,8 @@ class vector_handle
         // move constructor
         vector_handle(vector_handle&& other);
 
-        // stored working vector is cleared and returned to 
-        // vector_provider for later use
+        // stored work vector is cleared and returned to vector_provider 
+        // for later use
         ~vector_handle();
 
         // return working vector

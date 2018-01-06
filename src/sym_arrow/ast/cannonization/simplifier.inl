@@ -89,7 +89,7 @@ void simplify_expr<Item, Value_handle_builder>::simplify(Item* x, size_t size, b
             if (is_value_zero(tmp_s) == true)
                 x[i].get_expr_ref()     = expr_type();
             else
-                x[i].get_value_ref()    = handle_builder.make_handle(tmp_s);
+                x[i].get_value_handle_ref()    = handle_builder.make_handle(tmp_s);
           
             x[i-1].get_expr_ref()       = expr_type();
             any_simpl                   = true;

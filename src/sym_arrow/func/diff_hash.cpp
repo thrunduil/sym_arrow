@@ -195,6 +195,11 @@ void diff_hash::unregister(ast::expr_handle h, stack_type& st)
 
 expr diff_hash::find(ast::expr_handle h, const symbol& s)
 {
+    //TODO
+    (void)h;
+    (void)s;
+    return expr();
+    /*
     bool is_tracked = h->is_tracked();
 
     if (is_tracked == false)
@@ -216,6 +221,7 @@ expr diff_hash::find(ast::expr_handle h, const symbol& s)
     m_cache.add(ast::expr_ptr::from_this(h));
 
     return dif;
+    */
 };
 
 void diff_hash::add(ast::expr_handle h, const symbol& s, const expr& dif)

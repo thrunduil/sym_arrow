@@ -23,46 +23,10 @@
 
 #include "sym_arrow/config.h"
 #include "sym_arrow/fwd_decls.h"
-#include "sym_arrow/ast/builder/vlist.inl"
 #include "sym_arrow/nodes/value.h"
 
 namespace sym_arrow { namespace details
 {
-
-class value_holder
-{
-    public:
-        using value_type    = value;
-
-    public:
-        value           m_value;
-
-    public:
-        value_holder(const value& v)
-            :m_value(v)
-        {};
-
-        template<class Stack>
-        void release(Stack& s)
-        {
-            (void)s;
-        }
-};
-
-class value_stack : public ast::vlist_base<value_holder, value_stack, 10>
-{
-    private:
-        using base_type = ast::vlist_base<value_holder, value_stack, 10>;
-
-    public:
-        const value* push_back(const value& v)
-        {
-            return &(base_type::insert(value_holder(v))->m_value);
-        }
-
-        void init_with_default_values()
-        {};
-};
 
 template<class Val, bool Is_pod>
 class temp_value
@@ -71,6 +35,10 @@ class temp_value
 template<>
 class temp_value<value, false>
 {
+    public:
+        using handle_type   = typename value::handle_type;
+        using value_stack   = std::vector<value>;
+
     private:
         value_stack*    m_stack;
 
@@ -85,12 +53,13 @@ class temp_value<value, false>
                 release_stack(m_stack);
         }
 
-        const value* make_handle(const value& v)
+        handle_type make_handle(const value& v)
         {
             if (m_stack == nullptr)
                 m_stack = get_stack();
 
-            return m_stack->push_back(v);
+            m_stack->push_back(v);
+            return v.get_handle();
         }
 
     private:

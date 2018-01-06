@@ -58,24 +58,26 @@ int main(int argc, const char* argv[])
         test_set::example();
 
         test_set::test_diff();
-        test_set::test_diff_context();
+        //test_set::test_diff_context();
 
-        test_set::test_harmonics();
+        //test_set::test_harmonics();
 
+        //TODO
+        (void)n_rep;
         //test_set::test_special_cases();
         //test_set::test_visitor();        
 
-        test_set::test_random_diff(n_rep);
-        test_set::test_expression(n_rep);
+        //test_set::test_random_diff(n_rep);
+        //test_set::test_expression(n_rep);
 
         std::cout << "\n";
 
         //sym_dag::registered_dag_context::get().print_reuse_stats(std::cout);
         //sym_dag::registered_dag_context::get().print_memory_stats(std::cout);
-        sym_dag::registered_dag_context::get().print_collisions(std::cout);
+        //sym_dag::registered_dag_context::get().print_collisions(std::cout);
 
-        sym_dag::registered_dag_context::get().close();
-        sym_dag::registered_dag_context::get().print_memory_leaks(std::cout);
+        //sym_dag::registered_dag_context::get().close();
+        //sym_dag::registered_dag_context::get().print_memory_leaks(std::cout);
     }
     catch(std::exception& ex)
     {

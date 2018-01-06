@@ -49,7 +49,6 @@ add_rep::add_rep(const add_rep_info<item_type>& pi)
         add_symbols(h);
 
         base_type::set_user_flag<ast_flags::special>(true);
-        base_type::set_user_flag<ast_flags::normalized>(true);
     }
     else
     {

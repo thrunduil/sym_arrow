@@ -45,6 +45,9 @@ class SYM_ARROW_EXPORT value
     public:
         using impl_type         = sli::gsli_double;
 
+        // value handle type
+        using handle_type       = value;
+
         struct internal_rep_tag{};
 
         // value storing mp_float is not (effectively) a POD type
@@ -78,6 +81,16 @@ class SYM_ARROW_EXPORT value
         // return hash of this object
         size_t                  hash_value() const;
 
+    public:
+        // access to internal pointer; internal use only
+        handle_type             get_handle() const;
+
+        // return internal representation
+        const impl_type&        get_rep() const;
+
+        // convert this value to double
+        double                  get_double() const;
+
     public:        
         // make object of class value from a double scalar
         static value            make_value(double val);
@@ -99,12 +112,6 @@ class SYM_ARROW_EXPORT value
 
         // make -1 value; faster than make_value(-1)
         static value            make_minus_one();        
-
-        // return internal representation
-        const impl_type&        get_rep() const;
-
-        // convert this value to double
-        double                  get_double() const;
 
         // convert this value to gsli_double
         sli::gsli_double        get_gsli_double() const;

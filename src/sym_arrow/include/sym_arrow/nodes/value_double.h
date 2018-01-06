@@ -40,6 +40,9 @@ class SYM_ARROW_EXPORT value
     public:
         using impl_type         = double;
 
+        // value handle type
+        using handle_type       = value;
+
         // value storing mp_float is not (effectively) a POD type
         static const 
         bool is_pod             = true;
@@ -63,6 +66,13 @@ class SYM_ARROW_EXPORT value
         // return hash of this object
         size_t                  hash_value() const;
 
+    public:
+        // access to internal pointer; internal use only
+        handle_type             get_handle() const;
+
+        // convert this value to double
+        double                  get_double() const;
+
     public:        
         // make object of class value from a double scalar
         static value            make_value(double val);
@@ -84,9 +94,6 @@ class SYM_ARROW_EXPORT value
 
         // make -1 value; faster than make_value(-1)
         static value            make_minus_one();        
-
-        // convert this value to double
-        double                  get_double() const;
 
         // return true if this value represents NaN
         bool                    is_nan() const;

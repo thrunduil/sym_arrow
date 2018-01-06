@@ -456,8 +456,8 @@ expr cannonize::finalize_add(item_collector_add& ic, size_t n, value& ret_scal,
         value one   = value::make_one();
 
         // add_rep must be created; last element can always be modified
-        ih[n].get_value_ref()   = value_handle_type<value>::make_handle(one);
-        ih[n].get_expr_ref()    = ex_log.get_ptr().get();
+        ih[n].get_value_handle_ref()= one.get_handle();
+        ih[n].get_expr_ref()        = ex_log.get_ptr().get();
 
         add_rep_info<item_handle> ai(&add, n, ih, ih + n);
         ret = expr(add_rep::make(ai));
@@ -593,8 +593,8 @@ expr cannonize::process_mult(item_collector_mult& ic, value& scal, bool do_cse)
 
     if (has_exp_term)
     {
-        iih[in].get_value_ref() = 1;
-        iih[in].get_expr_ref()  = ex_term.get_ptr().get();
+        iih[in].get_value_handle_ref()  = 1;
+        iih[in].get_expr_ref()          = ex_term.get_ptr().get();
     };
 
     if (in == 1 && rn == 0 && has_exp_term == false && iih[0].get_value() == 1)
@@ -963,12 +963,12 @@ void cannonize::collect_items(const rlist_mult* rl, item_collector_mult& ic,
 
 static value operator*(const value& a, int b)
 {
-    return a * value::make_value(b);
+    return a * double(b);
 }
 
 static value operator*(int b, const value& a)
 {
-    return a * value::make_value(b);
+    return a * double(b);
 }
 
 static expr operator*(expr&& a, int b)

@@ -26,7 +26,7 @@ namespace sym_arrow
 {
 
 scalar::scalar(double v)
-    :m_ptr(value_type::make(v))
+    :m_ptr(value_type::make(value(v)))
 {};
 
 scalar::scalar(const value& v)

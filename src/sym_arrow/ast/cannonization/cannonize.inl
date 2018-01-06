@@ -27,43 +27,4 @@
 namespace sym_arrow { namespace ast
 {
 
-template<class Item>
-struct get_value;
-
-template<>
-struct get_value<value>
-{
-    static const value& eval(const value& v)
-    {
-        return v;
-    };
-};
-
-template<>
-struct get_value<details::value_expr<value>>
-{
-    static const value& eval(const details::value_expr<value>& v)
-    {
-        return v.m_value;
-    };
-};
-
-template<>
-struct get_value<build_item_handle<value>>
-{
-    static const value& eval(const build_item_handle<value>& v)
-    {
-        return v.get_value();
-    };
-};
-
-template<>
-struct get_value<build_item<value>>
-{
-    static const value& eval(const build_item<value>& v)
-    {
-        return v.get_value();
-    };
-};
-
 };};

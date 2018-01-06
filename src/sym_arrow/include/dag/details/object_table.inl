@@ -460,7 +460,7 @@ inline void unique_object_table<V, Alloc, Storage>::unregister_obj(value_type* p
     using VT_nc = typename std::remove_const<value_type>::type;
 
     const_cast<VT_nc*>(ptr)->~value_type();    
-    allocator_type::free(const_cast<void*>(static_cast<const void*>(ptr)));
+    m_storage.free(const_cast<void*>(static_cast<const void*>(ptr)));
 };
 
 template<class V, class Alloc, class Storage>

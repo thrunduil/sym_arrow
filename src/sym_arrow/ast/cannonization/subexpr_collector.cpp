@@ -311,13 +311,13 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
                             ipow_arr, rpow_arr,exp_arr);
 
         // this is not a special node (special nodes are not collected)
-        const value* v  = &ih[add_pos].get_value();
+        const value& v  = ih[add_pos].get_value();
         expr_handle eh  = ih[add_pos].get_expr_handle();
 
         if (eh->isa<mult_rep>() == false)
         {
             //this is an atom
-            add             = add + *v;
+            add             = add + v;
 
             // remove factored item
             ih[add_pos].get_expr_ref()  = nullptr;
@@ -374,11 +374,11 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
         if (mult_red.get_ptr()->isa<scalar_rep>() == true)
         {
             value val   = mult_red.get_ptr()->static_cast_to<scalar_rep>()->get_data();
-            add         = add + val * (*v);
+            add         = add + val * v;
         }
         else
         {
-            new (it + size_counter) item(*v, std::move(mult_red));
+            new (it + size_counter) item(v, std::move(mult_red));
             ++size_counter;
         };
 
@@ -599,10 +599,9 @@ void subexpr_collector::add_factor_to_mult(size_t isize, size_t& ipow_size, size
         case mult_subexpr_type::rpow:
         {
             size_t pos_arr      = factor.get_pos_in_array();
-            value pow           = rpow_arr[pos_arr].m_pow;
+            const value& pow    = rpow_arr[pos_arr].m_pow;
             expr_handle base    = factor.get_base();
 
-            //TODO: can we use rpow_arr[pos_arr].m_pow ?
             new(rh + rpow_size) build_item_handle<value>(m_temp_vals->make_handle(pow), base);
             ++rpow_size;
             return;
@@ -783,7 +782,7 @@ void subexpr_collector::reduce_mult(size_t pos_mult, build_item_handle<int>* ih,
         case mult_subexpr_type::ipow_horner:
         {
             int pow = factor.get_int_power();
-            ih[pos_mult].get_value_ref()    -= pow;
+            ih[pos_mult].get_value_handle_ref()    -= pow;
 
             assertion(ih[pos_mult].get_expr_handle() == factor.get_base(), "reduce_mult");
             assertion(ih[pos_mult].get_value() >= 0, "reduce_mult");

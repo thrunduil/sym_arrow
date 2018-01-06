@@ -59,5 +59,5 @@
 //      exp(double) < exp(mp_float) < exp(gsli_double)
 // performance ordering: 
 //      perf(mp_Float) < perf(gsli_double) <= perf(double)
-#define SYM_ARROW_VALUE_TYPE SYM_ARROW_VALUE_GSLI
+#define SYM_ARROW_VALUE_TYPE SYM_ARROW_VALUE_MP
 
