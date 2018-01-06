@@ -35,8 +35,11 @@ struct ast_flags
     // flag used to mark presence of log/exp terms
     static const size_t special     = 0;
 
+    // flag used by add_rep to mark normalization
+    static const size_t normalized  = 1;
+
     // temporary flag
-    static const size_t work        = 1;
+    static const size_t work        = 2;
 };
 
 }};

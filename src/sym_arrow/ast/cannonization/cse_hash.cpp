@@ -117,15 +117,10 @@ branch_predictor& cse_hash::get_predictor(int level)
 
 bool cse_hash::check_hash()
 {
-    //TODO
-    ++m_nest_level;
-    return false;
-    /*
     bool pred   = get_predictor(m_nest_level).get_prediction();
     ++m_nest_level;
 
     return pred;
-    */
 }
 
 void cse_hash::add_observation(bool obs, bool pred)
@@ -142,7 +137,7 @@ void cse_hash::add_observation(bool obs, bool pred)
     return get_predictor(m_nest_level).add_observation(obs, pred);
 }
 
-bool cse_hash::get_hashed_subexpr_elim(const expr& ex, value& norm, expr& simpl)
+bool cse_hash::get_hashed_subexpr_elim(const expr& ex, expr& simpl)
 {
     expr_handle h   = ex.get_ptr().get();
     bool is_tracked = h->is_tracked();
@@ -160,7 +155,6 @@ bool cse_hash::get_hashed_subexpr_elim(const expr& ex, value& norm, expr& simpl)
     if (elim_data.is_empty() == true)
         return false;
 
-    norm    = elim_data.get_normalization();
     simpl   = elim_data.get_simplified_expr();
 
     m_cache.add(ex.get_ptr());
@@ -169,13 +163,12 @@ bool cse_hash::get_hashed_subexpr_elim(const expr& ex, value& norm, expr& simpl)
     return true;
 }
 
-void cse_hash::set_hashed_subexpr_elim(const expr& ex, const value& norm, 
-                    const expr& simpl)
+void cse_hash::set_hashed_subexpr_elim(const expr& ex, const expr& simpl)
 {
     assertion(ex.is_null() == false, "error in set_hashed_subexpr_elim");
 
     expr_handle h   = ex.get_ptr().get();
-    m_hash_map.insert(h, cse_hash_data(norm, simpl));
+    m_hash_map.insert(h, cse_hash_data(simpl));
     
     h->set_tracked(true);
 

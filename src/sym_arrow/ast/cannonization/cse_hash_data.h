@@ -37,7 +37,6 @@ class cse_hash_data
         using stack_type    = expr_base::stack_type;
 
     private:
-        value               m_normalization;
         weak_expr_ptr       m_simplified;
 
     public:
@@ -45,13 +44,10 @@ class cse_hash_data
         cse_hash_data();
 
         // initialize with common subexpression elimination results
-        cse_hash_data(const value& norm, const expr& simpl);
+        cse_hash_data(const expr& simpl);
 
         // return true if this object is not initialized
         bool                is_empty() const;
-
-        // return normalization constant
-        const value&        get_normalization() const;
 
         // return simplified expression
         expr                get_simplified_expr() const;

@@ -70,10 +70,8 @@ class cse_hash : public sym_dag::node_cache
         void                add_observation(bool obs, bool pred);
 
         // get and set result of common subexpr elimination
-        bool                get_hashed_subexpr_elim(const expr& ex, 
-                                value& norm, expr& simpl);
-        void                set_hashed_subexpr_elim(const expr& ex, 
-                                const value& norm, const expr& simpl);
+        bool                get_hashed_subexpr_elim(const expr& ex, expr& simpl);
+        void                set_hashed_subexpr_elim(const expr& ex, const expr& simpl);
         branch_predictor&   get_predictor(int level);
 
         virtual void        clear() override;

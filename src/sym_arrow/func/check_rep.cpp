@@ -398,7 +398,7 @@ bool do_check_rep_vis::is_cannonized(ast::expr_handle h)
 
 bool do_check_rep_vis::is_simple(const ast::add_rep* h)
 {
-    return ast::cannonize().is_simple(h);
+    return ast::cannonize::is_simple_add(h);
 };
 
 bool do_check_rep_vis::is_atom(ast::expr_handle h)

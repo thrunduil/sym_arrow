@@ -32,14 +32,9 @@ namespace sym_arrow { namespace ast
 cse_hash_data::cse_hash_data()
 {};
 
-cse_hash_data::cse_hash_data(const value& norm, const expr& simpl)
-    :m_normalization(norm), m_simplified(simpl.get_ptr())
+cse_hash_data::cse_hash_data(const expr& simpl)
+    : m_simplified(simpl.get_ptr())
 {};
-
-const value& cse_hash_data::get_normalization() const
-{
-    return m_normalization;
-}
 
 expr cse_hash_data::get_simplified_expr() const
 {

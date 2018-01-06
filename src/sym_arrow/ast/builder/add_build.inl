@@ -31,7 +31,6 @@ namespace sym_arrow { namespace ast
 template<class item_type>
 add_build::add_build(const add_build_info<item_type>& bi)
     : base_type(this), m_vlist(bi.get_const(), value::make_one())
-    , m_normalization(value::make_zero())
 {
     for (size_t i = 0; i < bi.size(); ++i)
         insert_elem(bi.get_mult(i),bi.get_expr(i));
@@ -43,7 +42,6 @@ add_build::add_build(const add_build_info<item_type>& bi)
 template<class item_type>
 add_build::add_build(const add_build_info2<item_type>& bi)
     : base_type(this), m_vlist(bi.get_const(), value::make_one())
-    , m_normalization(value::make_zero())
 {
     for (size_t i = 0; i < bi.size(); ++i)
         insert_elem(bi.get_mult(i), bi.get_expr(i));
@@ -67,15 +65,13 @@ inline const add_build::vlist_type& add_build::get_vlist() const
     return m_vlist;
 };
 
-inline const expr& add_build::get_cannonized(value& scal) const
+inline const expr& add_build::get_cannonized() const
 {
-    scal = m_normalization;
     return m_cannonized;
 }
 
-inline void add_build::set_cannonized(const expr& ex, const value& scal) const
+inline void add_build::set_cannonized(const expr& ex) const
 {
-    m_normalization = scal;
     m_cannonized    = ex;
 };
 

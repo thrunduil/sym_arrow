@@ -65,12 +65,9 @@ class cannonize
         // cannonize add build
         expr            make_add(const add_build* h, bool do_cse);
 
-        // cannonize and normalize add build
-        expr            make_normalize(const add_build* h, value& scal, bool do_cse);
-
-        // cannonize and normalize decomposed add build
-        expr            make_normalize(const value& add, size_t size, 
-                            const build_item<value>* h, value& scal, bool do_cse);
+        // cannonize decomposed add build
+        expr            make_add(const value& add, size_t size, 
+                            const build_item<value>* h, bool do_cse);
 
         // cannonize decomposed mult expr
         expr            make_mult(size_t isize, size_t rsize, bool has_exp, 
@@ -78,7 +75,7 @@ class cannonize
                             value& scal, bool do_cse);
 
         // add term is simple if has the form a + bx, where a = 0
-        bool            is_simple(const add_rep* h) const;
+        static bool     is_simple_add(const add_rep* h);
 
         // return true is expression is cannonized
         bool            is_cannonized(const expr& ex) const;
@@ -86,11 +83,9 @@ class cannonize
 
     private:
         // implements cannonization        
-        expr            make_add_impl(const add_build* h, value& scal, bool normalize,
-                            bool do_cse);
+        expr            make_add_impl(const add_build* h,  bool do_cse);
         expr            make_add_impl(const add_rep* h);
-        expr            process_add(size_t n, item_collector_add& ic, value& ret_scal,
-                            bool normalize, bool do_cse);
+        expr            process_add(size_t n, item_collector_add& ic, bool do_cse);
 
         // update collected add items after succesful factorization
         void            process_add_factorization(const expr& fact, item_collector_add& ic,
@@ -103,8 +98,7 @@ class cannonize
                             expr& ex_term, expr& log_term, bool do_cse);
 
         // build final add expression
-        expr            finalize_add(item_collector_add& ic, size_t n, value& ret_scal, 
-                            bool normalize);
+        expr            finalize_add(item_collector_add& ic, size_t n);
 
         // calculate number of elements in build expressions
         void            calc_size(const mult_build* h, item_collector_size& ic) const;

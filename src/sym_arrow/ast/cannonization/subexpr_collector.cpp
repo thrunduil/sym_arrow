@@ -740,14 +740,33 @@ void subexpr_collector::finalize_sum(build_item<value>* it, size_t size, const v
         };
     };
 
-    res                 = cannonize().make_normalize(add, size, it, scal, true);
+    res                 = cannonize().make_add(add, size, it, true);
 
     if (res.get_ptr()->isa<scalar_rep>() == true)
     {
         value v         = res.get_ptr()->static_cast_to<scalar_rep>()->get_data();
         res             = scalar_rep::make_one();
-        scal            = scal * v;
-    };
+        scal            = v;
+    }
+    else if (res.get_ptr()->isa<add_rep>() == true)
+    {
+        const add_rep* ah   = res.get_ptr()->static_cast_to<add_rep>();
+        
+        if (cannonize::is_simple_add(ah) == true)
+        {
+            expr_handle tmp_ex  = ah->E(0);
+            scal                = ah->V(0);
+            res                 = expr(expr_ptr::from_this(tmp_ex));
+        }
+        else
+        {
+            scal        = value::make_one();
+        }
+    }
+    else
+    {
+        scal            = value::make_one();
+    }
 
     return;
 };

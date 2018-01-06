@@ -34,7 +34,6 @@ namespace sym_arrow { namespace ast
 //----------------------------------------------------------------------
 add_build::add_build(const add_log_build_info& bi)
     : base_type(this), m_vlist(value::make_zero(), value::make_one())
-    , m_normalization(value::make_zero())
 {
     insert_log_elem(bi.get_expr());
 };

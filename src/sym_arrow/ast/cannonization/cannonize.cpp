@@ -58,7 +58,7 @@ void cannonize::hold_expr(const expr& ex)
     m_expr_stack->push_back(ex);
 }
 
-bool cannonize::is_simple(const add_rep* h) const
+bool cannonize::is_simple_add(const add_rep* h)
 {
     if (h->size() == 1 && h->has_log() == false && h->V0().is_zero())
         return true;
@@ -141,13 +141,6 @@ bool cannonize::is_cannonized(const expr& ex) const
     return is_cannonized(ex.get_ptr().get());
 };
 
-expr cannonize::make_add(const add_build* h, bool do_cse)
-{
-    value scal  = value::make_one();
-    expr ret    = make_add_impl(h, scal, false, do_cse);
-    return ret;
-};
-
 expr cannonize::make_mult(const mult_build* h, bool do_cse)
 {
     expr ret = h->get_cannonized();
@@ -161,29 +154,28 @@ expr cannonize::make_mult(const mult_build* h, bool do_cse)
     return ret;
 };
 
-expr cannonize::make_normalize(const add_build* h, value& scal, bool do_cse)
+expr cannonize::make_add(const add_build* h, bool do_cse)
 {
-    expr ret = h->get_cannonized(scal);
+    expr ret = h->get_cannonized();
     
     if (ret.is_null() == false)
         return ret;
 
-    ret = make_add_impl(h, scal, true, do_cse);
-    h->set_cannonized(ret, scal);
+    ret = make_add_impl(h, do_cse);
+    h->set_cannonized(ret);
 
     return ret;
 };
 
-expr cannonize::make_add_impl(const add_build* h, value& ret_scal, bool normalize,
-                              bool do_cse)
+expr cannonize::make_add_impl(const add_build* h, bool do_cse)
 {    
     size_t n            = calc_size_add(h->get_vlist());
     value scal          = value::make_one();
 
-    item_collector_add ic(n, m_temp_vals);    
+    item_collector_add ic(n, m_temp_vals);        
     collect_items_root(h->get_vlist(), ic, scal);
 
-    return process_add(n, ic, ret_scal, normalize, do_cse);
+    return process_add(n, ic, do_cse);
 }
 
 expr cannonize::make_add_impl(const add_rep* h)
@@ -194,12 +186,11 @@ expr cannonize::make_add_impl(const add_rep* h)
     item_collector_add ic(n, m_temp_vals);    
     collect_items(h, ic, scal);
 
-    value ret_scal;
-    return process_add(n, ic, ret_scal, false, true);
+    return process_add(n, ic, true);
 }
 
-expr cannonize::make_normalize(const value& add, size_t size, 
-                    const build_item<value>* h, value& ret_scal, bool do_cse)
+expr cannonize::make_add(const value& add, size_t size, 
+                    const build_item<value>* h, bool do_cse)
 {
     size_t n            = 0;
     for (size_t i = 0; i < size; ++i)
@@ -212,11 +203,10 @@ expr cannonize::make_normalize(const value& add, size_t size,
     value scal          = value::make_one();
     collect_items_root(size, h, ic, scal);
 
-    return process_add(n, ic, ret_scal, true, do_cse);
+    return process_add(n, ic, do_cse);
 };
 
-expr cannonize::process_add(size_t n, item_collector_add& ic, value& ret_scal,
-                            bool normalize, bool do_cse)
+expr cannonize::process_add(size_t n, item_collector_add& ic, bool do_cse)
 {
     using item          = build_item<value>;
     using item_handle   = item::handle_type;
@@ -230,41 +220,31 @@ expr cannonize::process_add(size_t n, item_collector_add& ic, value& ret_scal,
     simplify_expr<item_handle, temp_value>::make(ih, n, m_temp_vals);
 
     if (n < 2 || do_cse == false)
-        return finalize_add(ic, n, ret_scal, normalize);
+        return finalize_add(ic, n);
 
     expr ex_test;
-    value scal_test;
-    bool check_hash     = false;
     cse_hash& hashed    = cse_hash::get();
 
-    if (normalize == true)
+    bool check_hash     = hashed.check_hash();
+
+    if (check_hash == true)
     {
-        check_hash      = hashed.check_hash();
+        expr ex_simpl;
+        ex_test         = finalize_add(ic, n);
+        size_t refcount = ex_test.get_expr_handle()->refcount();
+        bool succ       = false;
 
-        if (check_hash == true)
+        if (refcount != 1)
         {
-            expr ex_simpl;
-            value simpl_norm;
+            // only expr with refcoun > 1 could be hashed
+            succ        = hashed.get_hashed_subexpr_elim(ex_test, ex_simpl);
+        }            
 
-            ex_test         = finalize_add(ic, n, scal_test, true);
-            size_t refcount = ex_test.get_expr_handle()->refcount();
-            bool succ       = false;
-
-            if (refcount != 1)
-            {
-                // only expr with refcoun > 1 could be hashed
-                succ        = hashed.get_hashed_subexpr_elim(ex_test, 
-                                simpl_norm, ex_simpl);
-            }            
-
-            if (succ == true)
-            {
-                hashed.add_observation(succ, check_hash);
-
-                ret_scal    = simpl_norm * scal_test;
-                return ex_simpl;
-            }
-        };
+        if (succ == true)
+        {
+            hashed.add_observation(succ, check_hash);
+            return ex_simpl;
+        }
     };
 
     bool factorized     = false;
@@ -289,27 +269,18 @@ expr cannonize::process_add(size_t n, item_collector_add& ic, value& ret_scal,
             break;
     };
 
-    if (normalize == true)
+    hashed.add_observation(factorized, check_hash);
+
+    if (factorized == false && check_hash == true)
     {
-        hashed.add_observation(factorized, check_hash);
-
-        if (factorized == false && check_hash == true)
-        {
-            // expr was not factorized but finalize_add was called;
-
-            ret_scal = scal_test;
-            return ex_test;
-        };
+        // expr was not factorized but finalize_add was called;
+        return ex_test;
     };
 
-    expr ret    = finalize_add(ic, n, ret_scal, normalize);
+    expr ret    = finalize_add(ic, n);
 
     if (factorized == true && check_hash == true)
-    {
-        // add factorization result to hash table; rescale 
-        // normalization constant as if normalized expr was factorized
-        hashed.set_hashed_subexpr_elim(ex_test, ret_scal / scal_test, ret);
-    };
+        hashed.set_hashed_subexpr_elim(ex_test, ret);
 
     return ret;
 };
@@ -420,8 +391,7 @@ void cannonize::process_log(item_collector_add& ic, bool do_cse)
     return;
 };
 
-expr cannonize::finalize_add(item_collector_add& ic, size_t n, value& ret_scal, 
-                            bool normalize)
+expr cannonize::finalize_add(item_collector_add& ic, size_t n)
 {
     using item          = build_item<value>;
     using item_handle   = item::handle_type;
@@ -430,7 +400,6 @@ expr cannonize::finalize_add(item_collector_add& ic, size_t n, value& ret_scal,
     bool has_log        = ic.has_log();
     value add           = ic.get_add();
     expr ex_log         = ic.get_log();
-    ret_scal            = value::make_one();
 
     if (n == 0)
     {
@@ -466,12 +435,6 @@ expr cannonize::finalize_add(item_collector_add& ic, size_t n, value& ret_scal,
 
     if (n == 1 && add.is_zero() == true)
     {
-        if (normalize == true)
-        {
-            ret_scal = ih[0].get_value();
-            return expr(ih[0].get_expr_handle());
-        };
-
         if (ih[0].get_value().is_one() == true)
             return expr(ih[0].get_expr_handle());
     };
@@ -765,7 +728,7 @@ void cannonize::calc_size(item_collector_size& ic, const build_item<Value_t>& it
         {
             const add_rep* aa = it.get_expr_handle()->static_cast_to<add_rep>();
 
-            if (is_simple(aa) == true)
+            if (is_simple_add(aa) == true)
             {
                 if (aa->E(0)->isa<mult_rep>())
                 {
@@ -1013,7 +976,7 @@ void cannonize::collect_items(item_collector_mult& ic, const Pow_value& pow,
         {
             const add_rep* aa = elem.get_expr_handle()->static_cast_to<add_rep>();
 
-            if (is_simple(aa) == true)
+            if (is_simple_add(aa) == true)
             {
                 expr_handle tmp_ex  = aa->E(0);
                 auto pow2           = elem.get_value() * pow;

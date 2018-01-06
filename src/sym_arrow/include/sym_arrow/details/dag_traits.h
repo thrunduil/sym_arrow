@@ -64,7 +64,7 @@ template<>
 struct dag_tag_traits<sym_arrow::ast::term_tag>
 {
     static const size_t number_codes    = (size_t)sym_arrow::ast::term_types::number_codes;
-    static const size_t user_flag_bits  = 2;
+    static const size_t user_flag_bits  = 3;
     static const bool need_release_stack= true;
 };
 

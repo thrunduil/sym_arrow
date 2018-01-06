@@ -152,9 +152,6 @@ class add_build : public sym_dag::dag_item<add_build, term_tag, false>
         // cannonized and normalized expression if calculated
         mutable expr        m_cannonized;
 
-        // normalization constant for cannonized expression
-        mutable value       m_normalization;
-
     public:
         // create add_build node
         template<class Item>
@@ -186,10 +183,10 @@ class add_build : public sym_dag::dag_item<add_build, term_tag, false>
                             unique_elem() const;
 
         // return cannonization and normalization constant
-        const expr&         get_cannonized(value& scal) const;
+        const expr&         get_cannonized() const;
 
         // set result of cannonization and normalization of this node
-        void                set_cannonized(const expr& ex, const value& scal) const;
+        void                set_cannonized(const expr& ex) const;
 
     public:
         // perform a + (scal * x), where x is represented by this node;

@@ -62,26 +62,8 @@ namespace sym_arrow { namespace details
             
             static size_t eval_hash(const impl_type& val)
             {
-#if 0
-                size_t seed1        = matcl::hash_value(val);
-                return seed1;
-#else
-                //TODO: mp_float hash
-                double vd           = val.cast_float();
-                const size_t* tmp   = reinterpret_cast<const size_t*>(&vd);
-
-                size_t seed2        = tmp[0];
-
-                for(size_t i = 1; i < sizeof(double) / sizeof(size_t); ++i)
-                    boost::hash_combine(seed2, tmp[i]);
-
-                //boost::hash_combine(seed, seed1);
-
-                //(void)seed1;
-                //return seed2;
-                return seed2;
-#endif
-                
+                size_t seed = matcl::hash_value(val);
+                return seed;
             }
     };
 
