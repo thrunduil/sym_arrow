@@ -82,6 +82,7 @@ class vlist_stack;
 class vlist_add;
 class ilist_mult;
 class rlist_mult;
+class cannonize;
 
 template<class Value_type>
 class build_item;

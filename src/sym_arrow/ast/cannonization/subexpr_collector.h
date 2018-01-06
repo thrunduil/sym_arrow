@@ -202,13 +202,14 @@ class subexpr_collector
 
     private:
         temp_value*     m_temp_vals;
+        cannonize*      m_cannonize;
 
     public:
         // return true if some of items was factored; 
         // if true is returned, then factored items are removed 
         // from the array ih (i.e. expr handle is set to nullptr);
         bool            make(size_t n, add_item_handle* ih, expr& res, value& scal,
-                            temp_value& temp_vals);
+                            temp_value& temp_vals, cannonize& cannon);
 
     private:
         // count number of subterms (ipow, rpow, exp subexpressions)

@@ -54,9 +54,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\fast_sym\simplifications.txt">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\config.h">
       <Filter>Source Files\include\sym_arrow</Filter>
     </ClInclude>
@@ -508,6 +505,9 @@
       <Filter>Source Files\grammar\output</Filter>
     </Text>
     <Text Include="..\..\INSTALL.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="..\..\src\sym_arrow\simplifications.txt">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>

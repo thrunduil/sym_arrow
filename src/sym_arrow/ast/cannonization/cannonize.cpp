@@ -121,7 +121,7 @@ expr cannonize::make_cse(const expr& ex)
 };
 
 
-bool cannonize::is_cannonized(expr_handle ex) const
+bool cannonize::is_cannonized(expr_handle ex)
 {
     switch (ex->get_code())
     {
@@ -133,7 +133,7 @@ bool cannonize::is_cannonized(expr_handle ex) const
     };
 };
 
-bool cannonize::is_cannonized(const expr& ex) const
+bool cannonize::is_cannonized(const expr& ex)
 {    
     if (!ex.get_ptr())
         return true;
@@ -254,7 +254,7 @@ expr cannonize::process_add(size_t n, item_collector_add& ic, bool do_cse)
         expr fact;
         value scal;
 
-        bool succ       = subexpr_collector().make(n, ih, fact, scal, m_temp_vals);
+        bool succ       = subexpr_collector().make(n, ih, fact, scal, m_temp_vals, *this);
         factorized      |= succ;
 
         if (succ == false)
@@ -1043,5 +1043,189 @@ expr cannonize::make_exp_mult_rep(const expr& ex_exp) const
 
     return expr(std::move(am_ptr));
 };
+
+bool cannonize::is_normalized(const add_rep* h)
+{
+    return h->is_normalized();
+};
+
+expr_ptr cannonize::normalize(const add_rep* h, value& scal) const
+{
+    if (cannonize::is_simple_add(h) == true)
+    {
+        expr_handle tmp_ex  = h->E(0);
+        scal                = h->V(0);
+        expr_ptr res        = expr_ptr::from_this(tmp_ex);
+        return res;
+    };
+
+    if (h->is_normalized() == true)
+        return expr_ptr(h, sym_dag::copy_t());
+
+    value scal_inv      = get_normalize_scaling(h->V0(), h->size(), h->VE(), h->has_log());
+
+    if (scal_inv.is_one() == true)
+    {
+        scal            = value::make_one();
+
+        const_cast<add_rep*>(h)->set_normalized();
+        return expr_ptr(h, sym_dag::copy_t());
+    };
+
+    scal                = inv(scal_inv);
+
+    using item_handle   = build_item<value>::handle_type;
+    using pod_type      = sd::pod_type<item_handle>;
+
+    static const size_t ih_buffer_size = 20;
+
+    static_assert(sd::is_effective_pod<item_handle>::value == true, "pod required");
+
+    sd::stack_array<pod_type,ih_buffer_size> 
+    ih_array(h->size() + 1);
+
+    item_handle* ih     = (item_handle*)ih_array.get();
+
+    for (size_t i = 0; i < h->size(); ++i)
+        new(ih + i) item_handle(m_temp_vals.make_handle(h->V(i) * scal), h->E(i));
+
+    bool has_log        = h->has_log();
+    value one           = value::make_one();
+
+    if (has_log == true)
+        new(ih + h->size()) item_handle(value_handle_type<value>::make_handle(one), h->Log());
+
+    value tmp   = h->V0() * scal;
+    add_rep_info<item_handle> ai(&tmp, h->size(), ih, 
+                                    has_log ? ih + h->size() : nullptr);
+
+    using add_rep_ptr = sym_dag::dag_ptr<add_rep>;
+
+    add_rep_ptr res = add_rep::make(ai);
+    const_cast<add_rep*>(res.get())->set_normalized();
+    return res;
+};
+
+value cannonize::add_scalar_normalize(const add_rep* h, const value& add, const value& v, expr& res)
+{
+    if (v.is_one())
+        return add_scalar_normalize(h, add, res);
+
+    value new_add       = v * (h->V0()) + add;
+
+    if (h->size() == 1 && h->has_log() == false && new_add.is_zero() == true)
+    {
+        res = expr(h->E(0));
+        return v * (h->V(0));
+    };    
+
+    using item_handle   = build_item<value>::handle_type;
+    using pod_type      = sd::pod_type<item_handle>;
+
+    static const size_t ih_buffer_size = 20;
+    static_assert(sd::is_effective_pod<item_handle>::value == true, "pod required");
+
+    sd::stack_array<pod_type,ih_buffer_size> 
+    ih_array(h->size() + 1);
+
+    item_handle* ih     = (item_handle*)ih_array.get();
+
+    value scal_inv      = get_normalize_scaling(new_add, h->size(), h->VE(), h->has_log(), v);
+    
+    value v_scal        = v * scal_inv;
+    new_add             = new_add * scal_inv;
+
+    for (size_t i = 0; i < h->size(); ++i)
+        new(ih + i) item_handle(m_temp_vals.make_handle(h->V(i) * v_scal), h->E(i));
+
+    bool has_log        = h->has_log();
+    value one           = value::make_one();
+
+    expr log_mult;
+
+    if (has_log == true)
+    {
+        log_mult        = mult_log(h->Log(), v_scal);
+        new(ih + h->size()) item_handle(value_handle_type<value>::make_handle(one), log_mult.get_expr_handle());
+    }
+
+    add_rep_info<item_handle> ai(&new_add, h->size(), ih, 
+                                    has_log ? ih + h->size() : nullptr);
+
+    using add_rep_ptr = sym_dag::dag_ptr<add_rep>;
+
+    add_rep_ptr ares = add_rep::make(ai);
+    const_cast<add_rep*>(ares.get())->set_normalized();
+    res             = expr(ares);
+
+    value scal      = inv(scal_inv);
+    return scal;
+};
+
+value cannonize::add_scalar_normalize(const add_rep* h, const value& add, expr& res)
+{
+    value new_add       = h->V0() + add;
+
+    if (h->size() == 1 && h->has_log() == false && new_add.is_zero() == true)
+    {
+        res = expr(h->E(0));
+        return h->V(0);
+    };    
+
+    using value_expr    = details::value_expr<value>;
+
+    value scal_inv      = get_normalize_scaling(new_add, h->size(), h->VE(), h->has_log());
+
+    if (scal_inv.is_one() == true)
+    {
+        bool has_log        = h->has_log();
+        size_t n            = h->size();
+
+        add_rep_info<value_expr> ai(&new_add, n, h->VE(), has_log ? &h->VLog() : nullptr);
+
+        expr_ptr res_ptr    = add_rep::make(ai);
+        res                 = expr(res_ptr);
+        return scal_inv;
+    };
+
+    using item_handle   = build_item<value>::handle_type;
+    using pod_type      = sd::pod_type<item_handle>;
+
+    static const size_t ih_buffer_size = 20;
+    static_assert(sd::is_effective_pod<item_handle>::value == true, "pod required");
+
+    sd::stack_array<pod_type,ih_buffer_size> 
+    ih_array(h->size() + 1);
+
+    item_handle* ih     = (item_handle*)ih_array.get();
+
+    for (size_t i = 0; i < h->size(); ++i)
+        new(ih + i) item_handle(m_temp_vals.make_handle(h->V(i) * scal_inv), h->E(i));
+
+    new_add             = new_add * scal_inv;
+
+    // log term cannot exist
+    
+    add_rep_info<item_handle> ai(&new_add, h->size(), ih, nullptr);
+
+    using add_rep_ptr = sym_dag::dag_ptr<add_rep>;
+
+    add_rep_ptr ares = add_rep::make(ai);
+    const_cast<add_rep*>(ares.get())->set_normalized();
+    res             = expr(ares);
+
+    value scal      = inv(scal_inv);
+    return scal;
+};
+
+expr cannonize::mult_log(expr_handle log_h, const value& v)
+{
+    if (v.is_one() == true)
+        return expr(log_h);
+
+    expr res    = power_real(expr(log_h), v);
+    res.cannonize();
+    return res;
+}
 
 };};

@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\fast_sym\simplifications.txt" />
     <ClInclude Include="..\..\src\sym_arrow\ast\add_rep.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\ast.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\ast_rep_details.h" />
@@ -198,6 +197,7 @@
   <ItemGroup>
     <Text Include="..\..\INSTALL.txt" />
     <Text Include="..\..\src\sym_arrow\grammar\output\sym_arrow_vocabularyTokenTypes.txt" />
+    <Text Include="..\..\src\sym_arrow\simplifications.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4BE517FA-056D-4070-91EC-C33F3274AE38}</ProjectGuid>

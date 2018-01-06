@@ -181,12 +181,14 @@ bool factor_group_stats::operator<(const factor_group_stats& other) const
 //                  subexpr_collector
 //-------------------------------------------------------------------
 bool subexpr_collector::make(size_t n, add_item_handle* ih, expr& res, 
-                             value& scal, temp_value& temp_vals)
+                             value& scal, temp_value& temp_vals, cannonize& cannon)
 {
     if (n < 2)
         return false;
 
     m_temp_vals = &temp_vals;
+    m_cannonize = &cannon;
+
     subs_counter counter;
     
     for (size_t i = 0; i < n; ++i)
@@ -433,13 +435,13 @@ void subexpr_collector::factor_subexpr(add_item_handle* ih, ipow_item* ipow_arr,
     assertion(rpow_size == rsize, "error in factor_subexpr");
 
     // cannonize mult expr; add exp terms only when there is only one
-    res         = cannonize().make_mult(isize, rsize, n_exp == 1, imh, 
+    res         = m_cannonize->make_mult(isize, rsize, n_exp == 1, imh, 
                                         rmh, scal, true);
 
     if (n_exp > 1)
     {
         res     = res * exp(exp_term);
-        res     = cannonize().make(res, true);
+        res     = m_cannonize->make(res, true);
     }
 
     ret_scal    = scal;
@@ -722,14 +724,24 @@ void subexpr_collector::finalize_sum(build_item<value>* it, size_t size, const v
             const add_rep* ah   = it[0].get_expr_handle()->static_cast_to<add_rep>();
             const value& v      = it[0].get_value();
 
-            add             = add/v;
-            value norm_scal = add_rep::add_scalar_normalize(ah, add, res);
-            scal            = norm_scal * v;
+            scal                = m_cannonize->add_scalar_normalize(ah, add, v, res);
             return;
         }
         else
         {
-            scal                = value::make_one();
+            // this is just add + v * f;
+            value scal_inv  = cannonize::get_normalize_scaling(add, 1, it, false);
+
+            if (scal_inv.is_one() == false)
+            {
+                add                     = add * scal_inv;
+                it[0].get_value_ref()   = it[0].get_value() * scal_inv;
+                scal                    = inv(scal_inv);
+            }
+            else
+            {
+                scal                    = scal_inv;
+            }
 
             using item_type     = build_item<value>;
             add_rep_info<item_type> ai(&add, 1, it, nullptr);
@@ -740,7 +752,7 @@ void subexpr_collector::finalize_sum(build_item<value>* it, size_t size, const v
         };
     };
 
-    res                 = cannonize().make_add(add, size, it, true);
+    res                 = m_cannonize->make_add(add, size, it, true);
 
     if (res.get_ptr()->isa<scalar_rep>() == true)
     {
@@ -751,17 +763,8 @@ void subexpr_collector::finalize_sum(build_item<value>* it, size_t size, const v
     else if (res.get_ptr()->isa<add_rep>() == true)
     {
         const add_rep* ah   = res.get_ptr()->static_cast_to<add_rep>();
-        
-        if (cannonize::is_simple_add(ah) == true)
-        {
-            expr_handle tmp_ex  = ah->E(0);
-            scal                = ah->V(0);
-            res                 = expr(expr_ptr::from_this(tmp_ex));
-        }
-        else
-        {
-            scal        = value::make_one();
-        }
+        expr_ptr res_ptr    = m_cannonize->normalize(ah, scal);
+        res                 = expr(res_ptr);
     }
     else
     {

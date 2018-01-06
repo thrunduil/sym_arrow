@@ -74,7 +74,7 @@ int main(int argc, const char* argv[])
         //sym_dag::registered_dag_context::get().print_memory_stats(std::cout);
         //sym_dag::registered_dag_context::get().print_collisions(std::cout);
 
-        //sym_dag::registered_dag_context::get().close();
+        sym_dag::registered_dag_context::get().close();
         sym_dag::registered_dag_context::get().print_memory_leaks(std::cout);
     }
     catch(std::exception& ex)

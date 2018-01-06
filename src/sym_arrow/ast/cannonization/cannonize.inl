@@ -27,4 +27,55 @@
 namespace sym_arrow { namespace ast
 {
 
+template<class Item>
+value cannonize::get_normalize_scaling(const value& V0, size_t n, const Item* V, bool has_log)
+{
+    (void)n;
+
+    if (has_log == true)
+        return value::make_one();
+
+    if (V0.is_zero() == false)
+    {
+        if (V0.is_negative() == true)
+            return value::make_minus_one();
+        else
+            return value::make_one();
+    };
+
+    value loc   = V[0].get_value();
+
+    if (loc.is_negative() == true)
+        return value::make_minus_one();
+    else
+        return value::make_one();
+};
+
+template<class Item>
+value cannonize::get_normalize_scaling(const value& V0, size_t n, const Item* V, bool has_log, 
+                                        const value& v)
+{
+    (void)n;
+
+    if (has_log == true)
+        return value::make_one();
+
+    if (V0.is_zero() == false)
+    {
+        if (V0.is_negative() == true)
+            return value::make_minus_one();
+        else
+            return value::make_one();
+    };
+
+    bool is_v_neg   = v.is_negative();    
+    value loc       = V[0].get_value();
+    bool is_neg     = loc.is_negative();
+
+    if (is_v_neg != is_neg)
+        return value::make_minus_one();
+    else
+        return value::make_one();
+};
+
 };};

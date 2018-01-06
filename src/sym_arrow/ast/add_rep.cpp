@@ -77,27 +77,6 @@ void add_rep::remove_add(const add_rep* h, value& add, expr& res)
     return;
 };
 
-value add_rep::add_scalar_normalize(const add_rep* h, value& add, expr& res)
-{
-    value new_add       = h->V0() + add;
-
-    if (h->size() == 1 && h->has_log() == false && new_add.is_zero() == true)
-    {
-        res = expr(h->E(0));
-        return h->V(0);
-    };
-
-    bool has_log    = h->has_log();
-    size_t n        = h->size();
-
-    add_rep_info<value_expr> ai(&new_add, n, h->m_data + 1, 
-                                has_log ? h->m_data : nullptr);
-
-    expr_ptr res_ptr    = add_rep::make(ai);
-    res                 = expr(res_ptr);
-    return value::make_one();
-};
-
 void add_rep::remove_add_log(const add_rep* h, expr& res)
 {
     if (h->V0().is_zero() == true && h->has_log() == false)

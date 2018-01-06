@@ -13,8 +13,8 @@ Simplication rules:
 common subexpressions elimination:
 1.  negative powers are collected separately to positive powers
 2.  ordering for integer powers:
-        1. prefer sequence of equal powers higher number of
-            subexpr can be deeply simplified
+        1. prefer sequence with higher number of subexpr that can be 
+           deeply simplified
         2. then prefer longest sequences of equal powers
         3. in case of equal length prefer negative powers first
         4. prefer sequence with higher total length
@@ -33,15 +33,15 @@ common subexpressions elimination:
         5. prefer sequence with higher total length
         6. otherwise both sequences are equal
 3.  ordering for real powers
-        1. prefer sequence of equal powers higher number of
-            subexpr can be deeply simplified
+        1. prefer sequence with higher number of subexpr that can be 
+           deeply simplified
         2. then prefer longest sequences of equal powers
         3. if two sequences have the same length, then prefer sequence
             with higher power
         4. otherwise both sequences are equal
 4.  ordering for exp expressions
-        1. prefer sequence of equal powers higher number of
-            subexpr can be deeply simplified
+        1. prefer sequence with higher number of subexpr that can be 
+           deeply simplified
         2. then prefer longest sequences of equal exp expressions
         3. otherwise both sequences are equal
 5.  ordering between expression types
@@ -57,9 +57,9 @@ common subexpressions elimination:
         1. construct a set of all possible one-element subsexpressions
         2. select best subexpressions according to above ordering
         3. if a set of best subexpressions has more than one element, then
-           prefer the sequence with more complex base
+           prefer the sequence with more complex base (TODO)
         4. if a set of best subexpressions stil has more than one element, then
-           compare base expressions birth time
+           compare base expressions birth time (TODO)
 
 expression complexity comparison:
 expression a is more complex than expression b if
@@ -77,6 +77,7 @@ consistency checks:
     - if size = 0, then has_log = true
     - values are consistent:
         - subterm values are not zero
+        - subterm values are finite
         - is size = 1 and has_log = false
             if V0 = 0 and V(0) = 1 then error
     - subexpr are consistent:
@@ -95,17 +96,14 @@ consistency checks:
         
 3a. add_rep is normalized if:
     - has log or
-    - normalize scaling is 1, where absolute value of normalize scaling 
-        is equal to maximum value of scalars in add_rep (including constant)
-        and sign is the same as sign of the first nonzero scalar (including
-        constant); if maximum value of scalars is not finite, then expression
-        is considered as normalized
+    - sign of the first nonzero scalar (including constant) is positive
     
 4.  mult_rep
     - if isize == 0 and rsize == 0 and has_exp == false then error
     - values are consistent:
         - integer powers cannot be zero
         - real powers cannot be zero
+        - real powers are finite
         - if isize == 1 and rsize == 0 and IV(0) == 1 and has_exp == false
             then error
     - subexpr are consistent:

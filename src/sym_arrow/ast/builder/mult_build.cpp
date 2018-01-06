@@ -165,13 +165,18 @@ void mult_build::insert_ielem(int vpow, expr_handle expr)
         };
 
         sym_arrow::expr tmp = cannonize().make_add(ab, do_cse_default);
-
-        expr_handle be(tmp.get_ptr().get());
+        expr_handle be(tmp.get_ptr().get());        
         return insert_ielem(vpow,be);
     }
     else if (expr->isa<add_rep>() == true)
     {
-        ipush_back(vpow, expr);
+        value scal      = value::make_one();
+        expr_ptr tmp    = cannonize().normalize(expr->static_cast_to<add_rep>(), scal);
+
+        if (scal.is_one() == false)
+            make_scal(power_int(scal,vpow));
+
+        ipush_back(vpow, tmp.get());
         return;
     };
 
@@ -204,13 +209,18 @@ void mult_build::insert_relem(const value& pow, expr_handle expr)
         };
 
         sym_arrow::expr tmp  = cannonize().make_add(ab, do_cse_default);
-
         expr_handle be(tmp.get_ptr().get());
         return insert_relem(pow, be);
     }
     else if (expr->isa<add_rep>() == true)
     {
-        rpush_back(pow, expr);
+        value scal   = value::make_one();
+        expr_ptr tmp = cannonize().normalize(expr->static_cast_to<add_rep>(), scal);
+        
+        if (scal.is_one() == false)
+            make_scal(power_real(scal, pow));
+        
+        rpush_back(pow, tmp.get());
         return;
     };
 

@@ -36,24 +36,24 @@ template<class Item_type>
 struct add_rep_info
 {
     // number of subterms
-    size_t          n;
+    size_t              n;
 
     // free scalar
-    const value*    scal0;
+    const value*        scal0;
 
     // handles to subterms (storing a value and a term)
-    Item_type*      elems;
+    const Item_type*    elems;
 
     // handle to exp subterm
-    Item_type*      log_expr;
+    const Item_type*    log_expr;
 
     // hash value; will be set later
-    mutable size_t  m_hash_add;
+    mutable size_t      m_hash_add;
 
     // constructor; data must satisfy cannonization requirement
     // of add_rep
-    add_rep_info(const value* a0, size_t n_expr, Item_type* expr, 
-                    Item_type* log_expr_)
+    add_rep_info(const value* a0, size_t n_expr, const Item_type* expr, 
+                    const Item_type* log_expr_)
         : scal0(a0), n(n_expr), elems(expr), log_expr(log_expr_)
         , m_hash_add(0) 
     {};
@@ -120,13 +120,20 @@ class add_rep : public expr_symbols<add_rep>
         // return array of value-expression pairs
         const value_expr*   VE() const;
 
+        // return value-expression pair associated with the log
+        // subterm (i.e. [V0(), Log()]; requires has_log() == true
+        const value_expr&   VLog() const;
+
+        // return true, if this expression is normalized
+        bool                is_normalized() const;
+
+        // mark this object as normalized
+        void                set_normalized();
+
     public:
         // form expression obtained by removing additive term
         // add is set to V0(), are res stores resulting expression
         static void         remove_add(const add_rep* h, value& add, expr& res);
-
-        // form add + this; return normalized expression and scaling
-        static value        add_scalar_normalize(const add_rep* h, value& add, expr& res);
 
         // form expression obtained by removing add and log term
         static void         remove_add_log(const add_rep* h, expr& res);

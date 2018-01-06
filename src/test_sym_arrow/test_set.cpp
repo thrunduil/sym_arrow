@@ -218,6 +218,7 @@ void test_set::test_expression(size_t n_rep)
 
     bool show           = false;
     size_t stop_index   = (size_t)-1;
+    //size_t stop_index   = 84165;
 
     tic();
     for(size_t i = 0; i < n_rep; ++i)

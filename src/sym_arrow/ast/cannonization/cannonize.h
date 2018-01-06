@@ -77,9 +77,35 @@ class cannonize
         // add term is simple if has the form a + bx, where a = 0
         static bool     is_simple_add(const add_rep* h);
 
+        // return true if add expression is normalized
+        static bool     is_normalized(const add_rep* h);
+
+        // normalize add expression
+        expr_ptr        normalize(const add_rep* h, value& scal) const;
+
+        // get normalization scalar; all scalars in add_rep should be multiplied
+        // by this scalar in order to obtain normalized representation
+        template<class Item>
+        static value    get_normalize_scaling(const value& V0, size_t n, const Item* V, 
+                            bool has_log);
+
+        // get normalization scalar for add_rep expression represented as
+        // h = V0 + sum_{i = 1}^n V[i-1] * v; all scalars in add_rep should be multiplied
+        // by this scalar in order to obtain normalized representation
+        template<class Item>
+        static value    get_normalize_scaling(const value& V0, size_t n, const Item* V, 
+                            bool has_log, const value& v);
+
+        // form add + v * h, where h is add_rep expression and normalize result
+        value           add_scalar_normalize(const add_rep* h, const value& add, const value& v, 
+                            expr& res);
+
+        // form add + h, where h is add_rep expression and normalize result
+        value           add_scalar_normalize(const add_rep* h, const value& add, expr& res);
+
         // return true is expression is cannonized
-        bool            is_cannonized(const expr& ex) const;
-        bool            is_cannonized(expr_handle ex) const;
+        static bool     is_cannonized(const expr& ex);
+        static bool     is_cannonized(expr_handle ex);
 
     private:
         // implements cannonization        
@@ -91,6 +117,9 @@ class cannonize
         void            process_add_factorization(const expr& fact, item_collector_add& ic,
                             size_t& n, const value& scal, bool do_cse);
         
+        // represent log[log_h] * v as log[res]
+        expr            mult_log(expr_handle log_h, const value& v);
+
         void            process_log(item_collector_add& ic, bool do_cse);
         expr            make_mult_impl(const mult_build* h, bool do_cse); 
         expr            process_mult(item_collector_mult& ic, value& scal, bool do_cse);
