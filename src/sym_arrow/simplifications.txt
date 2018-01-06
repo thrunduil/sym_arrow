@@ -1,13 +1,13 @@
 Simplication rules:
 
-1.  0 * x   -> 0                        for any x (including inf, NaN)
+1.  0 * x   -> 0                        for any x (including inf, NaN) TODO
 2.  0 + x   -> x
 3.  1 * x   -> x
 4.  v1 * x + v2 * x -> (v1 + v2) * x    for any v1, v2, x
-5.  x ^ 0   -> 1                        for any x
+5.  x ^ 0   -> 1                        for any x, TODO
 6.  x ^ 1   -> x
 7.  (x^a) * (x^b) -> x^(a + b)          for any x and any integers a, b
-8.  1 ^ x   -> 1                        for any x
+8.  1 ^ x   -> 1                        for any x, TODO
 9.  a^x     -> e^(x*log(|a|))           for any a and x
 
 common subexpressions elimination:
@@ -80,6 +80,7 @@ consistency checks:
         - subterm values are finite
         - is size = 1 and has_log = false
             if V0 = 0 and V(0) = 1 then error
+        - V0 is finite
     - subexpr are consistent:
         - every subexpression is not null and is cannonized
         - every subexpression is atom or mult_rep
@@ -140,3 +141,4 @@ consistency checks:
         - subterm is not null
         - subterm is cannonized
         - subterm is consistent
+        - if subterm is a scalar, then this scalar is finite

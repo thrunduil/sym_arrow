@@ -63,10 +63,10 @@ class do_check_rep_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool atom_mult_check_rep_values(const ast::mult_rep* h);
         bool atom_mult_check_rep_expr(const ast::mult_rep* h);
         bool atom_mult_check_rep_exp_expr(const ast::mult_rep* h);
-        bool real_power_check_rep(const value&);
 
         bool is_cannonized(ast::expr_handle h);
         bool is_normalized(const ast::add_rep* h);
+        bool is_finite_scalar(ast::expr_handle h);
 
         bool is_add_free(ast::expr_handle h);
         bool is_atom(ast::expr_handle h);
@@ -161,6 +161,9 @@ bool do_check_rep_vis::eval(const ast::function_rep* h)
         if (is_cannonized(e) == false)
             return false;
 
+        if (is_finite_scalar(e) == false)
+            return false;
+
         if (visit(e) == false)
             return false;
     };
@@ -176,6 +179,9 @@ bool do_check_rep_vis::atom_add_check_rep_values(const ast::add_rep* h)
     {
         if (h->V(i).is_zero())
             return false;
+
+        if (h->V(i).is_finite() == false)
+            return false;
     };
 
     if (size == 1 && h->has_log() == false)
@@ -183,6 +189,9 @@ bool do_check_rep_vis::atom_add_check_rep_values(const ast::add_rep* h)
         if (h->V0().is_zero() && h->V(0).is_one())
             return false;
     };
+
+    if (h->V0().is_finite() == false)
+        return false;
 
     return true;
 };
@@ -256,7 +265,7 @@ bool do_check_rep_vis::atom_add_check_rep_log_expr(const ast::add_rep* h)
     if (h->Log()->isa<ast::add_rep>() == true)
     {
         const ast::add_rep* ah = h->Log()->static_cast_to<ast::add_rep>();
-        if (ah->size() == 1 && ah->has_log() == false && ah->V0().is_zero() == true)
+        if (ast::cannonize::is_simple_add(ah) == true)
             return false;
     };
 
@@ -275,6 +284,10 @@ bool do_check_rep_vis::atom_mult_check_rep_values(const ast::mult_rep* h)
     {
         if (h->RV(i).is_zero() == true)
             return false;
+
+        //TODO
+        //if (h->RV(i).is_finite() == false)
+        //    return false;
     };
 
     if (h->isize() == 1 && h->rsize() == 0)
@@ -318,7 +331,6 @@ bool do_check_rep_vis::atom_mult_check_rep_expr(const ast::mult_rep* h)
     for (size_t i = 0; i < n_real_elem; ++i)
     {
         ast::expr_handle e  = h->RE(i);
-        const value& p      = h->RV(i);
 
         if (is_cannonized(e) == false)
             return false;
@@ -337,9 +349,6 @@ bool do_check_rep_vis::atom_mult_check_rep_expr(const ast::mult_rep* h)
             return false;
 
         if (visit(e) == false)
-            return false;
-
-        if (real_power_check_rep(p) == false)
             return false;
     };
 
@@ -390,13 +399,19 @@ bool do_check_rep_vis::atom_mult_check_rep_exp_expr(const ast::mult_rep* h)
     return true;
 };
 
-bool do_check_rep_vis::real_power_check_rep(const value& p)
+bool do_check_rep_vis::is_finite_scalar(ast::expr_handle h)
 {
-    if (p.is_zero() == true)
-        return false;
-    else
+    if (h->isa<ast::scalar_rep>() == false)
         return true;
-};
+
+    bool is_fin = h->static_cast_to<ast::scalar_rep>()->get_data().is_finite();
+
+    if (is_fin == false)
+        return false;
+
+    //TODO: add checks at construction
+    return true;
+}
 
 bool do_check_rep_vis::is_cannonized(ast::expr_handle h)
 {

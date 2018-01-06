@@ -88,6 +88,9 @@ class scalar_rep : public sym_dag::dag_item<scalar_rep, term_tag, true>
 
         // return preallocated scalar storing value minus one
         static const scalar&    make_minus_one();
+
+        // return precomputed scalar representing value NaN
+        static const scalar&    make_nan();
 };
 
 };};

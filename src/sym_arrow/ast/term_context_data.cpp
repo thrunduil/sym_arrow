@@ -33,6 +33,7 @@ void term_context_data::initialize()
     m_scalar_zero       = scalar(value::make_zero());
     m_scalar_one        = scalar(value::make_one());
     m_scalar_minus_one  = scalar(value::make_minus_one());
+    m_scalar_nan        = scalar(value::make_nan());
 };
 
 void term_context_data::close()

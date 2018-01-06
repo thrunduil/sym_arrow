@@ -46,6 +46,11 @@ const scalar& scalar::make_zero()
     return ast::scalar_rep::make_zero();
 };
 
+const scalar& scalar::make_nan()
+{
+    return ast::scalar_rep::make_nan();
+};
+
 const scalar& scalar::make_one()
 {
     return ast::scalar_rep::make_one();

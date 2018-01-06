@@ -1209,6 +1209,7 @@ bool rand_state::values_equal(const error_value& v1, const value& v2,
 {
     ulp_err = std::numeric_limits<double>::infinity();
 
+    //TODO
     if (test_invalid == true && v1.is_finite() != v2.is_finite())
         return false;
   

@@ -57,6 +57,9 @@ struct add_rep_info
         : scal0(a0), n(n_expr), elems(expr), log_expr(log_expr_)
         , m_hash_add(0) 
     {};
+
+    // return true if all scalars are finite and false otherwise
+    bool is_finite() const;
 };
 
 // class representing a0 + sum_{i,n} ai * ei + log|el|

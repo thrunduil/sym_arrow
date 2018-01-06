@@ -746,6 +746,12 @@ void subexpr_collector::finalize_sum(build_item<value>* it, size_t size, const v
             using item_type     = build_item<value>;
             add_rep_info<item_type> ai(&add, 1, it, nullptr);
 
+            if (ai.is_finite() == false)
+            {
+                res             = scalar::make_nan();
+                return;
+            };
+
             expr_ptr res_ptr    = add_rep::make(ai);
             res                 = expr(res_ptr);
             return;

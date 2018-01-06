@@ -31,6 +31,11 @@ const scalar& scalar_rep::make_zero()
     return context_type::get().get_context_data().get_scalar_zero();
 };
 
+const scalar& scalar_rep::make_nan()
+{
+    return context_type::get().get_context_data().get_scalar_nan();
+};
+
 const scalar& scalar_rep::make_one()
 {
     return context_type::get().get_context_data().get_scalar_one();

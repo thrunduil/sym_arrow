@@ -145,7 +145,7 @@ void add_build::insert_log_elem(expr_handle expr)
         {
             const add_rep* ah  = expr->static_cast_to<add_rep>();
 
-            if (ah->size() == 1 && ah->has_log() == false && ah->V0().is_zero() == true)
+            if (cannonize::is_simple_add(ah) == true)
             {
                 make_add(log(ah->V(0)));
                 insert_log_elem(ah->E(0));

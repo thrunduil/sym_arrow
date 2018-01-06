@@ -214,11 +214,11 @@ void test_set::test_expression(size_t n_rep)
     //int n_sym         = 1000000;
     int n_sym           = 3;
     //rand_state r(n_sym, 12, false, false);
-    rand_state r(n_sym, 12, false, false);
+    rand_state r(n_sym, 12, false, false);//TODO
 
     bool show           = false;
     size_t stop_index   = (size_t)-1;
-    //size_t stop_index   = 84165;
+    //size_t stop_index   = 1352;
 
     tic();
     for(size_t i = 0; i < n_rep; ++i)

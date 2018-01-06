@@ -86,6 +86,9 @@ class SYM_ARROW_EXPORT scalar
 
         // return precomputed scalar representing value -1
         static const scalar&    make_minus_one();
+
+        // return precomputed scalar representing value NaN
+        static const scalar&    make_nan();
 };
 
 // comparison function based on addresses of pointers;

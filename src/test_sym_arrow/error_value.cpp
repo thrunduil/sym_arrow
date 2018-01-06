@@ -296,6 +296,7 @@ error_value testing::power_int(const error_value& v1, int v2)
 
 error_value testing::power_real(const error_value& v1, const error_value& v2)
 {
+    //TODO: special cases
     value v     = power_real(v1.get_value(), v2.get_value());
     value err   = abs(v2.get_value()) * v1.get_error()
                 + v2.get_value() * abs(log(abs(v1.get_value()))) * v2.get_error();

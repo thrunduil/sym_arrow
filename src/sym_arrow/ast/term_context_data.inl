@@ -31,6 +31,11 @@ inline const scalar& term_context_data::get_scalar_zero()
     return m_scalar_zero;
 }
 
+inline const scalar& term_context_data::get_scalar_nan()
+{
+    return m_scalar_nan;
+}
+
 inline const scalar& term_context_data::get_scalar_one()
 {
     return m_scalar_one;
