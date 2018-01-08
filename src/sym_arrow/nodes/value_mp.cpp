@@ -28,6 +28,9 @@
 #include "sym_arrow/functions/expr_functions.h"
 
 #include "sym_arrow/ast/ast_tags.h"
+#include "sym_arrow/nodes/value_functions_common.h"
+#include "sym_arrow/ast/value_context_data.h"
+
 #include <iostream>
 
 namespace sym_arrow { namespace details
@@ -67,17 +70,42 @@ namespace sym_arrow { namespace details
             }
     };
 
+    void details::initialize_values(ast::details::value_context_data& context)
+    {
+        context.val_zero_ptr    = new details::value_mp(0.0);
+        context.val_one_ptr     = new details::value_mp(1.0);
+        context.val_mone_ptr    = new details::value_mp(-1.0);
+        context.val_nan_ptr     = new details::value_mp(std::numeric_limits<double>::quiet_NaN());
+    };
+
+    void details::close_values(ast::details::value_context_data& context)
+    {
+        delete context.val_zero_ptr;
+        delete context.val_one_ptr;
+        delete context.val_mone_ptr;
+        delete context.val_nan_ptr;
+    };
+
+    void details::initialize_values()
+    {
+        // force initialization
+        sym_dag::dag_context<ast::value_tag>::get().get_context_data();
+    }
+
+    static inline
+    ast::details::value_context_data&
+    get_context()
+    {
+        return sym_dag::dag_context<ast::value_tag>::get().get_context_data();
+    };
+
 }}
 
 namespace sym_arrow
 {
 
-static details::value_mp* val_zero_ptr  = sym_dag::global_objects::make_before<details::value_mp>(0.0);
-static details::value_mp* val_one_ptr   = sym_dag::global_objects::make_before<details::value_mp>(1.0);
-static details::value_mp* val_mone_ptr  = sym_dag::global_objects::make_before<details::value_mp>(-1.0);
-
 value::value()
-    : value(val_zero_ptr)
+    : value(details::get_context().val_zero_ptr)
 {};
 
 value::value(double v)
@@ -142,7 +170,7 @@ const mp_float& value::get_mp_float() const
 
 value value::make_nan()
 {
-    return value(matcl::constants::mp_nan());
+    return value(details::get_context().val_nan_ptr);
 };
 
 value value::make_inf_plus()
@@ -157,17 +185,17 @@ value value::make_inf_minus()
 
 value value::make_one()
 {
-    return value(val_one_ptr);
+    return value(details::get_context().val_one_ptr);
 };
 
 value value::make_minus_one()
 {
-    return value(val_mone_ptr);
+    return value(details::get_context().val_mone_ptr);
 };
 
 value value::make_zero()
 {
-    return value(val_zero_ptr);
+    return value(details::get_context().val_zero_ptr);
 };
 
 bool value::is_nan() const
@@ -262,11 +290,17 @@ value sym_arrow::operator*(const double& v1, const value& v2)
 
 value sym_arrow::operator/(const value& v1, const value& v2)
 { 
+    if (v2.is_zero())
+        return value::make_nan();
+
     return value(v1.get_mp_float() / v2.get_mp_float());
 };
 
 value sym_arrow::operator/(const value& v1, const double& v2)
 { 
+    if (v2 == 0.0)
+        return value::make_nan();
+
     if (v2 == 1.0)
         return v1;
     else
@@ -275,6 +309,9 @@ value sym_arrow::operator/(const value& v1, const double& v2)
 
 value sym_arrow::operator/(const double& v1, const value& v2)
 { 
+    if (v2.is_zero())
+        return value::make_nan();
+
     return value(v1 / v2.get_mp_float());
 };
 
@@ -339,16 +376,31 @@ bool sym_arrow::operator>=(const value& v1,const value& v2)
 
 value sym_arrow::power_int(const value& v1, int v2)
 { 
+    bool computed;
+    value res   = details::special_cases_power_int(v1, v2, computed);
+
+    if (computed == true)
+        return res;
+
     return (v2 == 1) ? v1 : value(pow(v1.get_mp_float(), v2));
 };
 
 value sym_arrow::power_real(const value& v1, const value& v2)
 {
+    bool computed;
+    value res   = details::special_cases_power_real(v1, v2, computed);
+
+    if (computed == true)
+        return res;
+
     return value(pow(abs(v1.get_mp_float()), v2.get_mp_float()));
 };
 
 value sym_arrow::inv(const value& v1)
 { 
+    if (v1.is_zero())
+        return value::make_nan();
+
     return value(inv(v1.get_mp_float()));
 };
 

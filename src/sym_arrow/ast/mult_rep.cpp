@@ -84,6 +84,12 @@ void mult_rep::remove_exp(const mult_rep* h, expr& res)
     mult_rep_info<int_expr, value_expr> 
     info(in, h->m_int_data, nullptr, rn, h->m_real_data);
 
+    if (info.are_values_valid() == false)
+    {
+        res             = scalar::make_nan();
+        return;
+    }
+
     expr_ptr res_ptr    = mult_rep::make(info);
     res                 = expr(res_ptr);
     return;

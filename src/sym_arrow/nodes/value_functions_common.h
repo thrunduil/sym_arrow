@@ -19,39 +19,15 @@
 *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "term_context_data.inl"
-#include "sym_arrow/ast/ast.h"
-#include "sym_arrow/func/contexts_impl.h"
+#pragma once
 
-namespace sym_arrow { namespace ast { namespace details
+#include "sym_arrow/config.h"
+#include "sym_arrow/nodes/value.h"
+
+namespace sym_arrow { namespace details
 {
 
-term_context_data::~term_context_data()
-{};
+value special_cases_power_real(const value& v1, const value& v2, bool& computed);
+value special_cases_power_int(const value& v1, int v2, bool& computed);
 
-void term_context_data::initialize()
-{
-    // force initialization of values
-    sd::initialize_values();
-
-    m_scalar_zero       = scalar(value::make_zero());
-    m_scalar_one        = scalar(value::make_one());
-    m_scalar_minus_one  = scalar(value::make_minus_one());
-    m_scalar_nan        = scalar(value::make_nan());
-
-    sd::initialize_global_contexts();
-};
-
-void term_context_data::close()
-{
-    sd::close_global_contexts();
-
-    m_scalar_zero       = scalar();
-    m_scalar_one        = scalar();
-    m_scalar_minus_one  = scalar();
-    m_scalar_nan        = scalar();
-
-    m_reg_symbols.close(); 
-};
-
-}}};
+}}

@@ -53,6 +53,9 @@
 static unsigned long mt[N]; /* the array for the state vector  */
 static int mti=N+1; /* mti==N+1 means mt[N] is not initialized */
 
+static double      m_b;
+static int         m_flag;
+
 /* initializes mt[N] with a seed */
 void sym_arrow::testing::init_genrand(unsigned long s)
 {
@@ -67,6 +70,8 @@ void sym_arrow::testing::init_genrand(unsigned long s)
         mt[mti] &= 0xffffffffUL;
         /* for >32 bit machines */
     }
+
+    m_flag = 0;
 }
 
 /* initialize by an array with array-length */
@@ -175,3 +180,30 @@ static double genrand_res53(void)
     return(a*67108864.0+b)*(1.0/9007199254740992.0); 
 } 
 */
+
+#include <cmath>
+
+double sym_arrow::testing::gen_norm()
+{
+    double u, v, s;
+
+    if (m_flag) 
+    {
+        m_flag = 0;
+        return m_b;
+    }
+
+    do 
+    {
+        u = 2. * genrand_real3() - 1.;
+        v = 2. * genrand_real3() - 1.;
+    } 
+    while (((s = u * u + v * v) >= 1.) || (s == 0.));
+
+    s   = std::sqrt(-2. * std::log(s) / s);
+
+    m_b     = v * s;
+    m_flag  = 1;
+
+    return u * s;
+}

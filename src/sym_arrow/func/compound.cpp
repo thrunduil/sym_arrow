@@ -23,7 +23,7 @@
 #include "sym_arrow/ast/builder/add_build.h"
 #include "sym_arrow/ast/builder/mult_build.h"
 #include "sym_arrow/ast/ast.h"
-
+#include "sym_arrow/functions/expr_functions.h"
 namespace sym_arrow { namespace details
 {
 
@@ -211,16 +211,19 @@ void compound::mult_build(expr& ret, ast::expr_handle x1,  int b1,
     ret = expr(ast::mult_build::make(ai));
 };
 
-void compound::mult_build(expr& ret, ast::expr_handle x, const expr& p)
+void compound::mult_build(expr& ret, const expr& x0, const expr& p)
 {
     p.cannonize(do_cse_default);
+    x0.cannonize(do_cse_default);    
 
     //fast exit
     if (p.get_ptr()->isa<ast::scalar_rep>())
     {
         value v = p.get_ptr()->static_cast_to<ast::scalar_rep>()->get_data();
-        return mult_build(ret, x, v);
+        return mult_build(ret, x0, v);
     };
+
+    ast::expr_handle x = x0.get_expr_handle();
 
     if (x->isa<ast::scalar_rep>())
     {
@@ -250,8 +253,10 @@ void compound::mult_build(expr& ret, ast::expr_handle x, const expr& p)
     };
 };
 
-void compound::mult_build(expr& ret, ast::expr_handle x, const value& p)
+void compound::mult_build(expr& ret, const expr& x0, const value& p)
 {
+    x0.cannonize(do_cse_default);
+
     //forma x^b
 
     //fast exit
@@ -260,6 +265,8 @@ void compound::mult_build(expr& ret, ast::expr_handle x, const value& p)
         ret = ast::scalar_rep::make_one();
         return;
     };
+
+    ast::expr_handle x = x0.get_expr_handle();
 
     if (x->isa<ast::scalar_rep>())
     {
@@ -305,7 +312,16 @@ void compound::mult_build_pow(expr& ret, const value& x, ast::expr_handle b)
     else if (v.is_e())
     {
         return exp_build(ret, b);
-    };
+    }
+    else if (v.is_zero())
+    {
+        // 0^b = 0      if b > 0
+        //       Nan    if b <= 0
+        scalar zero = scalar::make_zero();
+        expr cond   = bool_gt(expr(b), zero);
+        ret         = if_then(cond, zero);
+        return;
+    }
 
     value v2 = log(v);
     

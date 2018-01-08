@@ -1,6 +1,6 @@
 Simplication rules:
 
-1.  0 * x   -> 0                        for any x (including inf, NaN) TODO
+1.  0 * x   -> 0                        for any x TODO
 2.  0 + x   -> x
 3.  1 * x   -> x
 4.  v1 * x + v2 * x -> (v1 + v2) * x    for any v1, v2, x
@@ -77,10 +77,10 @@ consistency checks:
     - if size = 0, then has_log = true
     - values are consistent:
         - subterm values are not zero
-        - subterm values are finite
+        - subterm values are valid
         - is size = 1 and has_log = false
             if V0 = 0 and V(0) = 1 then error
-        - V0 is finite
+        - V0 is valid
     - subexpr are consistent:
         - every subexpression is not null and is cannonized
         - every subexpression is atom or mult_rep
@@ -104,7 +104,7 @@ consistency checks:
     - values are consistent:
         - integer powers cannot be zero
         - real powers cannot be zero
-        - real powers are finite
+        - real powers are valid
         - if isize == 1 and rsize == 0 and IV(0) == 1 and has_exp == false
             then error
     - subexpr are consistent:
@@ -141,4 +141,6 @@ consistency checks:
         - subterm is not null
         - subterm is cannonized
         - subterm is consistent
-        - if subterm is a scalar, then this scalar is finite
+        - if subterm is a scalar, then this scalar is valid
+
+6. value is valid if is not NaN

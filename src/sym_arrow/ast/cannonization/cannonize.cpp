@@ -410,7 +410,7 @@ expr cannonize::finalize_add(item_collector_add& ic, size_t n)
 
             add_rep_info<item_handle> ci(&add, 0, nullptr, &ih_log);
 
-            if (ci.is_finite() == false)
+            if (ci.are_values_valid() == false)
                 return scalar::make_nan();
             else
                 return expr(add_rep::make(ci));
@@ -434,7 +434,7 @@ expr cannonize::finalize_add(item_collector_add& ic, size_t n)
 
         add_rep_info<item_handle> ai(&add, n, ih, ih + n);
 
-        if (ai.is_finite() == false)
+        if (ai.are_values_valid() == false)
             return scalar::make_nan();
 
         ret = expr(add_rep::make(ai));
@@ -449,7 +449,7 @@ expr cannonize::finalize_add(item_collector_add& ic, size_t n)
 
     add_rep_info<item_handle> ci(&add, n, ih, nullptr);
 
-    if (ci.is_finite() == false)
+    if (ci.are_values_valid() == false)
         return scalar::make_nan();
 
     using add_rep_ptr   = sym_dag::dag_ptr<add_rep>;
@@ -499,7 +499,7 @@ expr cannonize::make_mult_impl(const mult_build* h, bool do_cse)
         value zero              = value::make_zero();
         add_rep_info<val_expr> ai2(&zero, 1, &data, nullptr);
 
-        if (ai2.is_finite() == false)
+        if (ai2.are_values_valid() == false)
             return scalar::make_nan();
 
         expr_ptr ep2 = add_rep::make(ai2);
@@ -584,6 +584,9 @@ expr cannonize::process_mult(item_collector_mult& ic, value& scal, bool do_cse)
     {
         mult_rep_info<iitem_handle,ritem_handle> 
         ai(in,iih, has_exp_term? iih + in : nullptr, rn,rih);
+
+        if (ai.are_values_valid() == false)
+            return scalar::make_nan();
 
         ep = mult_rep::make(ai);
     }
@@ -1054,8 +1057,11 @@ expr cannonize::make_exp_mult_rep(const expr& ex_exp) const
     iitem_handle exp_expr_handle(1, ex_exp.get_ptr().get());
 
     atom_mult_info_type am_info(0, nullptr, &exp_expr_handle, 0, nullptr);
-    expr_ptr am_ptr         = mult_rep::make(am_info);
 
+    if (am_info.are_values_valid() == false)
+        return scalar::make_nan();
+
+    expr_ptr am_ptr         = mult_rep::make(am_info);
     return expr(std::move(am_ptr));
 };
 
@@ -1114,7 +1120,7 @@ expr_ptr cannonize::normalize(const add_rep* h, value& scal) const
     add_rep_info<item_handle> ai(&tmp, h->size(), ih, 
                                     has_log ? ih + h->size() : nullptr);
 
-    if (ai.is_finite() == false)
+    if (ai.are_values_valid() == false)
         return scalar::make_nan().get_ptr();
 
     using add_rep_ptr = sym_dag::dag_ptr<add_rep>;
@@ -1170,7 +1176,7 @@ value cannonize::add_scalar_normalize(const add_rep* h, const value& add, const 
     add_rep_info<item_handle> ai(&new_add, h->size(), ih, 
                                     has_log ? ih + h->size() : nullptr);
 
-    if (ai.is_finite() == false)
+    if (ai.are_values_valid() == false)
     {
         res         = scalar::make_nan();
         return value::make_one();
@@ -1207,7 +1213,7 @@ value cannonize::add_scalar_normalize(const add_rep* h, const value& add, expr& 
 
         add_rep_info<value_expr> ai(&new_add, n, h->VE(), has_log ? &h->VLog() : nullptr);
 
-        if (ai.is_finite() == false)
+        if (ai.are_values_valid() == false)
         {
             res             = scalar::make_nan();
             return value::make_one();
@@ -1238,7 +1244,7 @@ value cannonize::add_scalar_normalize(const add_rep* h, const value& add, expr& 
     
     add_rep_info<item_handle> ai(&new_add, h->size(), ih, nullptr);
 
-    if (ai.is_finite() == false)
+    if (ai.are_values_valid() == false)
     {
         res             = scalar::make_nan();
         return value::make_one();

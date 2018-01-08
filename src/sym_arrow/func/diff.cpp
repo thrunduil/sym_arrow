@@ -422,24 +422,27 @@ expr do_diff_vis::eval(const ast::function_rep* h, const symbol& sym)
 expr do_diff_vis::func_derivative(const symbol& func_name, size_t arg, const expr* args, 
                                   size_t n_args, const symbol& sym)
 {
-    expr arg_dif    = visit(args[arg].get_ptr().get(), sym);
+    expr dif;
+    bool make_dif = m_diff_context.diff(func_name, arg, args, n_args, dif);
 
-    bool is_zero    = false;
-
-    if (arg_dif.get_ptr()->isa<ast::scalar_rep>() == true)
-    {
-        if (cast_scalar(arg_dif).get_value().is_zero() == true)
-            is_zero = true;
-    };
-
-    if (is_zero == true)
-        return arg_dif;
-
-    expr dif    = m_diff_context.diff(func_name, arg, args, n_args);
+    if (make_dif == false)
+        return scalar::make_zero();
 
     if (dif.is_null() == true)
         error_diff_rule_not_defined(func_name, n_args, arg);
 
+    bool is_zero_pd = false;
+
+    if (dif.get_ptr()->isa<ast::scalar_rep>() == true)
+    {
+        if (cast_scalar(dif).get_value().is_zero() == true)
+            is_zero_pd = true;
+    };
+
+    if (is_zero_pd == true)
+        return dif;
+
+    expr arg_dif    = visit(args[arg].get_ptr().get(), sym);
     return std::move(dif) * std::move(arg_dif);
 };
 

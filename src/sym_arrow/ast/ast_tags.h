@@ -144,7 +144,7 @@ template<>
 struct dag_context_data<sym_arrow::ast::value_tag>
 {    
     // no context data
-    using context_data_type = sym_dag::context_data_base;
+    using context_data_type = sym_arrow::ast::details::value_context_data;
 };
 
 // define mapping from code to type for value_tag

@@ -88,9 +88,19 @@ double error_value::get_error() const
     return m_error;
 }
 
+value error_value::get_abs_error() const
+{
+    return m_error * m_value * std::numeric_limits<double>::epsilon();
+}
+
 bool error_value::is_finite() const
 {
     return m_value.is_finite() && std::isfinite(m_error);
+}
+
+bool error_value::is_value_finite() const
+{
+    return m_value.is_finite();
 }
 
 void testing::disp(const error_value& v, bool add_nl)
@@ -172,14 +182,19 @@ error_value testing::operator*(const error_value& v1, const value& v2)
 
 error_value testing::operator/(const error_value& v1, const error_value& v2)
 {
-    value v     = v1.get_value() / v2.get_value();
+    value min2      = v2.get_value() - v2.get_abs_error();
+    value max2      = v2.get_value() + v2.get_abs_error();
 
-    if (v.is_zero() == true)
-        return error_value(v, 0.0);
-    
+    value zero      = value::make_zero();
+    double inf      = std::numeric_limits<double>::infinity();
+
+    if (min2 <= zero && max2 >= zero)
+        return error_value(value::make_nan(), inf);
+
+    value v     = v1.get_value() / v2.get_value();    
     double err  = v1.get_error() + v2.get_error();
 
-    if (v1.get_value() != v2.get_value())
+    if (v1.get_value() != v2.get_value() && v1.get_value().is_zero() == false)
         err     = err + 0.5;
 
     return error_value(v, err);
@@ -279,8 +294,236 @@ error_value testing::operator-(const value& v1, const error_value& v2)
     return error_value(v, err.get_double());
 };
 
+static value max(const value& x, const value& y)
+{
+    return (x < y) ? y : x;
+};
+
+static value min(const value& x, const value& y)
+{
+    return (x < y) ? x : y;
+};
+
+// real power |v1| ^ v2
+// special cases are treated differently than according to IEEE 754-2008 standards:
+// power_real(NaN, y)   -> NaN for any y
+// power_real(x, NaN)   -> NaN for any x
+// pow(+-Inf, y)        -> plus zero for y negative, and plus infinity for y positive
+// pow(+-Inf, 0)        -> NaN
+// pow(x, -Inf)         -> plus infinity for 0 < |x| < 1, and plus zero for |x| > 1
+// pow(0, -Inf)         -> NaN
+// pow(x, +Inf)         -> plus zero for 0 < |x| < 1, and plus infinity for |x| > 1
+// pow(0, +Inf)         -> NaN
+// pow(0, y)            -> plus infinity for y < 0
+// pow(0, y)            -> plus zero for y > 0
+// power_real(0, +-0)   -> NaN
+// power_real(x, +-0)   -> 1
+// power_real(+-1, y)   -> 1
+error_value testing::power_real(const error_value& v1, const error_value& v2)
+{
+    double inf      = std::numeric_limits<double>::infinity();
+
+    value nan       = value::make_nan();
+    double d_nan    = std::numeric_limits<double>::quiet_NaN();
+    double d_inf    = std::numeric_limits<double>::infinity();
+
+    if (v1.get_value().is_nan() == true)
+        return error_value(nan, d_nan);
+
+    if (v2.get_value().is_nan() == true)
+        return error_value(nan, d_nan);
+
+    if (std::isnan(v1.get_error()) == true)
+        return error_value(nan, d_nan);
+
+    if (std::isnan(v2.get_error()) == true)
+        return error_value(nan, d_nan);
+
+    value min10     = v1.get_value() - v1.get_abs_error();
+    value max10     = v1.get_value() + v1.get_abs_error();
+    value min1      = min(abs(min10), abs(max10));
+    value max1      = max(abs(min10), abs(max10));
+
+    value zero      = value::make_zero();
+    value one       = value::make_one();
+
+    if (min1 <= zero && max1 >= 0)
+        min1        = zero;
+
+    value min2      = v2.get_value() - v2.get_abs_error();
+    value max2      = v2.get_value() + v2.get_abs_error();
+
+    bool v2_is_negative     = (max2 < 0.0);
+    bool v2_is_positive     = (min2 > 0.0);
+
+    if (v1.get_value().is_inf() == true)
+    {
+        if (v2_is_negative == true)
+            return error_value(zero, 0.0);
+        else if (v2_is_positive == true)
+            return error_value(inf, d_inf);
+        else
+            return error_value(nan, d_nan);
+    }
+
+    bool v1_is_less_1       = (max2 < 1.0);
+    bool v1_is_greater_1    = (min2 > 1.0);
+
+    if (v2.get_value().is_inf_minus() == true)
+    {
+        if (v1_is_less_1 == true)
+            return error_value(inf, d_inf);
+        else if (v1_is_greater_1 == true)
+            return error_value(zero, 0.0);
+        else
+            return error_value(nan, d_nan);
+    }
+
+    if (v2.get_value().is_inf_plus() == true)
+    {
+        if (v1_is_less_1 == true)
+            return error_value(zero, 0.0);            
+        else if (v1_is_greater_1 == true)
+            return error_value(inf, d_inf);
+        else
+            return error_value(nan, d_nan);
+    }
+
+    if (v1.is_finite() == false)
+        return error_value(value::make_nan(), inf);
+
+    if (v2.is_finite() == false)
+        return error_value(value::make_nan(), inf);
+    
+    value v         = power_real(v1.get_value(), v2.get_value());
+    value err       = abs(v2.get_value()) * v1.get_error()
+                    + v2.get_value() * abs(log(abs(v1.get_value()))) * v2.get_error();
+    
+    if (v2.get_value().is_zero() == false && v2.get_value().is_one() == false
+            && v1.get_value().is_zero() == false && v1.get_value().is_one() == false)
+    {
+        value base  = abs(log(abs(v1.get_value())) * v2.get_value());
+        err         = err + base * 1.0 + 0.5;
+    }
+    // |~0| ^ x, x > 0  -> ~ 0    
+    // |~0| ^ x, x < 0  -> +Inf
+    // |~0| ^ ~0        -> NaN
+    if (min1.is_zero() == true)
+    {
+        if (v1.get_error() == 0.0) //v1 is exactly zero
+        {
+            // 0 ^ +x = 0
+            if (min2 > 0.0)
+                return error_value(value::make_zero(), 0.0);
+
+            if (max2 < 0.0)
+                return error_value(inf, d_inf);
+
+            // 0 ^ 0 -> NaN, 0 ^ (+-eps) -> NaN
+            return error_value(value::make_nan(), inf);
+        };
+
+        // eps ^ +x = 0
+        if (min2 > zero)
+            return error_value(v, err.get_double());
+
+        // 0 ^-x = inf; result is v, but error is infinite
+        return error_value(v, std::numeric_limits<double>::infinity());
+    };
+
+    // x ^ ~0           -> ~ 1    
+    if (min2 <= zero && max2 >= zero)
+    {
+        if (v2.get_error() == 0.0) //v2 is exactly zero
+            return error_value(value::make_one(), 0.0);
+        else
+            return error_value(v, err.get_double());
+    };
+
+    // |~1| ^ x, x > 0  -> ~ 1    
+    // |~1| ^ x, x < 0  -> ~ 1
+    // |~1| ^ ~0        -> ~ 1
+    if (min1 <= one && max1 >= one)
+    {
+        if (v1.get_error() == 0.0) //v1 is exactly one
+            return error_value(value::make_one(), 0.0);
+        else
+            return error_value(v, err.get_double());
+    };
+    
+    // x   ^ ~1, x > 0  -> x
+    // |~0|^ ~1         -> ~ 0
+    if (min2 <= one && max2 >= one)
+    {
+        // default implementation is OK
+        return error_value(v, err.get_double());
+    };
+
+    return error_value(v, err.get_double());
+};
+
+// integer power v1 ^ v2
+// special cases are treated differently than according to IEEE 754-2008 standards:
+// power_int(NaN, y)    -> NaN for any y
+// power_int(-Inf, y)   -> 0 for y < 0
+// power_int(-Inf, y)   -> -Inf for y > 0 and y odd
+// power_int(-Inf, y)   -> Inf for y > 0 and y even
+// power_int(-Inf, 0)   -> NaN
+// power_int(+Inf, y)   -> 0 for y < 0
+// power_int(+Inf, y)   -> +Inf for y > 0
+// power_int(+Inf, 0)   -> NaN
+// power_int(+-0, y)    -> 0.0 for y > 0
+// power_int(+-0, y)    -> NaN for y < 0
+// power_int(0, 0)      -> NaN
+// power_int(x, 0)      -> 1
+// power_int(1, y)      -> 1
 error_value testing::power_int(const error_value& v1, int v2)
 {
+    double d_inf    = std::numeric_limits<double>::infinity();
+    double d_nan    = std::numeric_limits<double>::quiet_NaN();
+
+    value zero      = value::make_zero();
+    value one       = value::make_one();    
+    value nan       = value::make_nan();
+    value inf       = value::make_inf_plus();
+
+    if (v1.get_value().is_nan() == true)
+        return error_value(nan, d_nan);
+
+    if (std::isnan(v1.get_error()) == true)
+        return error_value(nan, d_nan);
+
+    bool v2_even    = (v2 % 2 == 0);
+    bool v2_odd     = (v2 % 2 != 0);
+
+    if (v1.get_value().is_inf_minus() == true)
+    {
+        if (v2 < 0)
+            return error_value(zero, 0.0);
+        if (v2 > 0 && v2_odd)
+            return error_value(-inf, d_inf);
+        if (v2 > 0 && v2_even)
+            return error_value(inf, d_inf);
+
+        return error_value(nan, d_nan);
+    }
+
+    if (v1.get_value().is_inf_plus() == true)
+    {
+        if (v2 < 0)
+            return error_value(zero, 0.0);
+        if (v2 > 0)
+            return error_value(inf, d_inf);
+
+        return error_value(nan, d_nan);
+    }
+
+    if (v1.is_finite() == false)
+        return error_value(value::make_nan(), d_inf);
+
+    value min1      = v1.get_value() - v1.get_abs_error();
+    value max1      = v1.get_value() + v1.get_abs_error();
+
     value v     = power_int(v1.get_value(), v2);
     double err  = std::abs(v2) * v1.get_error();
 
@@ -291,24 +534,28 @@ error_value testing::power_int(const error_value& v1, int v2)
         err         = err + base.get_double() * 1.0 + 0.5;
     }
 
-    return error_value(v, err);
-};
-
-error_value testing::power_real(const error_value& v1, const error_value& v2)
-{
-    //TODO: special cases
-    value v     = power_real(v1.get_value(), v2.get_value());
-    value err   = abs(v2.get_value()) * v1.get_error()
-                + v2.get_value() * abs(log(abs(v1.get_value()))) * v2.get_error();
-
-    if (v2.get_value().is_zero() == false && v2.get_value().is_one() == false
-            && v1.get_value().is_zero() == false && v1.get_value().is_one() == false)
+    // power_int(+-0, y)    -> NaN for y < 0 and 0.0 for y > 0
+    // power_int(0, 0)      -> NaN
+    if (min1 <= zero && max1 >= zero)
     {
-        value base  = abs(log(abs(v1.get_value())) * v2.get_value());
-        err         = err + base * 1.0 + 0.5;
+        // inf cannot be exact
+        if (v2 < 0)
+            return error_value(value::make_nan(), d_inf);
+
+        if (v2 == 0)
+            return error_value(value::make_nan(), d_inf);
+
+        if (v1.get_error() == 0.0) //v1 is exactly zero
+            return error_value(value::make_zero(), 0.0);
+        else
+            return error_value(v, err);
     }
 
-    return error_value(v, err.get_double());
+    // power_int(x, 0)      -> 1
+    if (v2 == 0)
+        return error_value(value::make_one(), 0.0);
+
+    return error_value(v, err);
 };
 
 };};

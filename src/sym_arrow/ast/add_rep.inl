@@ -28,14 +28,14 @@ namespace sym_arrow { namespace ast
 {
 
 template<class Item_type>
-bool add_rep_info<Item_type>::is_finite() const
+bool add_rep_info<Item_type>::are_values_valid() const
 {
-    if (scal0->is_finite() == false)
+    if (scal0->is_nan() == true)
         return false;
 
     for (int i = 0; i < n; ++i)
     {
-        if (elems[i].get_value().is_finite() == false)
+        if (elems[i].get_value().is_nan() == true)
             return false;
     }
 

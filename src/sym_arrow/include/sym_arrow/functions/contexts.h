@@ -49,6 +49,53 @@ class SYM_ARROW_EXPORT data_provider
                             size_t n_size) const = 0;
 };
 
+class SYM_ARROW_EXPORT function_evaler
+{
+    private:
+        using impl_type         = std::shared_ptr<details::function_evaler_impl>;
+
+    public:
+        // type of evaler
+        using evaler_function   = std::function<value (size_t n_args, const value* args)>;
+
+        // type of partial evaler
+        using partial_evaler_function
+                                = std::function<expr (size_t n_args, const expr* args)>;
+
+    protected:
+        impl_type       m_impl;
+
+        friend details::function_evaler_impl;
+
+    public:
+        // create empty mapping from functions to evaluators
+        function_evaler();
+
+        // evaluate a function with n_size arguments evaluated
+        // to values stored in the array subexpr; return true 
+        // if function was evaluated
+        bool            eval_function(const symbol& name, const value* subexpr, 
+                            size_t n_size, value& res) const;
+
+        // evaluate a function with n_size arguments stored in the
+        // array subexpr; return true if function was evaluated,
+        bool            eval_function(const symbol& name, const expr* subexpr, 
+                            size_t n_size, expr& res) const;
+
+        // register an evaler for function with name func_name and
+        // n_args arguments
+        void            add_evaler(const symbol& func_name, size_t n_args,
+                            const evaler_function& f);
+
+        // register an evaler for function with name func_name and
+        // n_args arguments; this function will be called when a function
+        // with given name and giben number of arguments is created or 
+        // modified and at least one argument is not a value; when evaluation
+        // is not possible, then the function f should return null expression
+        void            add_partial_evaler(const symbol& func_name, size_t n_args,
+                            const partial_evaler_function& f);
+};
+
 // visitor of substitutions stored in subs_context
 class SYM_ARROW_EXPORT substitution_vis
 {
@@ -137,7 +184,7 @@ class SYM_ARROW_EXPORT diff_context
     private:
         using impl_type = std::shared_ptr<details::diff_context_impl>;
 
-    private:
+    protected:
         impl_type       m_impl;
 
     public:
@@ -145,20 +192,35 @@ class SYM_ARROW_EXPORT diff_context
         diff_context();
 
         // construct partial derivative of a function 'func_name' with respect
-        // to i-th argument (i = arg_num, index is 0-based), i.e. and substitute
+        // to i-th argument (i = arg_num, index is 0-based),  and substitute
         // function arguments with n_args expressions given in the array args;
-        // return empty expression if appropriate diff rule is not defined
-        expr            diff(const symbol& func_name, size_t arg_num, const expr* args,
-                            size_t n_args);
+        // res is set to empty expression if appropriate diff rule is not defined;
+        // return true if differentiation rule is not defined or is defined and
+        // result is returned by the res variable;
+        // return false if partial derivative should not be taken with respect to
+        // given argument
+        bool            diff(const symbol& func_name, size_t arg_num, const expr* args,
+                            size_t n_args, expr& res);
 
         // add differentiation rule d/dx_i f[x0, ..., xn] -> dif[x0, ..., xn]
+        // set make_diff if differentiation with respect to i-th argument (i.e. 
+        // diff_arg) should be performed and false otherwise; if make_diff = false
+        // then dif is not referred; if differentiation with respect to i-th argument
+        // is not defined (for example it stores some internal data), then zero
+        // should not be returned, but make_diff should be set to false instead, in
+        // this way possible errors like 0 * NaN can be avoided
         void            add_diff_rule(const symbol& func_name, size_t n_args,
-                            const symbol* args, size_t diff_arg, const expr& dif);
+                            const symbol* args, size_t diff_arg, const expr& dif,
+                            bool make_diff);
 };
 
 // return global diff context
 SYM_ARROW_EXPORT 
 const diff_context&     global_diff_context();
+
+// return global function evaler
+SYM_ARROW_EXPORT 
+const function_evaler&  global_function_evaler();
 
 };
 

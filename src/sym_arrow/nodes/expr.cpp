@@ -29,8 +29,6 @@
 #include "sym_arrow/ast/cannonization/cannonize.h"
 #include "sym_arrow/functions/expr_functions.h"
 
-//#include <vld.h>
-
 namespace sym_arrow
 {
 
@@ -183,41 +181,6 @@ bool operator>=(const expr& v1,const expr& v2)
     v2.cannonize(do_cse_default);
 
     return v1.get_ptr() > v2.get_ptr();
-};
-
-expr sym_arrow::function(const symbol& sym)
-{
-    return function(sym, nullptr, 0);
-};
-
-expr sym_arrow::function(const symbol& sym, const expr& arg1)
-{
-    expr args[] = {arg1};
-    return function(sym, args, 1);
-};
-
-expr sym_arrow::function(const symbol& sym, const expr& arg1, const expr& arg2)
-{
-    expr args[] = {arg1, arg2};
-    return function(sym, args, 2);
-};
-
-expr sym_arrow::function(const symbol& sym, const std::vector<expr>& arg)
-{
-    return function(sym, arg.data(), arg.size());
-};
-
-expr sym_arrow::function(const symbol& sym, const expr* arg, size_t n)
-{
-    for (size_t i = 0; i < n; ++i)
-        arg[i].cannonize(do_cse_default);
-
-    using info              = ast::function_rep_info;
-
-    info f_info             = info(sym.get_ptr().get(), n, arg);
-    ast::expr_ptr ep        = ast::function_rep::make(f_info);
-
-    return expr(ep);
 };
 
 };

@@ -46,9 +46,9 @@ class compound
                             //x1^b1 * x2^b2
         static void         mult_build(expr& ret, ast::expr_handle x1, int b1, ast::expr_handle x2, int b2);
                             //x^b
-        static void         mult_build(expr& ret, ast::expr_handle x, const expr& b);
+        static void         mult_build(expr& ret, const expr& x, const expr& b);
         static void         mult_build(expr& ret, const value& x, ast::expr_handle b);
-        static void         mult_build(expr& ret, ast::expr_handle x, const value& b);
+        static void         mult_build(expr& ret, const expr& x, const value& b);
 
     private:
                             // x ^ b

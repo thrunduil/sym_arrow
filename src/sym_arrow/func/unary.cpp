@@ -43,7 +43,7 @@ struct do_abs : public process_scalar1<do_abs>
 
     static void eval(expr& ret, ast::expr_handle a)
     {
-        return compound::mult_build(ret, a, value::make_one());
+        return compound::mult_build(ret, expr(a), value::make_one());
     };
 };
 

@@ -249,6 +249,21 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value_double.h">
       <Filter>Source Files\include\sym_arrow\nodes</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\nodes\value_functions_common.h">
+      <Filter>Source Files\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\func\func_names.h">
+      <Filter>Source Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\func\contexts_impl.h">
+      <Filter>Source Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\global_context_initializers.h">
+      <Filter>Source Files\include\sym_arrow\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\value_context_data.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp">
@@ -410,6 +425,21 @@
     <ClCompile Include="..\..\src\sym_arrow\nodes\value_double.cpp">
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\value_functions_common.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\boolean.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\func_names.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\function.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\value_context_data.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr.inl">
@@ -498,6 +528,12 @@
     </None>
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_double.inl">
       <Filter>Source Files\include\sym_arrow\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\global_context_initializers.inl">
+      <Filter>Source Files\include\sym_arrow\details</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\value_context_data.inl">
+      <Filter>Source Files\ast</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

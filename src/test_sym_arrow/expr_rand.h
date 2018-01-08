@@ -129,7 +129,7 @@ struct rand_state
         static bool&    get_debug_flag();
 
         static bool     values_equal(const error_value& v1, const value& v2, 
-                            bool test_invalid_numbers, double& ulp_error);
+                            double& ulp_error);
 
     private:        
         void            disp(std::ostream& os, const expr_value& ex);
@@ -142,6 +142,7 @@ struct rand_state
 using expr_value    = std::pair<expr,error_value>;
 
 double      rand();
+double      randn();
 int         irand();
 expr_value  expr_rand(int n_sym, int max_depth, bool d, bool test_value);
 void        init_genrand(unsigned long s);

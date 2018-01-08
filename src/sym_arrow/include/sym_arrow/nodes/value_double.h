@@ -22,8 +22,18 @@
 #pragma once
 
 #include "sym_arrow/config.h"
+#include "sym_arrow/details/dag_traits.h"
 
 #include <iosfwd>
+
+namespace sym_arrow { namespace details
+{
+
+void initialize_values();
+void initialize_values(ast::details::value_context_data& );
+void close_values(ast::details::value_context_data& );
+
+}}
 
 namespace sym_arrow
 {
@@ -162,13 +172,12 @@ SYM_ARROW_EXPORT value   operator-(const value& v1, const value& v2);
 SYM_ARROW_EXPORT value   operator-(const value& v1, const double& v2);
 SYM_ARROW_EXPORT value   operator-(const double& v1, const value& v2);
 
-// multiplication v1 * v2; it is assumed, that 0 * v = 0 for any v
-// including inf and nan values
+// multiplication v1 * v2
 SYM_ARROW_EXPORT value   operator*(const value& v1, const value& v2);
 SYM_ARROW_EXPORT value   operator*(const value& v1, const double& v2);
 SYM_ARROW_EXPORT value   operator*(const double& v1, const value& v2);
 
-// division v1 / v2
+// division v1 / v2; x/0 gives NaN for any x
 SYM_ARROW_EXPORT value   operator/(const value& v1, const value& v2);
 SYM_ARROW_EXPORT value   operator/(const value& v1, const double& v2);
 SYM_ARROW_EXPORT value   operator/(const double& v1, const value& v2);
@@ -177,12 +186,40 @@ SYM_ARROW_EXPORT value   operator/(const double& v1, const value& v2);
 SYM_ARROW_EXPORT value   operator-(const value& v1);
 
 // integer power v1 ^ v2
+// special cases are treated differently than according to IEEE 754-2008 standards:
+// power_int(NaN, y)    -> NaN for any y
+// power_int(-Inf, y)   -> 0 for y < 0
+// power_int(-Inf, y)   -> -Inf for y > 0 and y odd
+// power_int(-Inf, y)   -> Inf for y > 0 and y even
+// power_int(-Inf, 0)   -> NaN
+// power_int(+Inf, y)   -> 0 for y < 0
+// power_int(+Inf, y)   -> +Inf for y > 0
+// power_int(+Inf, 0)   -> NaN
+// power_int(+-0, y)    -> 0.0 for y > 0
+// power_int(+-0, y)    -> NaN for y < 0
+// power_int(0, 0)      -> NaN
+// power_int(x, 0)      -> 1
+// power_int(1, y)      -> 1
 SYM_ARROW_EXPORT value   power_int(const value& v1, int v2);
 
 // real power |v1| ^ v2
+// special cases are treated differently than according to IEEE 754-2008 standards:
+// power_real(NaN, y)   -> NaN for any y
+// power_real(x, NaN)   -> NaN for any x
+// pow(+-Inf, y)        -> plus zero for y negative, and plus infinity for y positive
+// pow(+-Inf, 0)        -> NaN
+// pow(x, -Inf)         -> plus infinity for 0 < |x| < 1, and plus zero for |x| > 1
+// pow(0, -Inf)         -> NaN
+// pow(x, +Inf)         -> plus zero for 0 < |x| < 1, and plus infinity for |x| > 1
+// pow(0, +Inf)         -> NaN
+// pow(0, y)            -> plus infinity for y < 0
+// pow(0, y)            -> plus zero for y > 0
+// power_real(0, +-0)   -> NaN
+// power_real(x, +-0)   -> 1
+// power_real(+-1, y)   -> 1
 SYM_ARROW_EXPORT value   power_real(const value& v1, const value& v2);
 
-// inverse v1 ^ (-1)
+// inverse v1 ^ (-1); inv(0) gives NaN
 SYM_ARROW_EXPORT value   inv(const value& v1);
 
 // exponential exp(v1)

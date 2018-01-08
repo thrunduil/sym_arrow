@@ -53,6 +53,9 @@ class function_rep_info
             : m_name(name), m_size(size), m_args(args)
             , m_hash(0) 
         {};
+
+    // return true if all scalars are finite and false otherwise
+    bool are_values_valid() const;
 };
 
 // dag_item representing function term term; such term is represented as:

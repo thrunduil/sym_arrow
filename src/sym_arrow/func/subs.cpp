@@ -282,8 +282,20 @@ expr do_subs_vis::eval(const ast::function_rep* h, const subs_context& sc)
 
     using info              = ast::function_rep_info;
     info f_info             = info(h->name(), n, buff_ptr);
-    ast::expr_ptr ep        = ast::function_rep::make(f_info);
 
+    if (f_info.are_values_valid() == false)
+        return scalar::make_nan();
+
+    {
+        expr v;
+        bool evaled         = global_function_evaler()
+                                .eval_function(symbol(h->name()), buff_ptr, n, v);
+
+        if (evaled == true)
+            return v;
+    }
+
+    ast::expr_ptr ep        = ast::function_rep::make(f_info);
     return expr(ep);
 };
 

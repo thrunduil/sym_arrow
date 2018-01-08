@@ -39,9 +39,11 @@ class error_value
         bool            is_equal(const value& val, double ulp_limit,
                             double& ulp_error) const;
         bool            is_finite() const;
+        bool            is_value_finite() const;
 
         const value&    get_value() const;
         double          get_error() const;
+        value           get_abs_error() const;
 };
 
 void        disp(std::ostream& os, const error_value& v, bool add_nl = true);

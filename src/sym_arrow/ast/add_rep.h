@@ -59,7 +59,7 @@ struct add_rep_info
     {};
 
     // return true if all scalars are finite and false otherwise
-    bool is_finite() const;
+    bool are_values_valid() const;
 };
 
 // class representing a0 + sum_{i,n} ai * ei + log|el|

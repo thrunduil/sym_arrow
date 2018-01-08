@@ -30,11 +30,29 @@
 #include <boost/functional/hash.hpp>
 #include "boost/io/ios_state.hpp"
 
+#include "sym_arrow/nodes/value_functions_common.h"
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 
 #include <iostream>
 #include <iomanip>
+
+namespace sym_arrow { namespace details
+{
+    void details::initialize_values(ast::details::value_context_data& context)
+    {
+        (void)context;
+    };
+
+    void details::close_values(ast::details::value_context_data& context)
+    {
+        (void)context;
+    };
+
+    void details::initialize_values()
+    {}
+}}
 
 namespace sym_arrow
 {
@@ -237,26 +255,47 @@ value sym_arrow::operator*(const double& v1, const value& v2)
 
 value sym_arrow::operator/(const value& v1, const value& v2)
 { 
+    if (v2.is_zero())
+        return value::make_nan();
+
     return value(v1.get_rep() / v2.get_rep());
 };
 
 value sym_arrow::operator/(const value& v1, const double& v2)
-{ 
+{
+    if (v2 == 0.0)
+        return value::make_nan();
+
     return value(v1.get_rep() / v2);
 };
 
 value sym_arrow::operator/(const double& v1, const value& v2)
 { 
+    if (v2.is_zero())
+        return value::make_nan();
+
     return value(v1 / v2.get_rep());
 };
 
 value sym_arrow::power_int(const value& v1, int v2)
-{ 
+{
+    bool computed;
+    value res   = details::special_cases_power_int(v1, v2, computed);
+
+    if (computed == true)
+        return res;
+
     return value(sli::pow_int(v1.get_rep(), v2));
 };
 
 value sym_arrow::power_real(const value& v1, const value& v2)
 {
+    bool computed;
+    value res   = details::special_cases_power_real(v1, v2, computed);
+
+    if (computed == true)
+        return res;
+
     return value(sli::pow_abs(v1.get_rep(), v2.get_rep()));
 };
 
@@ -321,6 +360,9 @@ value sym_arrow::operator-(const value& v1)
 
 value sym_arrow::inv(const value& v1)
 { 
+    if (v1.is_zero())
+        return value::make_nan();
+
     return value(inv(v1.get_rep()));
 };
 

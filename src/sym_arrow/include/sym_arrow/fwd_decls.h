@@ -46,6 +46,7 @@ namespace sym_arrow { namespace details
 
 class subs_context_impl;
 class diff_context_impl;
+class function_evaler_impl;
 
 class value_mp;
 
@@ -104,5 +105,6 @@ namespace sym_arrow { namespace ast { namespace details
 {
 
 class term_context_data;
+class value_context_data;
 
 }}};

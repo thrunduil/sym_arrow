@@ -155,8 +155,23 @@ expr SYM_ARROW_EXPORT   abs(expr&& a);
 expr SYM_ARROW_EXPORT   function(const symbol& sym);
 expr SYM_ARROW_EXPORT   function(const symbol& sym, const expr& arg1);
 expr SYM_ARROW_EXPORT   function(const symbol& sym, const expr& arg1, const expr& arg2);
+expr SYM_ARROW_EXPORT   function(const symbol& sym, const expr& arg1, const expr& arg2, 
+                            const expr& arg3);
 expr SYM_ARROW_EXPORT   function(const symbol& sym, const std::vector<expr>& arg);
 expr SYM_ARROW_EXPORT   function(const symbol& sym, const expr* arg, size_t n);
+
+// create an expression defined only when a condition is satisfied:
+//      cond == 1.0  => ex
+//      cond != 1.0  => NaN
+// where cond is en expression which evaluetes to 1 or 0
+expr SYM_ARROW_EXPORT   if_then(const expr& cond, const expr& ex);
+
+// create a conditional expression defined as:
+//      cond == 1.0  => ex_true
+//      cond != 1.0  => ex_false
+// where cond is en expression which evaluetes to 1 or 0
+expr SYM_ARROW_EXPORT   if_then_else(const expr& cond, const expr& ex_true, 
+                            const expr& ex_false);
 
 // comparison function based on addresses of pointers
 bool SYM_ARROW_EXPORT   operator<(const expr& s1, const expr& s2);
@@ -175,6 +190,48 @@ SYM_ARROW_EXPORT const symbol&       cast_symbol(const expr& ex);
 SYM_ARROW_EXPORT const add_expr&     cast_add(const expr& ex);
 SYM_ARROW_EXPORT const mult_expr&    cast_mult(const expr& ex);
 SYM_ARROW_EXPORT const function_expr& cast_function(const expr& ex);
+
+//----------------------------------------------------------------------
+//                        boolean functions
+//----------------------------------------------------------------------
+
+// return expression that evaluates to 1 if x == y and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_eq(const expr& x, const expr& y);
+
+// return expression that evaluates to 1 if x != y and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_neq(const expr& x, const expr& y);
+
+// return expression that evaluates to 1 if x > y and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_gt(const expr& x, const expr& y);
+
+// return expression that evaluates to 1 if x < y and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_lt(const expr& x, const expr& y);
+
+// return expression that evaluates to 1 if x <= y and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_leq(const expr& x, const expr& y);
+
+// return expression that evaluates to 1 if x >= y and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_geq(const expr& x, const expr& y);
+
+// return expression that evaluates to 1 if (x == 1) || (y == 1)
+// and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_or(const expr& x, const expr& y);
+
+// return expression that evaluates to 1 if (x == 1) && (y == 1)
+// and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_and(const expr& x, const expr& y);
+
+// return expression that evaluates to 1 if (x == 1) ^ (y == 1)
+// and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_xor(const expr& x, const expr& y);
+
+// return expression that evaluates to 1 if !(x == 1) && (y == 1)
+// and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_andnot(const expr& x, const expr& y);
+
+// return expression that evaluates to 1 if !(x == 1) 
+// and to 0 otherwise
+expr SYM_ARROW_EXPORT   bool_not(const expr& x);
 
 };
 

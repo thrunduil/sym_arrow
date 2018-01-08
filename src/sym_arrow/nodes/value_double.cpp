@@ -27,6 +27,8 @@
 #include "sym_arrow/functions/expr_functions.h"
 #include "matcl-core/details/scalfunc_real.h"
 
+#include "sym_arrow/nodes/value_functions_common.h"
+
 #include <boost/functional/hash.hpp>
 #include "boost/io/ios_state.hpp"
 
@@ -35,6 +37,22 @@
 
 #include <iostream>
 #include <iomanip>
+
+namespace sym_arrow { namespace details
+{
+    void details::initialize_values(ast::details::value_context_data& context)
+    {
+        (void)context;
+    };
+
+    void details::close_values(ast::details::value_context_data& context)
+    {
+        (void)context;
+    };
+
+    void details::initialize_values()
+    {}
+}}
 
 namespace sym_arrow
 {
@@ -173,6 +191,28 @@ void sym_arrow::set_default_precision(int prec)
 {
     (void)prec;
 }
+
+value sym_arrow::power_real(const value& v1, const value& v2)
+{
+    bool computed;
+    value res   = details::special_cases_power_real(v1, v2, computed);
+
+    if (computed == true)
+        return res;
+
+    return value(std::pow(std::abs(v1.get_double()), v2.get_double()));
+};
+
+value sym_arrow::power_int(const value& v1, int v2)
+{
+    bool computed;
+    value res   = details::special_cases_power_int(v1, v2, computed);
+
+    if (computed == true)
+        return res;
+
+    return value(std::pow(v1.get_double(), v2));
+};
 
 };
 

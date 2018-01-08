@@ -97,7 +97,7 @@ struct do_pow_real : public process_scalar2<do_pow_real>
 
     static void eval(expr& ret, ast::expr_handle a, const value& b)
     {
-        return compound::mult_build(ret, a, b);
+        return compound::mult_build(ret, expr(a), b);
     }
 
     static void eval(expr& ret, const value& a, ast::expr_handle b)
@@ -108,7 +108,7 @@ struct do_pow_real : public process_scalar2<do_pow_real>
     // b should be cannonized
     static void eval(expr& ret, ast::expr_handle a, ast::expr_handle b)
     {
-        return compound::mult_build(ret, a, expr(b));
+        return compound::mult_build(ret, expr(a), expr(b));
     }
 };
 

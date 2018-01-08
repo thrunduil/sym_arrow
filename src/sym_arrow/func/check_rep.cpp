@@ -66,7 +66,8 @@ class do_check_rep_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
 
         bool is_cannonized(ast::expr_handle h);
         bool is_normalized(const ast::add_rep* h);
-        bool is_finite_scalar(ast::expr_handle h);
+        bool is_valid_scalar(ast::expr_handle h);
+        bool is_valid_value(const value& v);
 
         bool is_add_free(ast::expr_handle h);
         bool is_atom(ast::expr_handle h);
@@ -161,7 +162,7 @@ bool do_check_rep_vis::eval(const ast::function_rep* h)
         if (is_cannonized(e) == false)
             return false;
 
-        if (is_finite_scalar(e) == false)
+        if (is_valid_scalar(e) == false)
             return false;
 
         if (visit(e) == false)
@@ -180,7 +181,7 @@ bool do_check_rep_vis::atom_add_check_rep_values(const ast::add_rep* h)
         if (h->V(i).is_zero())
             return false;
 
-        if (h->V(i).is_finite() == false)
+        if (is_valid_value(h->V(i)) == false)
             return false;
     };
 
@@ -190,7 +191,7 @@ bool do_check_rep_vis::atom_add_check_rep_values(const ast::add_rep* h)
             return false;
     };
 
-    if (h->V0().is_finite() == false)
+    if (is_valid_value(h->V0()) == false)
         return false;
 
     return true;
@@ -285,9 +286,8 @@ bool do_check_rep_vis::atom_mult_check_rep_values(const ast::mult_rep* h)
         if (h->RV(i).is_zero() == true)
             return false;
 
-        //TODO
-        //if (h->RV(i).is_finite() == false)
-        //    return false;
+        if (is_valid_value(h->RV(i)) == false)
+            return false;
     };
 
     if (h->isize() == 1 && h->rsize() == 0)
@@ -399,18 +399,27 @@ bool do_check_rep_vis::atom_mult_check_rep_exp_expr(const ast::mult_rep* h)
     return true;
 };
 
-bool do_check_rep_vis::is_finite_scalar(ast::expr_handle h)
+bool do_check_rep_vis::is_valid_scalar(ast::expr_handle h)
 {
     if (h->isa<ast::scalar_rep>() == false)
         return true;
 
-    bool is_fin = h->static_cast_to<ast::scalar_rep>()->get_data().is_finite();
+    bool is_valid = is_valid_value(h->static_cast_to<ast::scalar_rep>()->get_data());
 
-    if (is_fin == false)
+    if (is_valid == false)
         return false;
+    else
+        return true;
+}
 
-    //TODO: add checks at construction
-    return true;
+bool do_check_rep_vis::is_valid_value(const value& h)
+{
+    bool is_valid   = (h.is_nan() == false);
+
+    if (is_valid == false)
+        return false;
+    else
+        return true;
 }
 
 bool do_check_rep_vis::is_cannonized(ast::expr_handle h)

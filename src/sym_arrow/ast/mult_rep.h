@@ -60,6 +60,9 @@ struct mult_rep_info
         : in(in_), iexpr(iex_), m_hash_mult(0), exp_expr(exp_expr_), rn(rn_)
         , rexpr(rex_)
     {};
+
+    // return true if all scalars are finite and false otherwise
+    bool are_values_valid() const;
 };
 
 // dag_item representing multiplicative term; such term is represented as:

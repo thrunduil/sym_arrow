@@ -26,6 +26,22 @@
 namespace sym_arrow { namespace ast
 {
 
+bool function_rep_info::are_values_valid() const
+{
+    for (size_t i = 0; i < m_size; ++i)
+    {
+        if (m_args[i].get_expr_handle()->isa<scalar_rep>() == true)
+        {
+            scalar_handle sh = m_args[i].get_expr_handle()->static_cast_to<scalar_rep>();
+
+            if (sh->get_data().is_nan() == true)
+                return false;
+        }
+    }
+
+    return true;
+}
+
 function_rep::function_rep(const function_rep_info& pi)
     :base_type(this), m_hash(pi.m_hash)
     ,m_size(pi.m_size), m_expr(nullptr), m_name(symbol_ptr::from_this(pi.m_name))

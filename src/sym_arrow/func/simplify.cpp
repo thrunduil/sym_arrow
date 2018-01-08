@@ -298,11 +298,26 @@ expr do_simplify_vis::eval(const ast::function_rep* h)
 
     ast::function_rep_info bi(h->name(), n, buff_ptr);
 
-    ast::expr_ptr simpl = ast::function_rep::make(bi);
+    if (bi.are_values_valid() == false)
+    {
+        expr ret    = scalar::make_nan();
+        insert(h, ret);
 
-    expr ret    = expr(std::move(simpl));
+        return ret;
+    };
+
+    expr ret;
+
+    bool evaled = global_function_evaler()
+                    .eval_function(symbol(h->name()), buff_ptr, n, ret);
+
+    if (evaled == false)
+    {
+        ast::expr_ptr simpl = ast::function_rep::make(bi);
+        ret                 = expr(std::move(simpl));
+    };
+
     ret.cannonize(true);
-
     insert(h, ret);
 
     return ret;

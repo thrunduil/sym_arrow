@@ -33,3 +33,4 @@
 
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/ast/add_rep.inl"
+#include "sym_arrow/ast/term_context_data.h"

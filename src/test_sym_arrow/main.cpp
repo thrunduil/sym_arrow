@@ -33,41 +33,41 @@ int main(int argc, const char* argv[])
     (void)argv;    
 
     // number of random trials
+    //size_t n_rep = 100000;
     size_t n_rep = 100000;
-
-    /*
-    {
-        sym_arrow::set_disp_precision(-1);
-        sym_arrow::set_default_precision(53);
-
-        sym_arrow::symbol x("x");
-        sym_arrow::expr ex  = log(3.564+x) * 1.007;
-        //sym_arrow::expr ex  = (exp(x) - 1.0)/x;
-        disp(ex);
-
-        std::vector<sym_arrow::expr> coef;
-        sym_arrow::taylor_coef(ex, x, 0.0, 5, coef);
-
-        for (const auto& it : coef)
-            disp(it);
-    };
-    */
 
     try
     {
-        //TODO
-        //test_set::example();
+        /*
+        {
+            sym_arrow::set_disp_precision(-1);
+            sym_arrow::set_default_precision(53);
 
-        //test_set::test_diff();
-        //test_set::test_diff_context();
+            sym_arrow::symbol x("x");
+            sym_arrow::expr ex  = log(3.564+x) * 1.007;
+            //sym_arrow::expr ex  = (exp(x) - 1.0)/x;
+            disp(ex);
 
-        //test_set::test_harmonics();
+            std::vector<sym_arrow::expr> coef;
+            sym_arrow::taylor_coef(ex, x, 0.0, 5, coef);
 
-        //test_set::test_special_cases();
-        //test_set::test_visitor();        
+            for (const auto& it : coef)
+                disp(it);
+        };
+        */
+
+        test_set::example();
+
+        test_set::test_diff();
+        test_set::test_diff_context();
+
+        test_set::test_harmonics();
+
+        test_set::test_special_cases();
+        test_set::test_visitor();        
 
         test_set::test_random_diff(n_rep);
-        //test_set::test_expression(n_rep);
+        test_set::test_expression(n_rep);
 
         std::cout << "\n";
 
@@ -75,9 +75,8 @@ int main(int argc, const char* argv[])
         //sym_dag::registered_dag_context::get().print_memory_stats(std::cout);
         //sym_dag::registered_dag_context::get().print_collisions(std::cout);
 
-        //TODO
-        //sym_dag::registered_dag_context::get().close();
-        //sym_dag::registered_dag_context::get().print_memory_leaks(std::cout);
+        sym_dag::registered_dag_context::get().close();
+        sym_dag::registered_dag_context::get().print_memory_leaks(std::cout);
     }
     catch(std::exception& ex)
     {

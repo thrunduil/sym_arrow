@@ -19,39 +19,37 @@
 *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include "term_context_data.inl"
-#include "sym_arrow/ast/ast.h"
-#include "sym_arrow/func/contexts_impl.h"
+#pragma once
+
+#include "sym_arrow/config.h"
+#include "dag/dag.h"
+#include "sym_arrow/fwd_decls.h"
+#include "sym_arrow/nodes/value.h"
 
 namespace sym_arrow { namespace ast { namespace details
 {
 
-term_context_data::~term_context_data()
-{};
+namespace sd = sym_arrow ::details;
 
-void term_context_data::initialize()
+// additional data stored in dag context for term nodes
+class value_context_data : public sym_dag::context_data_base
 {
-    // force initialization of values
-    sd::initialize_values();
+    public:
+        using expr_ptr      = sym_dag::dag_ptr<expr_base, sym_arrow::ast::term_tag>;
 
-    m_scalar_zero       = scalar(value::make_zero());
-    m_scalar_one        = scalar(value::make_one());
-    m_scalar_minus_one  = scalar(value::make_minus_one());
-    m_scalar_nan        = scalar(value::make_nan());
+    private:
+        virtual ~value_context_data() override;
 
-    sd::initialize_global_contexts();
-};
+        virtual void        initialize() override;
+        virtual void        close() override;
 
-void term_context_data::close()
-{
-    sd::close_global_contexts();
-
-    m_scalar_zero       = scalar();
-    m_scalar_one        = scalar();
-    m_scalar_minus_one  = scalar();
-    m_scalar_nan        = scalar();
-
-    m_reg_symbols.close(); 
+    public:
+        sd::value_mp*       val_zero_ptr;
+        sd::value_mp*       val_one_ptr;
+        sd::value_mp*       val_mone_ptr;
+        sd::value_mp*       val_nan_ptr;
 };
 
 }}};
+
+#include "sym_arrow/ast/value_context_data.inl"

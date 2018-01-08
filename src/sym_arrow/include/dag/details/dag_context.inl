@@ -36,9 +36,9 @@ namespace sym_dag
 template<class Tag>
 dag_context<Tag>::dag_context()
 {
-    registered_dag_context::get().register_dag(this);
-    m_context_data  = nullptr;
+    registered_dag_context::get().register_dag(this);    
     m_allocated     = 0;
+    m_context_data  = nullptr;
 };
 
 template<class Tag>
@@ -68,7 +68,7 @@ template<class Tag>
 inline typename dag_context<Tag>::context_data& 
 dag_context<Tag>::get_context_data()
 {
-    if (!m_context_data)
+    if (m_context_data == nullptr)
     {
         m_context_data  = new context_data();
         m_context_data->initialize();  
@@ -81,7 +81,7 @@ template<class Tag>
 inline typename dag_context<Tag>::context_data const& 
 dag_context<Tag>::get_context_data() const
 {
-    if (!m_context_data)
+    if (m_context_data == nullptr)
     {
         m_context_data  = new context_data();
         m_context_data->initialize();  

@@ -746,7 +746,7 @@ void subexpr_collector::finalize_sum(build_item<value>* it, size_t size, const v
             using item_type     = build_item<value>;
             add_rep_info<item_type> ai(&add, 1, it, nullptr);
 
-            if (ai.is_finite() == false)
+            if (ai.are_values_valid() == false)
             {
                 res             = scalar::make_nan();
                 return;
@@ -870,6 +870,9 @@ expr subexpr_collector::build_reduced_mult(size_t isize, size_t rsize, build_ite
 
     // after removal ordering is not changed
     mult_info info(isize, ih, exp, rsize, rh);
+
+    if (info.are_values_valid() == false)
+        return scalar::make_nan();
 
     expr_ptr ep = mult_rep::make(info);
     return expr(ep);

@@ -169,16 +169,25 @@ inline value sym_arrow::operator*(const double& v1, const value& v2)
 
 inline value sym_arrow::operator/(const value& v1, const value& v2)
 { 
+    if (v2.is_zero() == true)
+        return value::make_nan();
+
     return value(v1.get_double() / v2.get_double());
 };
 
 inline value sym_arrow::operator/(const value& v1, const double& v2)
-{ 
+{
+    if (v2 == 0.0)
+        return value::make_nan();
+
     return value(v1.get_double() / v2);
 };
 
 inline value sym_arrow::operator/(const double& v1, const value& v2)
 { 
+    if (v2.is_zero() == true)
+        return value::make_nan();
+
     return value(v1 / v2.get_double());
 };
 
@@ -221,18 +230,11 @@ inline bool sym_arrow::operator>=(const value& v1,const value& v2)
     return (v1 < v2) == false;
 };    
 
-inline value sym_arrow::power_int(const value& v1, int v2)
-{ 
-    return value(std::pow(v1.get_double(), v2));
-};
-
-inline value sym_arrow::power_real(const value& v1, const value& v2)
-{
-    return value(std::pow(std::abs(v1.get_double()), v2.get_double()));
-};
-
 inline value sym_arrow::inv(const value& v1)
 { 
+    if (v1.is_zero() == true)
+        return value::make_nan();
+
     return value(1.0 / v1.get_double());
 };
 

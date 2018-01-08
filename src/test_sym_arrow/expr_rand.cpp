@@ -179,7 +179,7 @@ bool rand_state::add(const expr_value& ex)
         value v2        = eval(tmp, rand_data_provider(this));
         double ulp_err;
 
-        if (values_equal(v1,v2,true, ulp_err) == false)
+        if (values_equal(v1,v2, ulp_err) == false)
         {
             if (get_debug_flag() == true)
             {
@@ -212,7 +212,7 @@ bool rand_state::test_existing_dif(const expr_value_dif& ex, const symbol& sym)
         value v2        = eval(tmp, rand_data_provider(this));
         double ulp_err;
 
-        if (values_equal(v1,v2,true, ulp_err) == false)
+        if (values_equal(v1,v2, ulp_err) == false)
         {
             if (get_debug_flag() == true)
             {
@@ -229,7 +229,7 @@ bool rand_state::test_existing_dif(const expr_value_dif& ex, const symbol& sym)
         expr tmp_d      = ex.get_dif();
         value vd2       = eval(tmp_d, rand_data_provider(this));
 
-        if (values_equal(vd1, vd2, true, ulp_err) == false)
+        if (values_equal(vd1, vd2, ulp_err) == false)
         {
             if (get_debug_flag() == true)
             {
@@ -249,7 +249,7 @@ bool rand_state::test_existing_dif(const expr_value_dif& ex, const symbol& sym)
         expr tmp_d2     = diff(ex.get_base(), sym);
         value vd3       = eval(tmp_d2, rand_data_provider(this));
 
-        if (values_equal(vd1, vd3,true, ulp_err) == false)
+        if (values_equal(vd1, vd3, ulp_err) == false)
         {
             if (get_debug_flag() == true)
             {
@@ -346,7 +346,7 @@ value rand_state::rand_value()
     if (t % 5 == 0)
         return rand_value_special();
 
-    double tmp = 1 + rand();
+    double tmp = randn();
     return value::make_value(tmp);
 };
 
@@ -1205,12 +1205,11 @@ bool rand_state::test_input_div(const error_value& val1, const error_value& val2
 }
 
 bool rand_state::values_equal(const error_value& v1, const value& v2, 
-                              bool test_invalid, double& ulp_err)
+                              double& ulp_err)
 {
     ulp_err = std::numeric_limits<double>::infinity();
 
-    //TODO
-    if (test_invalid == true && v1.is_finite() != v2.is_finite())
+    if (v1.is_value_finite() != v2.is_finite())
         return false;
   
     return v1.is_equal(v2, ulp_limit(), ulp_err);
@@ -1259,6 +1258,11 @@ void rand_state::disp(std::ostream& os, const expr_value_dif& ex)
 double testing::rand()
 {
     return testing::genrand_real1();
+};
+
+double testing::randn()
+{
+    return testing::gen_norm();
 };
 
 int testing::irand()
@@ -1369,6 +1373,13 @@ expr_value_dif rand_state::exp_dif(const expr_value_dif& x1)
 {
     expr new_base               = exp(x1.get_base());
     error_value new_base_val    = exp(x1.get_base_value());
+
+    if (x1.get_dif_value().get_value().is_zero() == true 
+        && x1.get_dif_value().get_error() == 0.0)
+    {
+        return expr_value_dif(new_base, new_base_val, x1.get_dif(), x1.get_dif_value());
+    };
+
     expr new_dif                = exp(x1.get_base()) * x1.get_dif();
     error_value new_dif_val     = exp(x1.get_base_value()) * x1.get_dif_value();
 

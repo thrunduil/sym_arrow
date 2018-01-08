@@ -56,7 +56,6 @@ void test_set::test_random_diff(size_t n_rep)
     // set stop_index to the value you want the loop to give
     // comments about calculations; value -1 if you don't want comments at all
     size_t stop_index   = (size_t)-1;
-    //size_t stop_index   = (size_t)9707;
 
     // display progress every nr_disp_gap
     int nr_disp_gap     = 20000;
@@ -107,7 +106,7 @@ void test_set::test_random_diff(size_t n_rep)
             
             value ev2		    = eval(ex_dif, rand_data_provider(&r));
             double ulp_error;
-            bool is_value_valid = rand_state::values_equal(ev_dif, ev2, false, ulp_error);
+            bool is_value_valid = rand_state::values_equal(ev_dif, ev2, ulp_error);
 
             if (is_value_valid == false)
             {				                
@@ -212,13 +211,12 @@ void test_set::test_expression(size_t n_rep)
     init_genrand(203);
 
     //int n_sym         = 1000000;
-    int n_sym           = 3;
+    int n_sym           = 5;
     //rand_state r(n_sym, 12, false, false);
-    rand_state r(n_sym, 12, false, false);//TODO
+    rand_state r(n_sym, 12, false, false);
 
     bool show           = false;
     size_t stop_index   = (size_t)-1;
-    //size_t stop_index   = 1352;
 
     tic();
     for(size_t i = 0; i < n_rep; ++i)
@@ -253,7 +251,7 @@ void test_set::test_expression(size_t n_rep)
             
             value ev2		    = eval(ex, rand_data_provider(&r));
             double ulp_error;
-            bool is_value_valid = rand_state::values_equal(ev, ev2, false, ulp_error);
+            bool is_value_valid = rand_state::values_equal(ev, ev2, ulp_error);
 
             if (is_value_valid == false)
             {				                
@@ -328,8 +326,8 @@ void test_set::test_diff_context()
     symbol cos("cos");
     symbol x("x");
 
-    dc.add_diff_rule(sin, 1, &x, 0, cos(x));
-    dc.add_diff_rule(cos, 1, &x, 0, -sin(x));
+    dc.add_diff_rule(sin, 1, &x, 0, cos(x), true);
+    dc.add_diff_rule(cos, 1, &x, 0, -sin(x), true);
 
     expr ex         = parse("sin[x^2]*cos[x^2]]");
 

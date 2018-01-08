@@ -28,6 +28,18 @@ namespace sym_arrow { namespace ast
 {
 
 template<class Iitem_type, class Ritem_type>
+bool mult_rep_info<Iitem_type, Ritem_type>::are_values_valid() const
+{
+    for (size_t i = 0; i < rn; ++i)
+    {
+        if (rexpr[i].get_value().is_nan() == true)
+            return false;
+    }
+
+    return true;
+};
+
+template<class Iitem_type, class Ritem_type>
 mult_rep::mult_rep(const mult_rep_info<Iitem_type, Ritem_type>& pi)
     : base_type(this), m_hash(pi.m_hash_mult)
     , m_int_size(pi.in), m_int_data(nullptr), m_real_data(nullptr)
