@@ -38,6 +38,19 @@ int main(int argc, const char* argv[])
 
     try
     {
+        {
+            //auto x              = sym_arrow::symbol("x");
+            //sym_arrow::expr ex  = sym_arrow::parse("A0");
+            sym_arrow::expr ex  = sym_arrow::parse("A0 - (A0 - A1)^2 / (A2 - A1 + A0 - A1)");
+            auto dif_A0         = diff(ex, sym_arrow::symbol("A0"));
+            auto dif_A1         = diff(ex, sym_arrow::symbol("A1"));
+            auto dif_A2         = diff(ex, sym_arrow::symbol("A2"));
+
+            disp(ex);
+            disp(dif_A0);
+            disp(dif_A1);
+            disp(dif_A2);
+        }
         /*
         {
             sym_arrow::set_disp_precision(-1);

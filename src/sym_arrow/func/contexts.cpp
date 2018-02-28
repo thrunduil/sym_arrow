@@ -637,7 +637,7 @@ const diff_context& sym_arrow::global_diff_context()
     if (!g_diff_context)
     {
         //force initialization
-        sym_dag::dag_context<ast::term_tag>::get().get_context_data();
+        details::initialize_global_contexts();
     }
 
     return *g_diff_context;
@@ -694,7 +694,7 @@ const function_evaler& sym_arrow::global_function_evaler()
     if (!g_func_evaler)
     {
         //force initialization
-        sym_dag::dag_context<ast::term_tag>::get().get_context_data();
+        details::initialize_global_contexts();
     }
     
     return *g_func_evaler;
