@@ -50,6 +50,7 @@ class do_disp_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dis
 
         void eval(const ast::scalar_rep* h, std::ostream& os, int prec);
         void eval(const ast::symbol_rep* h, std::ostream& os, int prec);
+        void eval(const ast::indexed_symbol_rep* h, std::ostream& os, int prec);
         void eval(const ast::add_build* h, std::ostream& os, int prec);
         void eval(const ast::mult_build* h, std::ostream& os, int prec);
         void eval(const ast::add_rep* h, std::ostream& os, int prec);
@@ -96,6 +97,32 @@ void do_disp_vis::eval(const ast::symbol_rep* h, std::ostream& os, int prec)
 {
     (void)prec;
     disp_symbol(h, os);
+};
+
+void do_disp_vis::eval(const ast::indexed_symbol_rep* h, std::ostream& os, int prec)
+{
+    (void)prec;
+
+    disp_symbol(h->name(), os);
+    os << "<";
+
+    size_t n = h->size();
+
+    if (n == 0)
+    {
+        os << ">";
+        return;
+    }
+
+    visit(h->arg(0), os, prec_lowest);
+
+    for (size_t j = 1; j < n; ++j)
+    {
+        os << ",";
+        visit(h->arg(j), os, prec_lowest);
+    };
+
+    os << ">";
 };
 
 void do_disp_vis::disp_symbol(const ast::symbol_rep* h, std::ostream& os)

@@ -71,6 +71,7 @@ class mult_rep;
 class function_rep;
 class scalar_rep;
 class symbol_rep;
+class indexed_symbol_rep;
 
 class item_collector_add;
 class item_collector_mult;

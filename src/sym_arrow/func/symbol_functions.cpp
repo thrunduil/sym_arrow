@@ -107,6 +107,8 @@ class do_get_number_symbols : public sym_dag::dag_visitor<sym_arrow::ast::term_t
 
         size_t eval(const ast::scalar_rep* )    { return 0; };
         size_t eval(const ast::symbol_rep* )    { return 1; };
+        size_t eval(const ast::indexed_symbol_rep* )    
+                                                { return 1; };
         size_t eval(const ast::add_build* )     { return 0; };
         size_t eval(const ast::mult_build* )    { return 0; };
         size_t eval(const ast::add_rep* h)      { return h->number_symbols(); };
@@ -128,6 +130,8 @@ class do_has_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::add_build*, size_t)        { return false; };
         bool eval(const ast::mult_build*, size_t)       { return false; };
         bool eval(const ast::symbol_rep* h, size_t code){ return h->get_symbol_code() == code; };
+        bool eval(const ast::indexed_symbol_rep* h, size_t code)
+                                                        { return h->get_symbol_code() == code; };
         bool eval(const ast::add_rep* h, size_t code)   { return h->has_symbol(code); };
         bool eval(const ast::mult_rep* h, size_t code)  { return h->has_symbol(code); };
         bool eval(const ast::function_rep* h, size_t c) { return h->has_symbol(c); };
@@ -148,6 +152,8 @@ class do_has_any_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::add_build*, const dbs&)        { return false; };
         bool eval(const ast::mult_build*, const dbs&)       { return false; };
         bool eval(const ast::symbol_rep* h, const dbs& f)   { return f.test(h->get_symbol_code()); };
+        bool eval(const ast::indexed_symbol_rep* h, const dbs& f)   
+                                                            { return f.test(h->get_symbol_code()); };
         bool eval(const ast::add_rep* h, const dbs& f)      { return h->has_any_symbol(f); };
         bool eval(const ast::mult_rep* h, const dbs& f)     { return h->has_any_symbol(f); };
         bool eval(const ast::function_rep* h, const dbs& f) { return h->has_any_symbol(f); };
@@ -168,6 +174,9 @@ class do_has_all_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::add_build*, const dbs&)        { return false; };
         bool eval(const ast::mult_build*, const dbs&)       { return false; };
         bool eval(const ast::symbol_rep* h, const dbs& f)   { return f.size() == 1 && 
+                                                                f.test(h->get_symbol_code()); };
+        bool eval(const ast::indexed_symbol_rep* h, const dbs& f)   
+                                                            { return f.size() == 1 && 
                                                                 f.test(h->get_symbol_code()); };
         bool eval(const ast::add_rep* h, const dbs& f)      { return h->has_all_symbols(f); };
         bool eval(const ast::mult_rep* h, const dbs& f)     { return h->has_all_symbols(f); };
@@ -201,6 +210,10 @@ class do_add_symbols : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         { 
             f = f.set(h->get_symbol_code()); 
         };
+        void eval(const ast::indexed_symbol_rep* h, dbs& f)
+        { 
+            f = f.set(h->get_symbol_code()); 
+        };
 };
 
 class do_measure_complexity : public sym_arrow::ast::traversal_visitor<do_measure_complexity>
@@ -225,6 +238,10 @@ class do_measure_complexity : public sym_arrow::ast::traversal_visitor<do_measur
         {};
 
         void eval(const ast::symbol_rep*, expr_complexity& compl)
+        { 
+            compl.add_symbol();
+        };
+        void eval(const ast::indexed_symbol_rep*, expr_complexity& compl)
         { 
             compl.add_symbol();
         };

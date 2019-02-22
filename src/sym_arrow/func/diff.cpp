@@ -60,6 +60,7 @@ class do_diff_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dif
 
         expr eval(const ast::scalar_rep* h, const symbol& sym);
         expr eval(const ast::symbol_rep* h, const symbol& sym);
+        expr eval(const ast::indexed_symbol_rep* h, const symbol& sym);
         expr eval(const ast::add_build* h, const symbol& sym);
         expr eval(const ast::mult_build* h, const symbol& sym);
         expr eval(const ast::add_rep* h, const symbol& sym);
@@ -100,6 +101,14 @@ expr do_diff_vis::eval(const ast::symbol_rep* h, const symbol& sym)
     {
         return ast::scalar_rep::make_zero();
     };
+};
+
+expr do_diff_vis::eval(const ast::indexed_symbol_rep* h, const symbol& sym)
+{
+    (void)h;
+    (void)sym;
+    //TODO: impl!!
+    return ast::scalar_rep::make_zero();
 };
 
 expr do_diff_vis::eval(const ast::add_build* h, const symbol&)

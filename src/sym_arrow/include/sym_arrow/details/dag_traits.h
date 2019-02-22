@@ -37,6 +37,7 @@ enum class term_types : size_t
 {
     scalar  = 0,
     symbol,
+    indexed_symbol,
     add_build,
     mult_build,
     add_rep,

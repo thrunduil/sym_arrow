@@ -39,6 +39,9 @@ class traversal_visitor : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, 
         void eval(const ast::symbol_rep* h, Args&& ... args);
 
         template<class ... Args>
+        void eval(const ast::indexed_symbol_rep* h, Args&& ... args);
+
+        template<class ... Args>
         void eval(const ast::add_build* h, Args&& ... args);
 
         template<class ... Args>
@@ -69,6 +72,14 @@ template<class Derived>
 template<class ... Args>
 void traversal_visitor<Derived>::eval(const ast::symbol_rep*, Args&& ...)
 {
+    return;
+};
+
+template<class Derived>
+template<class ... Args>
+void traversal_visitor<Derived>::eval(const ast::indexed_symbol_rep*, Args&& ...)
+{
+    TODO
     return;
 };
 

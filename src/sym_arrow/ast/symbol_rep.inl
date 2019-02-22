@@ -51,4 +51,9 @@ inline size_t symbol_rep::hash_value() const
     return m_name.get_hash();
 };
 
+inline size_t indexed_symbol_rep::get_symbol_code() const
+{
+    return m_name->get_symbol_code();
+}
+
 };}

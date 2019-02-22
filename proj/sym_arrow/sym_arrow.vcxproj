@@ -287,7 +287,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;C:\Program Files %28x86%29\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;..\..\..\arrow\antlr\antlr\lib\cpp;..\..\..\arrow\antlr\region\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -308,7 +308,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;..\..\..\arrow\antlr\antlr\lib\cpp;..\..\..\arrow\antlr\region\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN64;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -329,7 +329,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;..\..\..\arrow\antlr\antlr\lib\cpp;..\..\..\arrow\antlr\region\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -355,7 +355,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;..\..\..\arrow\antlr\antlr\lib\cpp;..\..\..\arrow\antlr\region\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>

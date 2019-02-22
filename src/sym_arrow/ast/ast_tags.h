@@ -72,6 +72,11 @@ struct dag_code_to_node<sym_arrow::ast::term_tag, (size_t)sym_arrow::ast::term_t
     using type = sym_arrow::ast::symbol_rep;
 };
 template<>
+struct dag_code_to_node<sym_arrow::ast::term_tag, (size_t)sym_arrow::ast::term_types::indexed_symbol>
+{
+    using type = sym_arrow::ast::indexed_symbol_rep;
+};
+template<>
 struct dag_code_to_node<sym_arrow::ast::term_tag, (size_t)sym_arrow::ast::term_types::add_build>
 {
     using type = sym_arrow::ast::add_build;
@@ -108,6 +113,12 @@ template<>
 struct dag_node_to_code<sym_arrow::ast::term_tag, sym_arrow::ast::symbol_rep>
 {
     static const size_t code    = (size_t)sym_arrow::ast::term_types::symbol;
+};
+
+template<>
+struct dag_node_to_code<sym_arrow::ast::term_tag, sym_arrow::ast::indexed_symbol_rep>
+{
+    static const size_t code    = (size_t)sym_arrow::ast::term_types::indexed_symbol;
 };
 
 template<>
