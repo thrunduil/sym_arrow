@@ -19,41 +19,22 @@
 *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#pragma once
+#include "symbol_context_data.inl"
+#include "sym_arrow/ast/ast.h"
+#include "sym_arrow/func/contexts_impl.h"
 
-#include "symbol_rep.inl"
-
-namespace sym_arrow { namespace ast
+namespace sym_arrow { namespace ast { namespace details
 {
 
-inline const char* base_symbol_rep::get_name() const
+symbol_context_data::~symbol_context_data()
+{};
+
+void symbol_context_data::initialize()
+{};
+
+void symbol_context_data::close()
 {
-    return m_name.get_string();
+    m_reg_symbols.close(); 
 };
 
-inline size_t base_symbol_rep::get_name_size() const
-{
-    return m_name.get_size();
-};
-
-inline size_t base_symbol_rep::get_base_symbol_code() const
-{ 
-    return m_code; 
-};
-
-inline size_t base_symbol_rep::hash_value() const
-{
-    return m_name.get_hash();
-};
-
-inline size_t indexed_symbol_rep::get_base_symbol_code() const
-{
-    return m_name->get_base_symbol_code();
-}
-
-inline size_t indexed_symbol_rep::get_indexed_symbol_code() const
-{
-    return m_code;
-}
-
-};}
+}}};

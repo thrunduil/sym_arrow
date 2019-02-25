@@ -28,6 +28,7 @@ private:
     int                     get_int(const std::string& s);
 
     expr                    make_function(const symbol& sym, const std::vector<expr>& args);
+    symbol                  make_indexed(const symbol& sym, const std::vector<expr>& args);
     void                    to_number(const std::string& value_str0, bool is_complex, double& ret);
     void                    get_precission(const std::string& str,size_t& radix,long& exp);
     int                     to_int(const std::string& value_str);

@@ -121,8 +121,22 @@ atoms returns[expr x]
 ;
 
 scoped_symbol returns[symbol x]
-{}
+{
+    std::vector<expr> args;
+    expr y;
+}
     :   x = atom_symbol
+        (
+            LANGLE
+            (
+                y = term                    { args.push_back(y); }
+                (
+                    COMMA
+                    y = term                { args.push_back(y); }
+                )*
+            )?
+            RANGLE                          { x = make_indexed(x, args); }
+        )?
 ;
 
 atom_symbol returns[symbol x]
@@ -206,6 +220,10 @@ LCURL   options {paraphrase = "'{'";}
             :       '{' ;
 RCURL   options {paraphrase = "'}'";}
             :       '}' ;
+LANGLE   options {paraphrase = "'<'";}
+            :       '<' ;
+RANGLE   options {paraphrase = "'>'";}
+            :       '>' ;
 MULT    options {paraphrase = "'*'";}
             :       '*'    ;
 DIV     options {paraphrase = "'/'";}

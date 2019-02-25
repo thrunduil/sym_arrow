@@ -315,3 +315,10 @@ expr parser_sym_arrow::make_function(const symbol& sym, const std::vector<expr>&
 
     return sym_arrow::function(sym, args);
 };
+
+symbol parser_sym_arrow::make_indexed(const symbol& sym, const std::vector<expr>& args)
+{
+    std::initializer_list<expr> il(args.data(), args.data() + args.size());
+
+    return sym.index(il);
+};

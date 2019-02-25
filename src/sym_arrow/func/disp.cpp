@@ -49,7 +49,6 @@ class do_disp_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dis
         void eval(const Node* ast, std::ostream& os, int prec);
 
         void eval(const ast::scalar_rep* h, std::ostream& os, int prec);
-        void eval(const ast::symbol_rep* h, std::ostream& os, int prec);
         void eval(const ast::indexed_symbol_rep* h, std::ostream& os, int prec);
         void eval(const ast::add_build* h, std::ostream& os, int prec);
         void eval(const ast::mult_build* h, std::ostream& os, int prec);
@@ -71,7 +70,7 @@ class do_disp_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dis
         void disp_vlist_mult_value(const int* h, std::ostream& os, int prec);
         void disp_vlist_mult_value(const value* h, std::ostream& os, int prec);
         void disp_real_power(const value& h, std::ostream& os, int prec);
-        void disp_symbol(const ast::symbol_rep* h, std::ostream& os);
+        void disp_symbol(const ast::base_symbol_rep* h, std::ostream& os);
 };
 
 void do_disp_vis::add_paren(std::ostream& os, int this_prec, int min_prec, bool left)
@@ -93,27 +92,19 @@ void do_disp_vis::eval(const ast::scalar_rep* h, std::ostream& os, int prec)
     return sym_arrow::disp(os, v, false);
 };  
 
-void do_disp_vis::eval(const ast::symbol_rep* h, std::ostream& os, int prec)
-{
-    (void)prec;
-    disp_symbol(h, os);
-};
-
 void do_disp_vis::eval(const ast::indexed_symbol_rep* h, std::ostream& os, int prec)
 {
     (void)prec;
 
-    disp_symbol(h->name(), os);
-    os << "<";
+    disp_symbol(h->get_name(), os);
 
     size_t n = h->size();
 
     if (n == 0)
-    {
-        os << ">";
         return;
-    }
 
+    os << "<";
+    
     visit(h->arg(0), os, prec_lowest);
 
     for (size_t j = 1; j < n; ++j)
@@ -125,7 +116,7 @@ void do_disp_vis::eval(const ast::indexed_symbol_rep* h, std::ostream& os, int p
     os << ">";
 };
 
-void do_disp_vis::disp_symbol(const ast::symbol_rep* h, std::ostream& os)
+void do_disp_vis::disp_symbol(const ast::base_symbol_rep* h, std::ostream& os)
 {
     os << h->get_name();
 };
@@ -271,7 +262,8 @@ void do_disp_vis::eval(const ast::function_rep* h, std::ostream& os, int prec)
 {
     (void)prec;
 
-    disp_symbol(h->name(), os);
+    visit(h->name(), os, prec_lowest);
+
     os << "[";
 
     size_t n = h->size();

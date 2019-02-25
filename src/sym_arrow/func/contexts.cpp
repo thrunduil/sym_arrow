@@ -523,7 +523,7 @@ void subs_context::add_symbol(const symbol& sym, size_t code)
     m_impl->remove_bind();
 
     m_impl->m_map[sym]  = code;
-    m_impl->m_set       = m_impl->m_set.set(sym.get_ptr()->get_symbol_code());
+    m_impl->m_set       = m_impl->m_set.set(sym.get_ptr()->get_indexed_symbol_code());
 };
 
 void subs_context::remove_symbol(const symbol& sym)
@@ -531,7 +531,7 @@ void subs_context::remove_symbol(const symbol& sym)
     remove_bind();
 
     m_impl->m_map.erase(sym);
-    m_impl->m_set = m_impl->m_set.reset(sym.get_ptr()->get_symbol_code());
+    m_impl->m_set = m_impl->m_set.reset(sym.get_ptr()->get_indexed_symbol_code());
 };
 
 size_t subs_context::size() const

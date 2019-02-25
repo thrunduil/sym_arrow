@@ -29,31 +29,29 @@ namespace sym_arrow
 
 expr sym_arrow::function(const symbol& sym)
 {
-    return function(sym, nullptr, 0);
+    return sym_arrow::function(sym, nullptr, 0);
 };
 
 expr sym_arrow::function(const symbol& sym, const expr& arg1)
 {
     expr args[] = {arg1};
-    return function(sym, args, 1);
+    return sym_arrow::function(sym, args, 1);
 };
 
 expr sym_arrow::function(const symbol& sym, const expr& arg1, const expr& arg2)
 {
     expr args[] = {arg1, arg2};
-    return function(sym, args, 2);
-};
-
-expr sym_arrow::function(const symbol& sym, const expr& arg1, const expr& arg2, 
-                        const expr& arg3)
-{
-    expr args[] = {arg1, arg2, arg3};
-    return function(sym, args, 3);
+    return sym_arrow::function(sym, args, 2);
 };
 
 expr sym_arrow::function(const symbol& sym, const std::vector<expr>& arg)
 {
-    return function(sym, arg.data(), arg.size());
+    return sym_arrow::function(sym, arg.data(), arg.size());
+};
+
+expr sym_arrow::function(const symbol& sym, std::initializer_list<expr> arg)
+{
+    return sym_arrow::function(sym, arg.begin(), arg.size());
 };
 
 expr sym_arrow::function(const symbol& sym, const expr* arg, size_t n)
@@ -114,7 +112,7 @@ expr sym_arrow::if_then_else(const expr& cond, const expr& ex_true, const expr& 
             return ex_false;
     };
 
-    return function(details::func_name::if_then_else(), cond, ex_true, ex_false);
+    return function(details::func_name::if_then_else(), {cond, ex_true, ex_false});
 }
 
 // add diff rules to global diff context

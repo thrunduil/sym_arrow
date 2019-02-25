@@ -32,6 +32,8 @@ public:
 	public: void mRBRACK(bool _createToken);
 	public: void mLCURL(bool _createToken);
 	public: void mRCURL(bool _createToken);
+	public: void mLANGLE(bool _createToken);
+	public: void mRANGLE(bool _createToken);
 	public: void mMULT(bool _createToken);
 	public: void mDIV(bool _createToken);
 	public: void mPLUS(bool _createToken);

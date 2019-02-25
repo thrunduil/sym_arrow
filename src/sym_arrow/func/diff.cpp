@@ -59,7 +59,6 @@ class do_diff_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dif
         expr eval(const Node* ast, const symbol& sym);
 
         expr eval(const ast::scalar_rep* h, const symbol& sym);
-        expr eval(const ast::symbol_rep* h, const symbol& sym);
         expr eval(const ast::indexed_symbol_rep* h, const symbol& sym);
         expr eval(const ast::add_build* h, const symbol& sym);
         expr eval(const ast::mult_build* h, const symbol& sym);
@@ -90,23 +89,15 @@ expr do_diff_vis::eval(const ast::scalar_rep* h, const symbol&)
     return ast::scalar_rep::make_zero();
 };
 
-expr do_diff_vis::eval(const ast::symbol_rep* h, const symbol& sym)
-{
-    if (h == sym.get_ptr().get())
-    {
-        // symbol found - result 1
-        return ast::scalar_rep::make_one();
-    }
-    else 
-    {
-        return ast::scalar_rep::make_zero();
-    };
-};
-
 expr do_diff_vis::eval(const ast::indexed_symbol_rep* h, const symbol& sym)
 {
-    (void)h;
-    (void)sym;
+    if (h->get_base_symbol_code() != sym.get_base_symbol_code())
+        return ast::scalar_rep::make_zero();
+
+    // symbols are exactly the same - result 1
+    if (h == sym.get_ptr().get())
+        return ast::scalar_rep::make_one();
+
     //TODO: impl!!
     return ast::scalar_rep::make_zero();
 };
@@ -129,7 +120,7 @@ expr do_diff_vis::eval(const ast::add_rep* h, const symbol& sym)
 {
     ast::symbol_handle sh = sym.get_ptr().get();
 
-    if (ast::details::has_symbol(h, sh->get_symbol_code()) == false)
+    if (ast::details::has_symbol(h, sh->get_base_symbol_code()) == false)
         return ast::scalar_rep::make_zero();
 
     expr hash           = diff_hash::get().find(h, sym);
@@ -209,7 +200,7 @@ expr do_diff_vis::eval(const ast::mult_rep* h, const symbol& sym)
 
     ast::symbol_handle sh = sym.get_ptr().get();
 
-    if (ast::details::has_symbol(h, sh->get_symbol_code()) == false)
+    if (ast::details::has_symbol(h, sh->get_base_symbol_code()) == false)
         return ast::scalar_rep::make_zero();
 
     expr hash           = diff_hash::get().find(h, sym);
@@ -360,7 +351,7 @@ expr do_diff_vis::eval(const ast::function_rep* h, const symbol& sym)
     ast::symbol_handle sh   = sym.get_ptr().get();
     size_t n                = h->size();
 
-    if (ast::details::has_symbol(h, sh->get_symbol_code()) == false|| n == 0)
+    if (ast::details::has_symbol(h, sh->get_base_symbol_code()) == false|| n == 0)
         return ast::scalar_rep::make_zero();
 
     expr hash           = diff_hash::get().find(h, sym);

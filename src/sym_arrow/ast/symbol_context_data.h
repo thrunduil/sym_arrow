@@ -24,55 +24,34 @@
 #include "sym_arrow/config.h"
 #include "dag/dag.h"
 #include "sym_arrow/fwd_decls.h"
-#include "sym_arrow/nodes/scalar.h"
 #include "sym_arrow/ast/helpers/registered_symbols.h"
 
 namespace sym_arrow { namespace ast { namespace details
 {
 
 // additional data stored in dag context for term nodes
-class term_context_data : public sym_dag::context_data_base
+class symbol_context_data : public sym_dag::context_data_base
 {
-    public:
-        using expr_ptr      = sym_dag::dag_ptr<expr_base, sym_arrow::ast::term_tag>;
-
     private:
-        scalar              m_scalar_zero;
-        scalar              m_scalar_one;
-        scalar              m_scalar_minus_one;
-        scalar              m_scalar_nan;
+        registered_symbols  m_reg_symbols;
 
-        symbol_codes        m_free_codes;
-
-        virtual ~term_context_data() override;
+        virtual ~symbol_context_data() override;
 
         virtual void        initialize() override;
         virtual void        close() override;
 
     public:
-        // scalar representing value 0
-        const scalar&       get_scalar_zero();
-
-        // scalar representing value 1
-        const scalar&       get_scalar_one();
-
-        // scalar representing value -1
-        const scalar&       get_scalar_minus_one();
-
-        // scalar representing value NaN
-        const scalar&       get_scalar_nan();
-
-        // return a code not used by other indexed symbols
-        size_t              get_fresh_indexed_symbol_code();
+        // return a code not used by other base symbols
+        size_t              get_fresh_base_symbol_code();
 
         // newly created symbols must be registered by this function
-        void                register_symbol(const indexed_symbol_rep* h);
+        void                register_symbol(const base_symbol_rep* h);
 
         // symbols about be beining destroyed must be unregistered 
         // by this function
-        void                unregister_symbol(const indexed_symbol_rep* h);
+        void                unregister_symbol(const base_symbol_rep* h);
 };
 
 }}};
 
-#include "sym_arrow/ast/term_context_data.inl"
+#include "sym_arrow/ast/symbol_context_data.inl"

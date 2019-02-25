@@ -22,16 +22,17 @@
 #include "symbol_rep.h"
 #include "sym_arrow/ast/ast.h"
 #include "term_context_data.h"
+#include "symbol_context_data.h"
 
 namespace sym_arrow { namespace ast
 {
 
 //----------------------------------------------------------------------
-//                          symbol_rep
+//                          base_symbol_rep
 //----------------------------------------------------------------------
-symbol_rep::symbol_rep(const named_symbol_info& info)
+base_symbol_rep::base_symbol_rep(const named_symbol_info& info)
     :base_type(this)
-    , m_code(context_type::get().get_context_data().get_fresh_symbol_code())
+    , m_code(context_type::get().get_context_data().get_fresh_base_symbol_code())
 {
     size_t N            = info.m_size;
     size_t hash         = eval_hash(info);
@@ -40,13 +41,13 @@ symbol_rep::symbol_rep(const named_symbol_info& info)
     context_type::get().get_context_data().register_symbol(this);
 };
 
-symbol_rep::~symbol_rep()
+base_symbol_rep::~base_symbol_rep()
 {
     m_name.destroy();
     context_type::get().get_context_data().unregister_symbol(this);
 };
 
-size_t symbol_rep::eval_hash(const named_symbol_info& info)
+size_t base_symbol_rep::eval_hash(const named_symbol_info& info)
 {
     size_t seed = 0;
 
@@ -56,7 +57,7 @@ size_t symbol_rep::eval_hash(const named_symbol_info& info)
     return seed;
 };
 
-bool symbol_rep::equal(const named_symbol_info& info) const
+bool base_symbol_rep::equal(const named_symbol_info& info) const
 {
     if (info.m_size != this->get_name_size())
         return false;
@@ -75,8 +76,11 @@ bool symbol_rep::equal(const named_symbol_info& info) const
 
 indexed_symbol_rep::indexed_symbol_rep(const indexed_symbol_info& pi)
     :base_type(this), m_hash(pi.m_hash)
-    ,m_size(pi.m_size), m_expr(nullptr), m_name(symbol_ptr::from_this(pi.m_name))
+    , m_size(pi.m_size), m_expr(nullptr), m_name(base_symbol_ptr::from_this(pi.m_name))
+    , m_code(context_type::get().get_context_data().get_fresh_indexed_symbol_code())
 {
+    context_type::get().get_context_data().register_symbol(this);
+
     if (m_size == 0)
         return;
 
@@ -94,6 +98,8 @@ indexed_symbol_rep::indexed_symbol_rep(const indexed_symbol_info& pi)
 
 indexed_symbol_rep::~indexed_symbol_rep()
 {
+    context_type::get().get_context_data().unregister_symbol(this);
+
     if (m_size == 0)
         return;
 

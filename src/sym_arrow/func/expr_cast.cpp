@@ -43,9 +43,8 @@ const sym_arrow::scalar& sym_arrow::cast_scalar(const expr& ex)
 
 const sym_arrow::symbol& sym_arrow::cast_symbol(const expr& ex)
 {    
-    //TODO: impl indexed_symbol
     #ifdef SYM_ARROW_DEBUG_EXPR
-        assertion(ex.get_ptr()->isa<ast::symbol_rep>(), "invalid cast");
+        assertion(ex.get_ptr()->isa<ast::indexed_symbol_rep>(), "invalid cast");
     #endif
     
     return reinterpret_cast<const sym_arrow::symbol&>(ex);

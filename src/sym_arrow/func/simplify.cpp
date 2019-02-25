@@ -69,7 +69,6 @@ class do_simplify_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do
         expr eval(const Node* ast);
 
         expr eval(const ast::scalar_rep* h);
-        expr eval(const ast::symbol_rep* h);
         expr eval(const ast::indexed_symbol_rep* h);
         expr eval(const ast::add_build* h);
         expr eval(const ast::mult_build* h);
@@ -119,11 +118,6 @@ void do_simplify_vis::insert(ast::expr_handle h, const expr& simpl)
 }
 
 expr do_simplify_vis::eval(const ast::scalar_rep* h)
-{
-    return expr(ast::expr_ptr::from_this(h));
-};
-
-expr do_simplify_vis::eval(const ast::symbol_rep* h)
 {
     return expr(ast::expr_ptr::from_this(h));
 };

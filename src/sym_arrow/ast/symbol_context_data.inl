@@ -21,39 +21,24 @@
 
 #pragma once
 
-#include "symbol_rep.inl"
+#include "symbol_context_data.h"
 
-namespace sym_arrow { namespace ast
+namespace sym_arrow { namespace ast { namespace details
 {
 
-inline const char* base_symbol_rep::get_name() const
-{
-    return m_name.get_string();
-};
-
-inline size_t base_symbol_rep::get_name_size() const
-{
-    return m_name.get_size();
-};
-
-inline size_t base_symbol_rep::get_base_symbol_code() const
+inline size_t symbol_context_data::get_fresh_base_symbol_code()
 { 
-    return m_code; 
+    return m_reg_symbols.get_fresh_symbol_code(); 
 };
 
-inline size_t base_symbol_rep::hash_value() const
-{
-    return m_name.get_hash();
+inline void symbol_context_data::register_symbol(const base_symbol_rep* h)
+{ 
+    m_reg_symbols.register_sym(h); 
 };
 
-inline size_t indexed_symbol_rep::get_base_symbol_code() const
+inline void symbol_context_data::unregister_symbol(const base_symbol_rep* h)
 {
-    return m_name->get_base_symbol_code();
-}
+    m_reg_symbols.unregister_sym(h); 
+};
 
-inline size_t indexed_symbol_rep::get_indexed_symbol_code() const
-{
-    return m_code;
-}
-
-};}
+}}};

@@ -33,7 +33,7 @@ inline symbol::symbol(const ptr_type& ex)
     :m_expr(ex)
 {};
 
-inline symbol::symbol(const ast::symbol_rep* h)
+inline symbol::symbol(const ast::indexed_symbol_rep* h)
     : m_expr(ptr_type::from_this(h))
 {};
 

@@ -45,7 +45,7 @@ sym_arrow::expr sym_arrow::bool_eq(const expr& a, const expr& b)
             return scalar::make_zero();
     };
 
-    return function(details::func_name::bool_eq(), a, b);
+    return function(details::func_name::bool_eq(), {a, b});
 };
 
 sym_arrow::expr sym_arrow::bool_neq(const expr& a, const expr& b)
@@ -64,7 +64,7 @@ sym_arrow::expr sym_arrow::bool_neq(const expr& a, const expr& b)
             return scalar::make_zero();
     };
 
-    return function(details::func_name::bool_neq(), a, b);
+    return function(details::func_name::bool_neq(), {a, b});
 };
 
 sym_arrow::expr sym_arrow::bool_gt(const expr& a, const expr& b)
@@ -83,7 +83,7 @@ sym_arrow::expr sym_arrow::bool_gt(const expr& a, const expr& b)
             return scalar::make_zero();
     };
 
-    return function(details::func_name::bool_gt(), a, b);
+    return function(details::func_name::bool_gt(), {a, b});
 };
 
 sym_arrow::expr sym_arrow::bool_lt(const expr& a, const expr& b)

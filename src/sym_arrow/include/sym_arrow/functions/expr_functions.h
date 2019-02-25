@@ -153,12 +153,18 @@ expr SYM_ARROW_EXPORT   abs(expr&& a);
 
 // make function 
 expr SYM_ARROW_EXPORT   function(const symbol& sym);
-expr SYM_ARROW_EXPORT   function(const symbol& sym, const expr& arg1);
-expr SYM_ARROW_EXPORT   function(const symbol& sym, const expr& arg1, const expr& arg2);
-expr SYM_ARROW_EXPORT   function(const symbol& sym, const expr& arg1, const expr& arg2, 
-                            const expr& arg3);
-expr SYM_ARROW_EXPORT   function(const symbol& sym, const std::vector<expr>& arg);
+expr SYM_ARROW_EXPORT   function(const symbol& sym, const expr& a1);
+expr SYM_ARROW_EXPORT   function(const symbol& sym, const expr& a1, const expr& a2);
+expr SYM_ARROW_EXPORT   function(const symbol& sym, std::initializer_list<expr> args);
+expr SYM_ARROW_EXPORT   function(const symbol& sym, const std::vector<expr>& args);
 expr SYM_ARROW_EXPORT   function(const symbol& sym, const expr* arg, size_t n);
+
+// make indexed symbol
+symbol SYM_ARROW_EXPORT index(const symbol& sym, const expr& a1);
+symbol SYM_ARROW_EXPORT index(const symbol& sym, const expr& a1, const expr& a2);
+symbol SYM_ARROW_EXPORT index(const symbol& sym, std::initializer_list<expr> args);
+symbol SYM_ARROW_EXPORT index(const symbol& sym, const std::vector<expr>& args);
+symbol SYM_ARROW_EXPORT index(const symbol& sym, const expr* arg, size_t n);
 
 // create an expression defined only when a condition is satisfied:
 //      cond == 1.0  => ex

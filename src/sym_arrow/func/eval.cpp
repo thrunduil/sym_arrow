@@ -47,7 +47,6 @@ class do_eval_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_eva
         value eval(const Node* ast, const data_provider& dp);
 
         value eval(const ast::scalar_rep* h, const data_provider& dp);
-        value eval(const ast::symbol_rep* h, const data_provider& dp);
         value eval(const ast::indexed_symbol_rep* h, const data_provider& dp);
         value eval(const ast::add_build* h, const data_provider& dp);
         value eval(const ast::mult_build* h, const data_provider& dp);
@@ -66,7 +65,6 @@ class do_eval_vis_log : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do
         value eval(const Node* ast, const data_provider& dp);
 
         value eval(const ast::scalar_rep* h, const data_provider& dp);
-        value eval(const ast::symbol_rep* h, const data_provider& dp);
         value eval(const ast::indexed_symbol_rep* h, const data_provider& dp);
         value eval(const ast::add_build* h, const data_provider& dp);
         value eval(const ast::mult_build* h, const data_provider& dp);
@@ -84,30 +82,13 @@ value do_eval_vis_log::eval(const ast::scalar_rep* h, const data_provider&)
     return log(h->get_data());
 };
 
-value do_eval_vis::eval(const ast::symbol_rep* h, const data_provider& dp)
+value do_eval_vis::eval(const ast::indexed_symbol_rep* h, const data_provider& dp)
 {
     return dp.get_value(symbol(h));
 };
-value do_eval_vis_log::eval(const ast::symbol_rep* h, const data_provider& dp)
-{
-    return log(dp.get_value(symbol(h)));
-};
-
-value do_eval_vis::eval(const ast::indexed_symbol_rep* h, const data_provider& dp)
-{
-    (void)h;
-    (void)dp;
-    //TODO: impl!!
-    value ret = value::make_zero();
-    return ret;
-};
 value do_eval_vis_log::eval(const ast::indexed_symbol_rep* h, const data_provider& dp)
 {
-    (void)h;
-    (void)dp;
-    //TODO: impl!!
-    value ret = value::make_zero();
-    return ret;
+    return log(dp.get_value(symbol(h)));
 };
 
 value do_eval_vis::eval(const ast::add_build* h, const data_provider& dp)

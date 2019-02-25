@@ -45,6 +45,7 @@
     <ClInclude Include="..\..\src\sym_arrow\ast\helpers\utils.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\mult_rep.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\scalar_rep.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\symbol_context_data.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\symbol_rep.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\term_context_data.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\traversal_visitor.h" />
@@ -109,6 +110,7 @@
     <ClCompile Include="..\..\src\sym_arrow\ast\helpers\string_data.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\mult_rep.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\scalar_rep.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\symbol_context_data.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\symbol_rep.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\term_context_data.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\value_context_data.cpp" />
@@ -186,6 +188,7 @@
     <None Include="..\..\src\sym_arrow\ast\helpers\string_data.inl" />
     <None Include="..\..\src\sym_arrow\ast\mult_rep.inl" />
     <None Include="..\..\src\sym_arrow\ast\scalar_rep.inl" />
+    <None Include="..\..\src\sym_arrow\ast\symbol_context_data.inl" />
     <None Include="..\..\src\sym_arrow\ast\symbol_rep.inl" />
     <None Include="..\..\src\sym_arrow\ast\term_context_data.inl" />
     <None Include="..\..\src\sym_arrow\ast\value_context_data.inl" />

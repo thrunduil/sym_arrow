@@ -67,11 +67,6 @@ struct dag_code_to_node<sym_arrow::ast::term_tag, (size_t)sym_arrow::ast::term_t
     using type = sym_arrow::ast::scalar_rep;
 };
 template<>
-struct dag_code_to_node<sym_arrow::ast::term_tag, (size_t)sym_arrow::ast::term_types::symbol>
-{
-    using type = sym_arrow::ast::symbol_rep;
-};
-template<>
 struct dag_code_to_node<sym_arrow::ast::term_tag, (size_t)sym_arrow::ast::term_types::indexed_symbol>
 {
     using type = sym_arrow::ast::indexed_symbol_rep;
@@ -107,12 +102,6 @@ template<>
 struct dag_node_to_code<sym_arrow::ast::term_tag, sym_arrow::ast::scalar_rep>
 {
     static const size_t code    = (size_t)sym_arrow::ast::term_types::scalar;
-};
-
-template<>
-struct dag_node_to_code<sym_arrow::ast::term_tag, sym_arrow::ast::symbol_rep>
-{
-    static const size_t code    = (size_t)sym_arrow::ast::term_types::symbol;
 };
 
 template<>
@@ -170,6 +159,31 @@ template<>
 struct dag_node_to_code<sym_arrow::ast::value_tag, sym_arrow::details::value_mp>
 {
     static const size_t code    = (size_t)sym_arrow::ast::value_types::mp_float;
+};
+
+//-------------------------------------------------------------
+//              symbol_tag
+//-------------------------------------------------------------
+// type of additional data stored in the dag_context for symbol_tag
+template<>
+struct dag_context_data<sym_arrow::ast::symbol_tag>
+{    
+    // no context data
+    using context_data_type = sym_arrow::ast::details::symbol_context_data;
+};
+
+// define mapping from code to type for symbol_tag
+template<>
+struct dag_code_to_node<sym_arrow::ast::symbol_tag, (size_t)sym_arrow::ast::symbol_types::base_symbol>
+{
+    using type = sym_arrow::ast::base_symbol_rep;
+};
+
+// define mapping from type to code for symbol_tag
+template<>
+struct dag_node_to_code<sym_arrow::ast::symbol_tag, sym_arrow::ast::base_symbol_rep>
+{
+    static const size_t code    = (size_t)sym_arrow::ast::symbol_types::base_symbol;
 };
 
 };

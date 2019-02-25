@@ -61,6 +61,13 @@ struct term_tag{};
 // dag item tag for values
 struct value_tag{};
 
+// dag item tag for basic symbols
+struct symbol_tag{};
+
+// basic symbols representations
+class base_symbol_rep;
+
+// terms representations
 template<class Derived>
 class expr_symbols;
 
@@ -70,7 +77,6 @@ class add_rep;
 class mult_rep;
 class function_rep;
 class scalar_rep;
-class symbol_rep;
 class indexed_symbol_rep;
 
 class item_collector_add;
@@ -93,11 +99,13 @@ using expr_base             = sym_dag::dag_item_base<term_tag>;
 
 using expr_handle           = const expr_base*;
 using scalar_handle         = const scalar_rep*;
-using symbol_handle         = const symbol_rep*;
+using symbol_handle         = const indexed_symbol_rep*;
+using base_symbol_handle    = const base_symbol_rep*;
 
 using expr_ptr              = sym_dag::dag_ptr<expr_base, term_tag>;
 using scalar_ptr            = sym_dag::dag_ptr<scalar_rep, term_tag>;
-using symbol_ptr            = sym_dag::dag_ptr<symbol_rep, term_tag>;
+using symbol_ptr            = sym_dag::dag_ptr<indexed_symbol_rep, term_tag>;
+using base_symbol_ptr       = sym_dag::dag_ptr<base_symbol_rep, symbol_tag>;
 using weak_expr_ptr         = sym_dag::weak_dag_item<term_tag>;
 
 }}
@@ -107,5 +115,6 @@ namespace sym_arrow { namespace ast { namespace details
 
 class term_context_data;
 class value_context_data;
+class symbol_context_data;
 
 }}};

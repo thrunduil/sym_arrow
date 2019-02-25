@@ -48,8 +48,7 @@ class do_check_rep_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         template<class Node>
         bool eval(const Node* ast);
 
-        bool eval(const ast::scalar_rep* h);
-        bool eval(const ast::symbol_rep* h);
+        bool eval(const ast::scalar_rep* h);        
         bool eval(const ast::indexed_symbol_rep* h);
         bool eval(const ast::add_build* h);
         bool eval(const ast::mult_build* h);
@@ -76,12 +75,6 @@ class do_check_rep_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
 };
 
 bool do_check_rep_vis::eval(const ast::scalar_rep* h)
-{
-    (void)h;
-    return true;
-};
-
-bool do_check_rep_vis::eval(const ast::symbol_rep* h)
 {
     (void)h;
     return true;
@@ -459,15 +452,10 @@ bool do_check_rep_vis::is_simple(const ast::add_rep* h)
 
 bool do_check_rep_vis::is_atom(ast::expr_handle h)
 {
-    if (h->isa<ast::function_rep>() || h->isa<ast::symbol_rep>() 
-        || h->isa<ast::indexed_symbol_rep>())
-    {
+    if (h->isa<ast::function_rep>() || h->isa<ast::indexed_symbol_rep>())
         return true;
-    }
     else
-    {
         return false;
-    };
 };
 
 bool do_check_rep_vis::is_add_free(ast::expr_handle h)

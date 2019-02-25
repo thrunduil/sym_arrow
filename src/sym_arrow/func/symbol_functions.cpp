@@ -33,7 +33,7 @@ bool sym_arrow::contain_symbol(const expr& ex, const symbol& sym)
 
     ex.cannonize(do_cse_default);
 
-    return ast::details::has_symbol(ex.get_ptr().get(), sh->get_symbol_code());
+    return ast::details::has_symbol(ex.get_ptr().get(), sh->get_base_symbol_code());
 };
 
 bool sym_arrow::contain_any(const expr& ex, const std::vector<symbol>& syms)
@@ -47,14 +47,14 @@ bool sym_arrow::contain_any(const expr& ex, const std::vector<symbol>& syms)
     ex.cannonize(do_cse_default);
 
     if (syms.size() == 1)
-        return ast::details::has_symbol(ex.get_ptr().get(), syms[0].get_ptr()->get_symbol_code());
+        return ast::details::has_symbol(ex.get_ptr().get(), syms[0].get_ptr()->get_base_symbol_code());
 
     std::vector<size_t> codes(syms.size());
 
     size_t N = syms.size();
 
     for (size_t i = 0; i < N; ++i)
-        codes[i] = syms[i].get_ptr()->get_symbol_code();
+        codes[i] = syms[i].get_ptr()->get_base_symbol_code();
 
     std::sort(codes.begin(), codes.end());
 
@@ -75,14 +75,17 @@ bool sym_arrow::contain_all(const expr& ex, const std::vector<symbol>& syms)
     ex.cannonize(do_cse_default);
 
     if (syms.size() == 1)
-        return ast::details::has_symbol(ex.get_ptr().get(), syms[0].get_ptr()->get_symbol_code());
+    {
+        return ast::details::has_symbol(ex.get_ptr().get(), 
+                    syms[0].get_ptr()->get_base_symbol_code());
+    }
 
     std::vector<size_t> codes(syms.size());
 
     size_t N = syms.size();
 
     for (size_t i = 0; i < N; ++i)
-        codes[i] = syms[i].get_ptr()->get_symbol_code();
+        codes[i] = syms[i].get_ptr()->get_base_symbol_code();
 
     std::sort(codes.begin(), codes.end());
 
@@ -106,7 +109,6 @@ class do_get_number_symbols : public sym_dag::dag_visitor<sym_arrow::ast::term_t
         size_t eval(const Node* ast);
 
         size_t eval(const ast::scalar_rep* )    { return 0; };
-        size_t eval(const ast::symbol_rep* )    { return 1; };
         size_t eval(const ast::indexed_symbol_rep* )    
                                                 { return 1; };
         size_t eval(const ast::add_build* )     { return 0; };
@@ -129,9 +131,8 @@ class do_has_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::scalar_rep*, size_t)       { return false; };        
         bool eval(const ast::add_build*, size_t)        { return false; };
         bool eval(const ast::mult_build*, size_t)       { return false; };
-        bool eval(const ast::symbol_rep* h, size_t code){ return h->get_symbol_code() == code; };
         bool eval(const ast::indexed_symbol_rep* h, size_t code)
-                                                        { return h->get_symbol_code() == code; };
+                                                        { return h->get_base_symbol_code() == code; };
         bool eval(const ast::add_rep* h, size_t code)   { return h->has_symbol(code); };
         bool eval(const ast::mult_rep* h, size_t code)  { return h->has_symbol(code); };
         bool eval(const ast::function_rep* h, size_t c) { return h->has_symbol(c); };
@@ -151,9 +152,8 @@ class do_has_any_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::scalar_rep*, const dbs&)       { return false; };        
         bool eval(const ast::add_build*, const dbs&)        { return false; };
         bool eval(const ast::mult_build*, const dbs&)       { return false; };
-        bool eval(const ast::symbol_rep* h, const dbs& f)   { return f.test(h->get_symbol_code()); };
         bool eval(const ast::indexed_symbol_rep* h, const dbs& f)   
-                                                            { return f.test(h->get_symbol_code()); };
+                                                            { return f.test(h->get_base_symbol_code()); };
         bool eval(const ast::add_rep* h, const dbs& f)      { return h->has_any_symbol(f); };
         bool eval(const ast::mult_rep* h, const dbs& f)     { return h->has_any_symbol(f); };
         bool eval(const ast::function_rep* h, const dbs& f) { return h->has_any_symbol(f); };
@@ -173,11 +173,9 @@ class do_has_all_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::scalar_rep*, const dbs&)       { return false; };        
         bool eval(const ast::add_build*, const dbs&)        { return false; };
         bool eval(const ast::mult_build*, const dbs&)       { return false; };
-        bool eval(const ast::symbol_rep* h, const dbs& f)   { return f.size() == 1 && 
-                                                                f.test(h->get_symbol_code()); };
         bool eval(const ast::indexed_symbol_rep* h, const dbs& f)   
                                                             { return f.size() == 1 && 
-                                                                f.test(h->get_symbol_code()); };
+                                                                f.test(h->get_base_symbol_code()); };
         bool eval(const ast::add_rep* h, const dbs& f)      { return h->has_all_symbols(f); };
         bool eval(const ast::mult_rep* h, const dbs& f)     { return h->has_all_symbols(f); };
         bool eval(const ast::function_rep* h, const dbs& f) { return h->has_all_symbols(f); };
@@ -206,13 +204,9 @@ class do_add_symbols : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         void eval(const ast::mult_build*, dbs&)
         {};
 
-        void eval(const ast::symbol_rep* h, dbs& f)
-        { 
-            f = f.set(h->get_symbol_code()); 
-        };
         void eval(const ast::indexed_symbol_rep* h, dbs& f)
         { 
-            f = f.set(h->get_symbol_code()); 
+            f = f.set(h->get_base_symbol_code()); 
         };
 };
 
@@ -237,10 +231,6 @@ class do_measure_complexity : public sym_arrow::ast::traversal_visitor<do_measur
         void eval(const ast::mult_build*, expr_complexity&)
         {};
 
-        void eval(const ast::symbol_rep*, expr_complexity& compl)
-        { 
-            compl.add_symbol();
-        };
         void eval(const ast::indexed_symbol_rep*, expr_complexity& compl)
         { 
             compl.add_symbol();

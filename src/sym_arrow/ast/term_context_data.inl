@@ -46,19 +46,20 @@ inline const scalar& term_context_data::get_scalar_minus_one()
     return m_scalar_minus_one;
 }
 
-inline size_t term_context_data::get_fresh_symbol_code()
+inline size_t term_context_data::get_fresh_indexed_symbol_code()
 { 
-    return m_reg_symbols.get_fresh_symbol_code(); 
+    return m_free_codes.get_fresh_symbol_code(); 
 };
 
-inline void term_context_data::register_symbol(const symbol_rep* h)
-{ 
-    m_reg_symbols.register_sym(h); 
-};
-
-inline void term_context_data::unregister_symbol(const symbol_rep* h)
+inline void term_context_data::register_symbol(const indexed_symbol_rep* h)
 {
-    m_reg_symbols.unregister_sym(h); 
+    (void)h;
+};
+
+inline void term_context_data::unregister_symbol(const indexed_symbol_rep* h)
+{
+    size_t code     = h->get_indexed_symbol_code();
+    m_free_codes.unregister_sym(code);
 };
 
 }}};

@@ -264,6 +264,9 @@
     <ClInclude Include="..\..\src\sym_arrow\ast\value_context_data.h">
       <Filter>Source Files\ast</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\symbol_context_data.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp">
@@ -440,6 +443,9 @@
     <ClCompile Include="..\..\src\sym_arrow\ast\value_context_data.cpp">
       <Filter>Source Files\ast</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\symbol_context_data.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr.inl">
@@ -533,6 +539,9 @@
       <Filter>Source Files\include\sym_arrow\details</Filter>
     </None>
     <None Include="..\..\src\sym_arrow\ast\value_context_data.inl">
+      <Filter>Source Files\ast</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\ast\symbol_context_data.inl">
       <Filter>Source Files\ast</Filter>
     </None>
   </ItemGroup>

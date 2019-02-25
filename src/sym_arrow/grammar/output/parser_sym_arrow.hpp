@@ -68,10 +68,10 @@ protected:
 private:
 	static const char* tokenNames[];
 #ifndef NO_STATIC_CONSTS
-	static const int NUM_TOKENS = 38;
+	static const int NUM_TOKENS = 40;
 #else
 	enum {
-		NUM_TOKENS = 38
+		NUM_TOKENS = 40
 	};
 #endif
 	
@@ -85,6 +85,8 @@ private:
 	static const ANTLR_USE_NAMESPACE(antlr)BitSet _tokenSet_3;
 	static const unsigned long _tokenSet_4_data_[];
 	static const ANTLR_USE_NAMESPACE(antlr)BitSet _tokenSet_4;
+	static const unsigned long _tokenSet_5_data_[];
+	static const ANTLR_USE_NAMESPACE(antlr)BitSet _tokenSet_5;
 };
 
 #endif /*INC_parser_sym_arrow_hpp_*/

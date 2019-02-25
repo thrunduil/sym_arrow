@@ -74,27 +74,40 @@ class SYM_ARROW_EXPORT symbol
         // null terminated pointer to name of this symbol
         const char*         get_name() const;
 
+        // return number of indices
+        size_t              size() const;
+
+        // get i-th index
+        expr                arg(size_t i) const;
+
         // return code of this symbol; different symbols have
         // differrent codes
-        size_t              get_symbol_code() const;
+        size_t              get_indexed_symbol_code() const;
+
+        // return code of base symbol of this symbol; different 
+        // base symbols have differrent codes
+        size_t              get_base_symbol_code() const;
 
     public:
         // create function f[], where f is this symbol name
         expr                operator()() const;
 
-        // create function f[x], where f is this symbol name
-        expr                operator()(const expr& x) const;
-
-        // create function f[x, y], where f is this symbol name
-        expr                operator()(const expr& x, const expr& y) const;
-
         // create function f[x1, x2, ...], where f is this symbol name
-        expr                operator()(std::initializer_list<expr> ex) const;
+        expr                operator()(const expr& x1) const;
+        expr                operator()(const expr& x1, const expr& x2) const;
+        expr                operator()(std::initializer_list<expr> args) const;
+        expr                operator()(const std::vector<expr>& args) const;
+
+        // create function f<x1, x2, ...>, where f is this symbol name
+        symbol              index(const expr& x1) const;
+        symbol              index(const expr& x1, const expr& x2) const;
+        symbol              index(std::initializer_list<expr> args) const;
+        symbol              index(const std::vector<expr>& args) const;
 
     public:
         // create a symbol from internal representation; internal use only
         explicit symbol(const ptr_type& ex);
-        explicit symbol(const ast::symbol_rep* h);
+        explicit symbol(const ast::indexed_symbol_rep* h);
 
         // access to internal pointers; internal use only
         const ptr_type&     get_ptr() const;

@@ -49,7 +49,7 @@ void term_context_data::close()
     m_scalar_minus_one  = scalar();
     m_scalar_nan        = scalar();
 
-    m_reg_symbols.close(); 
+    m_free_codes.close(); 
 };
 
 }}};

@@ -36,7 +36,6 @@ namespace sym_arrow { namespace ast
 enum class term_types : size_t
 {
     scalar  = 0,
-    symbol,
     indexed_symbol,
     add_build,
     mult_build,
@@ -49,6 +48,12 @@ enum class term_types : size_t
 enum class value_types : size_t
 {
     mp_float  = 0,
+    number_codes
+};
+
+enum class symbol_types : size_t
+{
+    base_symbol  = 0,
     number_codes
 };
 
@@ -74,6 +79,15 @@ template<>
 struct dag_tag_traits<sym_arrow::ast::value_tag>
 {
     static const size_t number_codes    = (size_t)sym_arrow::ast::value_types::number_codes;
+    static const size_t user_flag_bits  = 0;
+    static const bool need_release_stack= false;
+};
+
+// configure dag_item for symbol_tag
+template<>
+struct dag_tag_traits<sym_arrow::ast::symbol_tag>
+{
+    static const size_t number_codes    = (size_t)sym_arrow::ast::symbol_types::number_codes;
     static const size_t user_flag_bits  = 0;
     static const bool need_release_stack= false;
 };

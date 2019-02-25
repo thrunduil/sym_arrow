@@ -48,33 +48,30 @@ struct named_symbol_info
 };
 
 // class representing a symbol
-class symbol_rep : public sym_dag::dag_item<symbol_rep, term_tag, true>
+class base_symbol_rep : public sym_dag::dag_item<base_symbol_rep, symbol_tag, true>
 {
     private:
-        using base_type         = sym_dag::dag_item<symbol_rep, term_tag, true>;
+        using base_type         = sym_dag::dag_item<base_symbol_rep, symbol_tag, true>;
 
     private:
         details::string_data    m_name;
         size_t                  m_code;
 
     public:
-        symbol_rep(const named_symbol_info& info);
+        base_symbol_rep(const named_symbol_info& info);
 
-        symbol_rep(const symbol_rep&) = delete;
-        symbol_rep& operator=(const symbol_rep&) = delete;
+        base_symbol_rep(const base_symbol_rep&) = delete;
+        base_symbol_rep& operator=(const base_symbol_rep&) = delete;
 
     public:
         // destructor
-        ~symbol_rep();
+        ~base_symbol_rep();
         
         // evaluate hash function
         static size_t       eval_hash(const named_symbol_info& info);
 
         // test for equality
         bool                equal(const named_symbol_info& info) const;
-
-        // delay destruction of directly accessible dag items
-        void                release(stack_type& stack);
 
         // return hash value
         size_t              hash_value() const;
@@ -87,7 +84,7 @@ class symbol_rep : public sym_dag::dag_item<symbol_rep, term_tag, true>
 
         // return code of this symbol; different symbols have
         // differrent codes
-        size_t              get_symbol_code() const;
+        size_t              get_base_symbol_code() const;
 };
 
 // data representing indexed_symbol_rep node
@@ -95,20 +92,20 @@ class indexed_symbol_info
 {
     public:
         // symbol name
-        symbol_handle   m_name;
+        base_symbol_handle  m_name;
 
         // number of arguments
-        size_t          m_size;
+        size_t              m_size;
 
         // vector of arguments of length m_size
-        const expr*     m_args;
+        const expr*         m_args;
 
         // hash value; will be set later
-        mutable size_t  m_hash;
+        mutable size_t      m_hash;
 
     public:
         // constructor; arguments must be cannonized
-        indexed_symbol_info(symbol_handle name, size_t size, const expr* args)
+        indexed_symbol_info(base_symbol_handle name, size_t size, const expr* args)
             : m_name(name), m_size(size), m_args(args)
             , m_hash(0) 
         {};
@@ -123,8 +120,9 @@ class indexed_symbol_rep : public sym_dag::dag_item<indexed_symbol_rep, term_tag
     private:
         size_t          m_hash;
         size_t          m_size;
+        size_t          m_code;
 
-        symbol_ptr      m_name;
+        base_symbol_ptr m_name;
         expr_ptr*       m_expr;
 
     private:
@@ -151,18 +149,23 @@ class indexed_symbol_rep : public sym_dag::dag_item<indexed_symbol_rep, term_tag
         void            release(stack_type& st);
 
     public:        
-        // return number of arguments
+        // return number of indices
         size_t          size() const            { return m_size; };
 
-        // get i-th argument
+        // get i-th index
         expr_handle     arg(size_t i) const     { return m_expr[i].get(); };
 
-        // get symbol name
-        symbol_handle   name() const            { return m_name.get(); };
+        // null terminated pointer to name of this symbol
+        base_symbol_handle
+                        get_name() const        { return m_name.get();}
 
         // return code of this symbol; different symbols have
         // differrent codes
-        size_t          get_symbol_code() const;
+        size_t          get_indexed_symbol_code() const;
+
+        // return code of base symbol of this symbol; different 
+        // base symbols have differrent codes
+        size_t          get_base_symbol_code() const;
 };
 
 };}

@@ -27,11 +27,41 @@
 namespace sym_arrow { namespace ast
 {
 
+// assign unique code to a fresh symbol
+class symbol_codes
+{
+    private:
+        using dbs               = dbs_lib::dbs;
+        using dbs_initializer   = dbs_lib::details::dbs_initializer;
+
+    private:
+        dbs                     m_free_codes;        
+        size_t                  m_current_symbol_code;
+
+        // make sure, that dbs is not closed before destructor of this object
+        dbs_initializer         m_dbs_init;
+
+    public:
+        symbol_codes();
+        ~symbol_codes();
+
+        // release all memory
+        void                    close();
+
+        // unregister a symbol; should be called during destruction
+        // of base symbol or indexed symbol with given code
+        void                    unregister_sym(size_t code);
+
+        // get unused code; should be called during constructor of 
+        // base_symbol_rep
+        size_t                  get_fresh_symbol_code();
+};
+
 // assign unique code to a new symbol and maintain code -> symbol mapping
 class registered_symbols
 {
     private:
-        using code_sym          = std::pair<size_t, const symbol_rep*>;
+        using code_sym          = std::pair<size_t, const base_symbol_rep*>;
         using allocator         = sym_dag::details::symbolic_allocator<registered_symbols>;
         using pool_allocator    = sym_dag::details::object_allocator<allocator>;
         using dbs               = dbs_lib::dbs;
@@ -54,11 +84,7 @@ class registered_symbols
     private:
         pool_allocator          m_pool;
         code_sym_map            m_code_sym_map;
-        dbs                     m_free_codes;        
-        size_t                  m_current_symbol_code;
-
-        // make sure, that dbs is not closed before destructor of this object
-        dbs_initializer         m_dbs_init;
+        symbol_codes            m_free_codes;
 
     public:
         registered_symbols();
@@ -68,21 +94,21 @@ class registered_symbols
         void                    close();
 
         // register a new symbol; should be called after construction
-        // of symbol_rep
-        void                    register_sym(const symbol_rep* h);
+        // of base_symbol_rep
+        void                    register_sym(const base_symbol_rep* h);
 
         // unregister a symbol; should be called during destruction
-        // of symbol_rep
-        void                    unregister_sym(const symbol_rep* h);
+        // of base_symbol_rep
+        void                    unregister_sym(const base_symbol_rep* h);
 
         // get unused code; should be called during constructor of 
-        // symbol_rep
+        // base_symbol_rep
         size_t                  get_fresh_symbol_code();
 
         // get symbol with given code; code must be valid, i.e. there
         // must exist a symbol with given code, otherwise nullptr is
         // returned
-        const symbol_rep*       get_symbol_from_code(size_t code) const;
+        const base_symbol_rep*  get_symbol_from_code(size_t code) const;
 };
 
 };};

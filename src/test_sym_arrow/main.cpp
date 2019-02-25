@@ -41,6 +41,24 @@ int main(int argc, const char* argv[])
         {
             //auto x              = sym_arrow::symbol("x");
             //sym_arrow::expr ex  = sym_arrow::parse("A0");
+            sym_arrow::expr ex  = sym_arrow::parse("A<0> - (A<0> - A<1>)^2 / (A<2> - A<1> + A<0> - A<1>)");
+            disp(ex);
+
+            auto v0             = sym_arrow::scalar::make_zero();
+            auto v1             = sym_arrow::scalar::make_one();
+            auto v2             = sym_arrow::scalar(2.0);
+
+            auto dif_A0         = diff(ex, sym_arrow::symbol("A").index(v0));
+            auto dif_A1         = diff(ex, sym_arrow::symbol("A").index(v1));
+            auto dif_A2         = diff(ex, sym_arrow::symbol("A").index(v2));
+
+            disp(dif_A0);
+            disp(dif_A1);
+            disp(dif_A2);
+        }
+        {
+            //auto x              = sym_arrow::symbol("x");
+            //sym_arrow::expr ex  = sym_arrow::parse("A0");
             sym_arrow::expr ex  = sym_arrow::parse("A0 - (A0 - A1)^2 / (A2 - A1 + A0 - A1)");
             auto dif_A0         = diff(ex, sym_arrow::symbol("A0"));
             auto dif_A1         = diff(ex, sym_arrow::symbol("A1"));

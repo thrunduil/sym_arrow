@@ -350,11 +350,11 @@ expr  parser_sym_arrow::star_or_symbol() {
 						args.push_back(y);
 					}
 					else {
-						goto _loop25;
+						goto _loop29;
 					}
 					
 				}
-				_loop25:;
+				_loop29:;
 				} // ( ... )*
 				break;
 			}
@@ -381,6 +381,7 @@ expr  parser_sym_arrow::star_or_symbol() {
 		case OR:
 		case RPAREN:
 		case COMMA:
+		case RANGLE:
 		case RBRACK:
 		{
 			break;
@@ -402,8 +403,80 @@ expr  parser_sym_arrow::star_or_symbol() {
 symbol  parser_sym_arrow::scoped_symbol() {
 	symbol x;
 	
+	std::vector<expr> args;
+	expr y;
+	
+	
 	try {      // for error handling
 		x=atom_symbol();
+		{
+		switch ( LA(1)) {
+		case LANGLE:
+		{
+			match(LANGLE);
+			{
+			switch ( LA(1)) {
+			case PLUS:
+			case MINUS:
+			case OR:
+			case LPAREN:
+			case ID:
+			case NUMBER:
+			case INT:
+			{
+				y=term();
+				args.push_back(y);
+				{ // ( ... )*
+				for (;;) {
+					if ((LA(1) == COMMA)) {
+						match(COMMA);
+						y=term();
+						args.push_back(y);
+					}
+					else {
+						goto _loop23;
+					}
+					
+				}
+				_loop23:;
+				} // ( ... )*
+				break;
+			}
+			case RANGLE:
+			{
+				break;
+			}
+			default:
+			{
+				throw ANTLR_USE_NAMESPACE(antlr)NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
+			match(RANGLE);
+			x = make_indexed(x, args);
+			break;
+		}
+		case ANTLR_USE_NAMESPACE(antlr)Token::EOF_TYPE:
+		case PLUS:
+		case MINUS:
+		case MULT:
+		case DIV:
+		case POWER:
+		case OR:
+		case RPAREN:
+		case COMMA:
+		case RANGLE:
+		case LBRACK:
+		case RBRACK:
+		{
+			break;
+		}
+		default:
+		{
+			throw ANTLR_USE_NAMESPACE(antlr)NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
 		reportError(ex);
@@ -423,7 +496,7 @@ symbol  parser_sym_arrow::atom_symbol() {
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
 		reportError(ex);
-		recover(ex,_tokenSet_4);
+		recover(ex,_tokenSet_5);
 	}
 	return x;
 }
@@ -501,9 +574,11 @@ const char* parser_sym_arrow::tokenNames[] = {
 	"|",
 	"\'(\'",
 	"\')\'",
+	"\'<\'",
+	"\',\'",
+	"\'>\'",
 	"an identifier",
 	"\'[\'",
-	"\',\'",
 	"\']\'",
 	"number",
 	"integer",
@@ -533,17 +608,20 @@ const char* parser_sym_arrow::tokenNames[] = {
 const unsigned long parser_sym_arrow::_tokenSet_0_data_[] = { 2UL, 0UL, 0UL, 0UL };
 // EOF 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_0(_tokenSet_0_data_,4);
-const unsigned long parser_sym_arrow::_tokenSet_1_data_[] = { 51714UL, 0UL, 0UL, 0UL };
-// EOF OR RPAREN COMMA RBRACK 
+const unsigned long parser_sym_arrow::_tokenSet_1_data_[] = { 158210UL, 0UL, 0UL, 0UL };
+// EOF OR RPAREN COMMA RANGLE RBRACK 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_1(_tokenSet_1_data_,4);
-const unsigned long parser_sym_arrow::_tokenSet_2_data_[] = { 51762UL, 0UL, 0UL, 0UL };
-// EOF PLUS MINUS OR RPAREN COMMA RBRACK 
+const unsigned long parser_sym_arrow::_tokenSet_2_data_[] = { 158258UL, 0UL, 0UL, 0UL };
+// EOF PLUS MINUS OR RPAREN COMMA RANGLE RBRACK 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_2(_tokenSet_2_data_,4);
-const unsigned long parser_sym_arrow::_tokenSet_3_data_[] = { 52210UL, 0UL, 0UL, 0UL };
-// EOF PLUS MINUS MULT DIV POWER OR RPAREN COMMA RBRACK 
+const unsigned long parser_sym_arrow::_tokenSet_3_data_[] = { 158706UL, 0UL, 0UL, 0UL };
+// EOF PLUS MINUS MULT DIV POWER OR RPAREN COMMA RANGLE RBRACK 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_3(_tokenSet_3_data_,4);
-const unsigned long parser_sym_arrow::_tokenSet_4_data_[] = { 60402UL, 0UL, 0UL, 0UL };
-// EOF PLUS MINUS MULT DIV POWER OR RPAREN LBRACK COMMA RBRACK 
+const unsigned long parser_sym_arrow::_tokenSet_4_data_[] = { 224242UL, 0UL, 0UL, 0UL };
+// EOF PLUS MINUS MULT DIV POWER OR RPAREN COMMA RANGLE LBRACK RBRACK 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_4(_tokenSet_4_data_,4);
+const unsigned long parser_sym_arrow::_tokenSet_5_data_[] = { 228338UL, 0UL, 0UL, 0UL };
+// EOF PLUS MINUS MULT DIV POWER OR RPAREN LANGLE COMMA RANGLE LBRACK RBRACK 
+const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_5(_tokenSet_5_data_,4);
 
 

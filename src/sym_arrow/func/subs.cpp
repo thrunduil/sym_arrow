@@ -48,7 +48,6 @@ class do_subs_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_sub
         expr eval(const Node* ast, const subs_context& sub);
 
         expr eval(const ast::scalar_rep* h, const subs_context& sub);
-        expr eval(const ast::symbol_rep* h, const subs_context& sub);
         expr eval(const ast::indexed_symbol_rep* h, const subs_context& sub);
         expr eval(const ast::add_build* h, const subs_context& sub);
         expr eval(const ast::mult_build* h, const subs_context& sub);
@@ -64,18 +63,10 @@ expr do_subs_vis::eval(const ast::scalar_rep* h, const subs_context& sub)
     return expr();
 }
 
-expr do_subs_vis::eval(const ast::symbol_rep* h, const subs_context& sc)
+expr do_subs_vis::eval(const ast::indexed_symbol_rep* h, const subs_context& sc)
 {
     expr res2 = sc.subs(symbol(h));
     return res2;
-};
-
-expr do_subs_vis::eval(const ast::indexed_symbol_rep* h, const subs_context& sc)
-{
-    //TODO: impl
-    (void)h;
-    (void)sc;
-    return expr();
 };
 
 expr do_subs_vis::eval(const ast::add_build* h, const subs_context& sub)
