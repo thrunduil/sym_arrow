@@ -322,8 +322,8 @@ void test_set::test_diff_context()
 {
     diff_context dc;
 
-    symbol sin("sin");
-    symbol cos("cos");
+    identifier sin("sin");
+    identifier cos("cos");
     symbol x("x");
 
     dc.add_diff_rule(sin, 1, &x, 0, cos(x), true);

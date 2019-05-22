@@ -27,20 +27,21 @@
 namespace sym_arrow { namespace details { namespace func_name
 {
 
-symbol  bool_eq();
-symbol  bool_neq();
-symbol  bool_lt();
-symbol  bool_gt();
-symbol  bool_leq();
-symbol  bool_geq();
+identifier  bool_eq();
+identifier  bool_neq();
+identifier  bool_lt();
+identifier  bool_gt();
+identifier  bool_leq();
+identifier  bool_geq();
 
-symbol  bool_or();
-symbol  bool_and();
-symbol  bool_xor();
-symbol  bool_andnot();
-symbol  bool_not();
+identifier  bool_or();
+identifier  bool_and();
+identifier  bool_xor();
+identifier  bool_andnot();
+identifier  bool_not();
 
-symbol  if_then();
-symbol  if_then_else();
+identifier  if_then();
+identifier  if_then_else();
+identifier  delta();
 
 }}}

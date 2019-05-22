@@ -41,7 +41,9 @@ public:
 	public: void mPOWER(bool _createToken);
 	public: void mSEMI(bool _createToken);
 	public: void mCOMMA(bool _createToken);
+	public: void mCOLON(bool _createToken);
 	public: void mOR(bool _createToken);
+	public: void mDOTEQ(bool _createToken);
 	protected: void mESC(bool _createToken);
 	public: void mID(bool _createToken);
 	public: void mWHITESPACE(bool _createToken);

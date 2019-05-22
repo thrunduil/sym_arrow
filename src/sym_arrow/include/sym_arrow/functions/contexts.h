@@ -45,7 +45,7 @@ class SYM_ARROW_EXPORT data_provider
 
         // evaluate a function with n_size arguments evaluated
         // to values stored in the array subexpr
-        virtual value   eval_function(const symbol& name, const value* subexpr, 
+        virtual value   eval_function(const identifier& name, const value* subexpr, 
                             size_t n_size) const = 0;
 };
 
@@ -74,17 +74,17 @@ class SYM_ARROW_EXPORT function_evaler
         // evaluate a function with n_size arguments evaluated
         // to values stored in the array subexpr; return true 
         // if function was evaluated
-        bool            eval_function(const symbol& name, const value* subexpr, 
+        bool            eval_function(const identifier& name, const value* subexpr, 
                             size_t n_size, value& res) const;
 
         // evaluate a function with n_size arguments stored in the
         // array subexpr; return true if function was evaluated,
-        bool            eval_function(const symbol& name, const expr* subexpr, 
+        bool            eval_function(const identifier& name, const expr* subexpr, 
                             size_t n_size, expr& res) const;
 
         // register an evaler for function with name func_name and
         // n_args arguments
-        void            add_evaler(const symbol& func_name, size_t n_args,
+        void            add_evaler(const identifier& func_name, size_t n_args,
                             const evaler_function& f);
 
         // register an evaler for function with name func_name and
@@ -92,7 +92,7 @@ class SYM_ARROW_EXPORT function_evaler
         // with given name and giben number of arguments is created or 
         // modified and at least one argument is not a value; when evaluation
         // is not possible, then the function f should return null expression
-        void            add_partial_evaler(const symbol& func_name, size_t n_args,
+        void            add_partial_evaler(const identifier& func_name, size_t n_args,
                             const partial_evaler_function& f);
 };
 
@@ -199,7 +199,7 @@ class SYM_ARROW_EXPORT diff_context
         // result is returned by the res variable;
         // return false if partial derivative should not be taken with respect to
         // given argument
-        bool            diff(const symbol& func_name, size_t arg_num, const expr* args,
+        bool            diff(const identifier& func_name, size_t arg_num, const expr* args,
                             size_t n_args, expr& res);
 
         // add differentiation rule d/dx_i f[x0, ..., xn] -> dif[x0, ..., xn]
@@ -209,7 +209,7 @@ class SYM_ARROW_EXPORT diff_context
         // is not defined (for example it stores some internal data), then zero
         // should not be returned, but make_diff should be set to false instead, in
         // this way possible errors like 0 * NaN can be avoided
-        void            add_diff_rule(const symbol& func_name, size_t n_args,
+        void            add_diff_rule(const identifier& func_name, size_t n_args,
                             const symbol* args, size_t diff_arg, const expr& dif,
                             bool make_diff);
 };

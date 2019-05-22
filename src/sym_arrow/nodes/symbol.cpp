@@ -30,17 +30,138 @@ namespace sym_arrow
 
 namespace sd = sym_arrow::details;
 
+//-------------------------------------------------------------------
+//                  identifier
+//-------------------------------------------------------------------
+identifier::~identifier()
+{};
+
+identifier::identifier(const char* name, size_t num_char)
+    :m_expr()
+{
+    ast::identifier_ptr n = ast::identifier_rep::make(ast::identifier_info(name, num_char));
+    m_expr = n;
+
+    if (num_char == 0 || name[0] == '$')
+        throw std::runtime_error("invalid symbol name");
+};
+
+const char* identifier::get_name() const
+{
+    return get_ptr()->get_name();
+}
+
+size_t identifier::get_base_symbol_code() const
+{
+    return get_ptr()->get_base_symbol_code();
+};
+
+expr identifier::operator()() const
+{
+    return function(*this);
+}
+
+expr identifier::operator()(const expr& x1) const
+{
+    return sym_arrow::function(*this, x1);
+}
+
+expr identifier::operator()(const expr& x1, const expr& x2) const
+{
+    return sym_arrow::function(*this, x1, x2);
+}
+
+expr identifier::operator()(std::initializer_list<expr> ex) const
+{
+    return sym_arrow::function(*this, ex);
+}
+
+expr identifier::operator()(const std::vector<expr>& ex) const
+{
+    return sym_arrow::function(*this, ex);
+}
+
+symbol identifier::indexed(const expr& x1) const
+{
+    return sym_arrow::indexed(*this, x1);
+}
+
+symbol identifier::indexed(const expr& x1, const expr& x2) const
+{
+    return sym_arrow::indexed(*this, x1, x2);
+}
+
+symbol identifier::indexed(std::initializer_list<expr> ex) const
+{
+    return sym_arrow::indexed(*this, ex);
+}
+
+symbol identifier::indexed(const std::vector<expr>& ex) const
+{
+    return sym_arrow::indexed(*this, ex);
+}
+
+
+symbol sym_arrow::indexed(const identifier& sym, const expr& arg1)
+{
+    expr args[] = {arg1};
+    return sym_arrow::indexed(sym, args, 1);
+};
+
+symbol sym_arrow::indexed(const identifier& sym, const expr& arg1, const expr& arg2)
+{
+    expr args[] = {arg1, arg2};
+    return sym_arrow::indexed(sym, args, 2);
+};
+
+symbol sym_arrow::indexed(const identifier& sym, const std::vector<expr>& arg)
+{
+    return sym_arrow::indexed(sym, arg.data(), arg.size());
+};
+
+symbol sym_arrow::indexed(const identifier& sym, std::initializer_list<expr> arg)
+{
+    return sym_arrow::indexed(sym, arg.begin(), arg.size());
+};
+
+symbol sym_arrow::indexed(const identifier& sym, const expr* arg, size_t n)
+{
+    if (n == 0)
+        return symbol::from_identifier(sym);
+
+    for (size_t i = 0; i < n; ++i)
+        arg[i].cannonize(do_cse_default);
+
+    using info              = ast::indexed_symbol_info;
+
+    info f_info         = info(sym.get_ptr().get(), n, arg);
+
+    ast::symbol_ptr ep  = ast::indexed_symbol_rep::make(f_info);
+    return symbol(ep);
+};
+
+
+//-------------------------------------------------------------------
+//                  symbol
+//-------------------------------------------------------------------
+
 symbol::~symbol()
 {};
 
 symbol::symbol(const char* name, size_t num_char)
     :m_expr()
 {
-    ast::base_symbol_ptr n = ast::base_symbol_rep::make(ast::named_symbol_info(name, num_char));
+    ast::identifier_ptr n = ast::identifier_rep::make(ast::identifier_info(name, num_char));
     m_expr = ast::indexed_symbol_rep::make(ast::indexed_symbol_info(n.get(), 0, nullptr));
 
     if (num_char == 0 || name[0] == '$')
         throw std::runtime_error("invalid symbol name");
+};
+
+symbol symbol::from_identifier(const identifier& sym)
+{
+    ast::symbol_ptr ex = ast::indexed_symbol_rep::make(ast::indexed_symbol_info(sym.get_ptr().get(), 0, nullptr));
+    return symbol(ex);
 };
 
 const char* symbol::get_name() const
@@ -66,120 +187,6 @@ size_t symbol::get_indexed_symbol_code() const
 size_t symbol::get_base_symbol_code() const
 {
     return get_ptr()->get_base_symbol_code();
-};
-
-expr symbol::operator()() const
-{
-    return function(*this);
-}
-
-expr symbol::operator()(const expr& x1) const
-{
-    return sym_arrow::function(*this, x1);
-}
-
-expr symbol::operator()(const expr& x1, const expr& x2) const
-{
-    return sym_arrow::function(*this, x1, x2);
-}
-
-expr symbol::operator()(std::initializer_list<expr> ex) const
-{
-    return sym_arrow::function(*this, ex);
-}
-
-expr symbol::operator()(const std::vector<expr>& ex) const
-{
-    return sym_arrow::function(*this, ex);
-}
-
-symbol symbol::index(const expr& x1) const
-{
-    return sym_arrow::index(*this, x1);
-}
-
-symbol symbol::index(const expr& x1, const expr& x2) const
-{
-    return sym_arrow::index(*this, x1, x2);
-}
-
-symbol symbol::index(std::initializer_list<expr> ex) const
-{
-    return sym_arrow::index(*this, ex);
-}
-
-symbol symbol::index(const std::vector<expr>& ex) const
-{
-    return sym_arrow::index(*this, ex);
-}
-
-
-symbol sym_arrow::index(const symbol& sym, const expr& arg1)
-{
-    expr args[] = {arg1};
-    return sym_arrow::index(sym, args, 1);
-};
-
-symbol sym_arrow::index(const symbol& sym, const expr& arg1, const expr& arg2)
-{
-    expr args[] = {arg1, arg2};
-    return sym_arrow::index(sym, args, 2);
-};
-
-symbol sym_arrow::index(const symbol& sym, const std::vector<expr>& arg)
-{
-    return sym_arrow::index(sym, arg.data(), arg.size());
-};
-
-symbol sym_arrow::index(const symbol& sym, std::initializer_list<expr> arg)
-{
-    return sym_arrow::index(sym, arg.begin(), arg.size());
-};
-
-symbol sym_arrow::index(const symbol& sym, const expr* arg, size_t n)
-{
-    if (n == 0)
-        return sym;
-
-    for (size_t i = 0; i < n; ++i)
-        arg[i].cannonize(do_cse_default);
-
-    using info              = ast::indexed_symbol_info;
-
-    if (sym.size() == 0)
-    {    
-        info f_info         = info(sym.get_ptr()->get_name(), n, arg);
-
-        ast::symbol_ptr ep  = ast::indexed_symbol_rep::make(f_info);
-        return symbol(ep);
-    };
-
-    size_t n_old            = sym.size();
-    size_t n_elem           = n + n_old;
-
-    int size_counter        = 0;
-    using expr_pod          =  sd::pod_type<expr>;
-    expr_pod::destructor_type d(&size_counter);
-    sd::stack_array<expr_pod> buff(n_elem, &d);    
-
-    expr* buff_ptr          = reinterpret_cast<expr*>(buff.get());
-
-    for (size_t i = 0; i < n_old; ++i)
-    {
-        new(buff_ptr + size_counter) expr(std::move(sym.arg(i)));
-        ++size_counter;
-    };
-
-    for (size_t i = 0; i < n; ++i)
-    {
-        new(buff_ptr + size_counter) expr(arg[i]);
-        ++size_counter;
-    };
-
-    info f_info         = info(sym.get_ptr()->get_name(), n_elem, buff_ptr);
-
-    ast::symbol_ptr ep  = ast::indexed_symbol_rep::make(f_info);
-    return symbol(ep);
 };
 
 };

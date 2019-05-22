@@ -31,3 +31,9 @@ msvs
 *.vspx
 *.db-shm
 *.db-wal
+*.aux
+*.bbl
+*.blg
+*.out
+*.pdf
+*.synctex

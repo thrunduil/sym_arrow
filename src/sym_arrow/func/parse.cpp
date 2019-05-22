@@ -32,35 +32,73 @@
 namespace sym_arrow
 {
 
-expr sym_arrow::parse(const std::string& v)
+class parser
 {
-    if (v.size() == 0)
-        return ast::scalar_rep::make_zero();
+    private:
+        using filter_type   = antlr::TokenStreamHiddenTokenFilter;
 
-    region::region reg;
+    private:
+        region::region      m_reg;
+        std::istringstream* m_is;
+        lexer_sym_arrow*    m_lexer;
+        filter_type*        m_filter;
+        parser_sym_arrow*   m_parser;
 
-    std::istringstream is(v);
+    public:
+        parser(const std::string& v);
+        ~parser();
 
-    lexer_sym_arrow lexer(&reg,is);
+    private:
+        parser(const parser&) = delete;
+        parser& operator=(const parser&) = delete;
 
-    antlr::TokenStreamHiddenTokenFilter filter(&reg,lexer);
+    public:
+        expr    make_expr();
+        index   make_index();
+        symbol  make_symbol();
 
-    filter.hide(lexer_sym_arrow::WHITESPACE);
-    filter.hide(lexer_sym_arrow::NEWLINE);
-    filter.hide(lexer_sym_arrow::COMMENT);
-    filter.hide(lexer_sym_arrow::SL_DCOMMENT);
-    filter.hide(lexer_sym_arrow::SL_COMMENT);
-    filter.hide(lexer_sym_arrow::ML_COMMENT);
-    filter.hide(lexer_sym_arrow::NOT_NEWLINE);    
-    filter.hide(lexer_sym_arrow::CONTINUATION);    
+        void    make_def();
 
-    parser_sym_arrow parser(&reg,filter);
+    private:
+        template<class T>
+        static T    make(const std::function<T ()>& f);
+};
 
-    parser.init(&std::cout);
+parser::parser(const std::string& v)
+    : m_is(nullptr), m_lexer(nullptr), m_filter(nullptr), m_parser(nullptr)
+{    
+    m_is        = new std::istringstream(v);
+    m_lexer     = new lexer_sym_arrow(&m_reg, *m_is);
+    m_filter    = new antlr::TokenStreamHiddenTokenFilter(&m_reg, *m_lexer);
 
+    m_filter->hide(lexer_sym_arrow::WHITESPACE);
+    m_filter->hide(lexer_sym_arrow::NEWLINE);
+    m_filter->hide(lexer_sym_arrow::COMMENT);
+    m_filter->hide(lexer_sym_arrow::SL_DCOMMENT);
+    m_filter->hide(lexer_sym_arrow::SL_COMMENT);
+    m_filter->hide(lexer_sym_arrow::ML_COMMENT);
+    m_filter->hide(lexer_sym_arrow::NOT_NEWLINE);    
+    m_filter->hide(lexer_sym_arrow::CONTINUATION);    
+
+    m_parser = new parser_sym_arrow(&m_reg, *m_filter);
+
+    m_parser->init(&std::cout);
+}
+
+parser::~parser()
+{
+    delete m_parser;
+    delete m_filter;
+    delete m_lexer;
+    delete m_is;
+};
+
+template<class T>
+static T parser::make(const std::function<T ()>& f)
+{
     try
     {
-        expr ex = parser.stringUnit();
+        T ex = f();
         return ex;
     }
     catch (antlr::CharStreamIOException& e)
@@ -87,6 +125,71 @@ expr sym_arrow::parse(const std::string& v)
     {
         throw std::runtime_error(e.getMessage());
     }
+}
+
+expr parser::make_expr()
+{
+    parser_sym_arrow* p = m_parser;
+
+    return make<expr>([p, this](){return p->stringUnit();});
 };
+
+index parser::make_index()
+{
+    parser_sym_arrow* p = m_parser;
+
+    return make<index>([p, this](){return p->index_def();});
+}
+
+symbol parser::make_symbol()
+{
+    parser_sym_arrow* p = m_parser;
+
+    return make<symbol>([p, this](){return p->symbol_def();});
+}
+
+void parser::make_def()
+{
+    parser_sym_arrow* p = m_parser;
+
+    make<int>([p, this](){p->any_def(); return 0;});
+};
+
+expr sym_arrow::parse(const std::string& v)
+{
+    if (v.size() == 0)
+        return ast::scalar_rep::make_zero();
+
+    parser p(v);
+
+    expr ex = p.make_expr();
+    return ex;
+};
+
+void sym_arrow::parse_def(const std::string& v)
+{
+    if (v.size() == 0)
+        return;
+
+    parser p(v);
+
+    p.make_def();
+};
+
+index sym_arrow::parse_index(const std::string& v)
+{
+    parser p(v);
+
+    index i = p.make_index();
+    return i;
+}
+
+symbol sym_arrow::parse_sym(const std::string& v)
+{
+    parser p(v);
+
+    symbol s = p.make_symbol();
+    return s;
+}
 
 };

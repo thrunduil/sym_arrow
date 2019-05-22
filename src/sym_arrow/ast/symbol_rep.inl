@@ -26,22 +26,22 @@
 namespace sym_arrow { namespace ast
 {
 
-inline const char* base_symbol_rep::get_name() const
+inline const char* identifier_rep::get_name() const
 {
     return m_name.get_string();
 };
 
-inline size_t base_symbol_rep::get_name_size() const
+inline size_t identifier_rep::get_name_size() const
 {
     return m_name.get_size();
 };
 
-inline size_t base_symbol_rep::get_base_symbol_code() const
+inline size_t identifier_rep::get_base_symbol_code() const
 { 
     return m_code; 
 };
 
-inline size_t base_symbol_rep::hash_value() const
+inline size_t identifier_rep::hash_value() const
 {
     return m_name.get_hash();
 };

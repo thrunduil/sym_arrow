@@ -175,7 +175,6 @@ class factor_group_stats
         using dbs       = dbs_lib::dbs;
 
     private:
-        size_t          n_symbols;
         dbs             m_symbol_set;
         expr_handle     m_base;
 
@@ -184,10 +183,10 @@ class factor_group_stats
 
         // constuctor from number of symbols in factorization
         // group; union of symbol sets; and smallest base
-        factor_group_stats(size_t symbols, const dbs& syms, expr_handle eh_best);
+        factor_group_stats(const dbs& syms, expr_handle eh_best);
 
         // ordering of two statistics, based on lexicographic
-        // ordering (number symbols x symbol set x smallest base)
+        // ordering (symbol set x smallest base)
         bool        operator<(const factor_group_stats& other) const;
 };
 

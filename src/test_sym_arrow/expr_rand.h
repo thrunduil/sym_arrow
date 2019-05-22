@@ -156,7 +156,7 @@ class rand_data_provider : public sym_arrow::data_provider
         rand_data_provider(const rand_state* rs);
 
         virtual value   get_value(const symbol& sh) const override;
-        virtual value   eval_function(const symbol&, const value*, size_t nargs) const override;
+        virtual value   eval_function(const identifier&, const value*, size_t nargs) const override;
 
         void            set_value(const symbol& sh, value v);
         void            disp(std::ostream& os) const;

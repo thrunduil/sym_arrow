@@ -53,7 +53,7 @@ class symbol_codes
         void                    unregister_sym(size_t code);
 
         // get unused code; should be called during constructor of 
-        // base_symbol_rep
+        // identifier_rep
         size_t                  get_fresh_symbol_code();
 };
 
@@ -61,7 +61,7 @@ class symbol_codes
 class registered_symbols
 {
     private:
-        using code_sym          = std::pair<size_t, const base_symbol_rep*>;
+        using code_sym          = std::pair<size_t, const identifier_rep*>;
         using allocator         = sym_dag::details::symbolic_allocator<registered_symbols>;
         using pool_allocator    = sym_dag::details::object_allocator<allocator>;
         using dbs               = dbs_lib::dbs;
@@ -81,34 +81,52 @@ class registered_symbols
 
         using code_sym_map      = sym_dag::hash_table<code_sym, cs_h, cs_e>;
 
+    public:
+        using reg_sym_ptr       = registered_symbols*;
+
     private:
         pool_allocator          m_pool;
         code_sym_map            m_code_sym_map;
         symbol_codes            m_free_codes;
+        size_t                  m_refcount;
+        static reg_sym_ptr      m_handle;
 
-    public:
+    private:
         registered_symbols();
         ~registered_symbols();
 
-        // release all memory
-        void                    close();
+        registered_symbols(const registered_symbols&) = delete;
+        registered_symbols& operator=(const registered_symbols&) = delete;
 
-        // register a new symbol; should be called after construction
-        // of base_symbol_rep
-        void                    register_sym(const base_symbol_rep* h);
+    public:
+        // get global instance of this class
+        static reg_sym_ptr      get();
+
+        // register new symbol; should be called after construction
+        // of identifier_rep
+        void                    register_sym(const identifier_rep* h);
+        void                    register_sym(const indexed_symbol_rep* h);
 
         // unregister a symbol; should be called during destruction
-        // of base_symbol_rep
-        void                    unregister_sym(const base_symbol_rep* h);
+        // of identifier_rep
+        void                    unregister_sym(const identifier_rep* h);
+        void                    unregister_sym(const indexed_symbol_rep* h);
 
         // get unused code; should be called during constructor of 
-        // base_symbol_rep
+        // identifier_rep
         size_t                  get_fresh_symbol_code();
 
         // get symbol with given code; code must be valid, i.e. there
         // must exist a symbol with given code, otherwise nullptr is
         // returned
-        const base_symbol_rep*  get_symbol_from_code(size_t code) const;
+        const identifier_rep*   get_symbol_from_code(size_t code) const;        
+
+        // release handle to this object; memory is released if all handles 
+        // are released
+        void                    close();
+
+    private:
+        void                    release_memory();
 };
 
 };};

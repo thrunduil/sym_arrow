@@ -26,7 +26,7 @@
 namespace sym_arrow { namespace ast { namespace details
 {
 
-// helper class used by base_symbol_rep
+// helper class used by identifier_rep
 struct string_data
 {
     // pointer to first element of null-terminated char array; 

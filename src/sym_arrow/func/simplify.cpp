@@ -75,6 +75,7 @@ class do_simplify_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do
         expr eval(const ast::add_rep* h);
         expr eval(const ast::mult_rep* h);
         expr eval(const ast::function_rep* h);
+        expr eval(const ast::index_rep* h);
 
     private:
         handle_type find(ast::expr_handle h);
@@ -124,9 +125,15 @@ expr do_simplify_vis::eval(const ast::scalar_rep* h)
 
 expr do_simplify_vis::eval(const ast::indexed_symbol_rep* h)
 {
-    //TODO: simplify indices?
+    //nothing to do
     return expr(ast::expr_ptr::from_this(h));
 };
+
+expr do_simplify_vis::eval(const ast::index_rep* h)
+{
+    //nothing to do
+    return expr(ast::expr_ptr::from_this(h));
+}
 
 expr do_simplify_vis::eval(const ast::add_build* h)
 {
@@ -310,7 +317,7 @@ expr do_simplify_vis::eval(const ast::function_rep* h)
     expr ret;
 
     bool evaled = global_function_evaler()
-                    .eval_function(symbol(h->name()), buff_ptr, n, ret);
+                    .eval_function(identifier(h->name()), buff_ptr, n, ret);
 
     if (evaled == false)
     {

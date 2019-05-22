@@ -43,6 +43,17 @@ public:
 	}
 	public: expr  stringUnit();
 	public: expr  term();
+	public: void any_def();
+	public: void set_def();
+	public: void type_def();
+	public: void sym_def();
+	public: identifier  sym_name();
+	public: set  set_initializer();
+	public: void index_postfix_def(
+		std::vector<identifier>& args
+	);
+	public: identifier  type_postfix();
+	public: set  set_literal();
 	public: expr  addExpr();
 	public: expr  multExpr();
 	public: expr  sgnAtom();
@@ -52,9 +63,18 @@ public:
 	public: expr  postfixExpr();
 	public: expr  atoms();
 	public: expr  final_values();
-	public: expr  star_or_symbol();
-	public: symbol  scoped_symbol();
-	public: symbol  atom_symbol();
+	public: expr  symbol_postfix();
+	public: void function_postfix(
+		std::vector<expr>& args
+	);
+	public: void index_postfix(
+		std::vector<expr>& args
+	);
+	public: index  indexer_postfix(
+		const identifier& sym
+	);
+	public: index  index_def();
+	public: symbol  symbol_def();
 	public: expr  atom_number();
 	public: int  atom_int();
 public:
@@ -68,10 +88,10 @@ protected:
 private:
 	static const char* tokenNames[];
 #ifndef NO_STATIC_CONSTS
-	static const int NUM_TOKENS = 40;
+	static const int NUM_TOKENS = 45;
 #else
 	enum {
-		NUM_TOKENS = 40
+		NUM_TOKENS = 45
 	};
 #endif
 	

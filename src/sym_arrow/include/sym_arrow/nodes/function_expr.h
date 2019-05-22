@@ -66,7 +66,7 @@ class SYM_ARROW_EXPORT function_expr
         expr                arg(size_t i) const;
 
         // get function_expr name
-        symbol              name() const;
+        identifier          name() const;
 
     public: 
         // internal use only

@@ -28,11 +28,11 @@ namespace sym_arrow { namespace ast
 {
 
 //----------------------------------------------------------------------
-//                          base_symbol_rep
+//                          identifier_rep
 //----------------------------------------------------------------------
-base_symbol_rep::base_symbol_rep(const named_symbol_info& info)
+identifier_rep::identifier_rep(const identifier_info& info)
     :base_type(this)
-    , m_code(context_type::get().get_context_data().get_fresh_base_symbol_code())
+    , m_code(context_type::get().get_context_data().get_fresh_symbol_code())
 {
     size_t N            = info.m_size;
     size_t hash         = eval_hash(info);
@@ -41,13 +41,13 @@ base_symbol_rep::base_symbol_rep(const named_symbol_info& info)
     context_type::get().get_context_data().register_symbol(this);
 };
 
-base_symbol_rep::~base_symbol_rep()
+identifier_rep::~identifier_rep()
 {
     m_name.destroy();
     context_type::get().get_context_data().unregister_symbol(this);
 };
 
-size_t base_symbol_rep::eval_hash(const named_symbol_info& info)
+size_t identifier_rep::eval_hash(const identifier_info& info)
 {
     size_t seed = 0;
 
@@ -57,7 +57,7 @@ size_t base_symbol_rep::eval_hash(const named_symbol_info& info)
     return seed;
 };
 
-bool base_symbol_rep::equal(const named_symbol_info& info) const
+bool identifier_rep::equal(const identifier_info& info) const
 {
     if (info.m_size != this->get_name_size())
         return false;
@@ -76,10 +76,14 @@ bool base_symbol_rep::equal(const named_symbol_info& info) const
 
 indexed_symbol_rep::indexed_symbol_rep(const indexed_symbol_info& pi)
     :base_type(this), m_hash(pi.m_hash)
-    , m_size(pi.m_size), m_expr(nullptr), m_name(base_symbol_ptr::from_this(pi.m_name))
-    , m_code(context_type::get().get_context_data().get_fresh_indexed_symbol_code())
+    , m_size(pi.m_size), m_expr(nullptr), m_name(identifier_ptr::from_this(pi.m_name))
+    , m_code(context_type::get().get_context_data().get_fresh_symbol_code())
 {
     context_type::get().get_context_data().register_symbol(this);
+
+    //TODO: only one code if number of indices is zero
+    add_symbol(pi.m_name->get_base_symbol_code());
+    add_symbol(m_code);
 
     if (m_size == 0)
         return;
@@ -93,6 +97,8 @@ indexed_symbol_rep::indexed_symbol_rep(const indexed_symbol_info& pi)
     {
         expr_handle h   = pi.m_args[i].get_ptr().get();
         new(m_expr+i) expr_ptr(h, sym_dag::copy_t());
+
+        add_symbols(h);
     }
 };
 

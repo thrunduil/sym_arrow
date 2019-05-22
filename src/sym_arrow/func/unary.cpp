@@ -73,3 +73,9 @@ size_t sym_arrow::hash_value(const expr& ex)
     size_t seed = (size_t)ex.get_ptr().get();    
     return seed;
 };
+
+size_t sym_arrow::hash_value(const identifier& ex)
+{
+    size_t seed = (size_t)ex.get_ptr().get();    
+    return seed;
+};

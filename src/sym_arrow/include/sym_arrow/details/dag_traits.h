@@ -42,6 +42,7 @@ enum class term_types : size_t
     add_rep,
     mult_rep,
     function_rep,
+    index_rep,
     number_codes
 };
 
@@ -51,9 +52,10 @@ enum class value_types : size_t
     number_codes
 };
 
-enum class symbol_types : size_t
+enum class unique_nodes_types : size_t
 {
     base_symbol  = 0,
+    set,
     number_codes
 };
 
@@ -83,11 +85,11 @@ struct dag_tag_traits<sym_arrow::ast::value_tag>
     static const bool need_release_stack= false;
 };
 
-// configure dag_item for symbol_tag
+// configure dag_item for unique_nodes_tag
 template<>
-struct dag_tag_traits<sym_arrow::ast::symbol_tag>
+struct dag_tag_traits<sym_arrow::ast::unique_nodes_tag>
 {
-    static const size_t number_codes    = (size_t)sym_arrow::ast::symbol_types::number_codes;
+    static const size_t number_codes    = (size_t)sym_arrow::ast::unique_nodes_types::number_codes;
     static const size_t user_flag_bits  = 0;
     static const bool need_release_stack= false;
 };

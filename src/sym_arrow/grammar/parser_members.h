@@ -27,11 +27,20 @@ private:
     expr                    get_number(const std::string& s);
     int                     get_int(const std::string& s);
 
-    expr                    make_function(const symbol& sym, const std::vector<expr>& args);
-    symbol                  make_indexed(const symbol& sym, const std::vector<expr>& args);
+    expr                    make_function(const identifier& sym, const std::vector<expr>& args);
+    symbol                  make_indexed(const identifier& sym, const std::vector<expr>& args);
+    symbol                  make_symbol(const identifier& sym);
+    index                   make_indexer(const identifier& sym, const identifier& set);
+    set                     make_set(const std::vector<identifier>& args);
+
     void                    to_number(const std::string& value_str0, bool is_complex, double& ret);
     void                    get_precission(const std::string& str,size_t& radix,long& exp);
     int                     to_int(const std::string& value_str);
+
+    void                    def_set(const identifier& sym, const set& ex);
+    void                    def_sym(const identifier& sym, const std::vector<identifier>& args,
+                                const identifier& type);
+    void                    def_type(const identifier& sym);
 
 private:
     void                    reportError(const antlr::RecognitionException& ex);

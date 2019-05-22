@@ -30,6 +30,8 @@
 #include "sym_arrow/func/symbol_functions.h"
 #include "sym_arrow/functions/expr_functions.h"
 #include "sym_arrow/functions/sym_functions.h"
+#include "sym_arrow/functions/set_functions.h"
+#include "sym_arrow/error/sema_error.h"
 
 #include <sstream>
 
@@ -54,6 +56,11 @@ class do_subs_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_sub
         expr eval(const ast::add_rep* h, const subs_context& sub);
         expr eval(const ast::mult_rep* h, const subs_context& sub);
         expr eval(const ast::function_rep* h, const subs_context& sub);
+        expr eval(const ast::index_rep* h, const subs_context& sub);
+
+    private:
+        expr subs_indexed_final(const ast::indexed_symbol_rep* h, const subs_context& sc);
+        expr subs_index(ast::expr_handle h, const subs_context& sc);
 };
 
 expr do_subs_vis::eval(const ast::scalar_rep* h, const subs_context& sub)
@@ -65,9 +72,102 @@ expr do_subs_vis::eval(const ast::scalar_rep* h, const subs_context& sub)
 
 expr do_subs_vis::eval(const ast::indexed_symbol_rep* h, const subs_context& sc)
 {
+    if (h->size() == 0)
+        return subs_indexed_final(h, sc);
+
+    // substitute indices first
+
+    size_t n                = h->size();
+    int size_counter        = 0;
+    bool any                = false;
+
+    using expr_pod          =  sd::pod_type<expr>;
+    expr_pod::destructor_type d(&size_counter);
+    sd::stack_array<expr_pod> buff(n, &d);    
+
+    expr* buff_ptr          = reinterpret_cast<expr*>(buff.get());
+
+    for (size_t j = 0; j < n; ++j)
+    {
+        expr tmp            = subs_index(h->arg(j), sc);
+
+        if (tmp.is_null() == true)
+            tmp             = expr(h->arg(j));
+        else
+            any             = true;
+
+        new(buff_ptr + size_counter) expr(std::move(tmp));
+        ++size_counter;
+    };
+
+    // index name cannot be substituted
+
+    if (any == false)
+        return subs_indexed_final(h, sc);
+
+    // make substituted index
+    ast::indexed_symbol_info info(h->get_name(), n, buff_ptr);
+
+    ast::symbol_ptr h_sub = ast::indexed_symbol_rep::make(info);
+
+    // final substitution
+    expr res = subs_indexed_final(h_sub.get(), sc);
+
+    if (res.is_null() == true)
+        return symbol(h_sub);
+    else
+        return res;
+};
+
+expr do_subs_vis::subs_indexed_final(const ast::indexed_symbol_rep* h, const subs_context& sc)
+{
     expr res2 = sc.subs(symbol(h));
     return res2;
-};
+}
+
+expr do_subs_vis::subs_index(ast::expr_handle h, const subs_context& sc)
+{
+    // only symbolic index can be substituted
+    if (h->isa<ast::index_rep>() == false)
+        return expr();
+
+    const ast::index_rep* i = h->static_cast_to<ast::index_rep>();
+    return visit(i, sc);
+}
+
+expr do_subs_vis::eval(const ast::index_rep* h, const subs_context& sc)
+{
+    expr res2 = sc.subs(symbol(h->name()));
+
+    if (res2.is_null() == true)
+        return res2;
+
+    ast::identifier_handle sh1  = h->set_name();
+
+    //1. if result is an index, then index set must be the same
+    bool is_ind                 = res2.get_ptr()->isa<ast::index_rep>();    
+
+    if (is_ind)
+    {
+        const ast::index_rep* h2    = res2.get_ptr()->static_cast_to<ast::index_rep>();        
+        ast::identifier_handle sh2  = h2->set_name();
+
+        bool eq                     = set_is_equal(identifier(sh1), identifier(sh2));
+        if (eq == false)
+            error::sema_error().unable_subs_index_set_different(index(h), index(h2));
+
+        return res2;
+    };
+
+    //2. otherwise it must be a member of the index set
+
+    bool is_member                  = set_is_member(identifier(sh1), res2);
+
+    if (is_member == false)
+        error::sema_error().unable_subs_index_not_member(index(h), res2);
+
+    return res2;
+}
 
 expr do_subs_vis::eval(const ast::add_build* h, const subs_context& sub)
 {
@@ -249,7 +349,9 @@ expr do_subs_vis::eval(const ast::function_rep* h, const subs_context& sc)
 
     if (ast::details::has_any_symbol(h, sc.get_symbol_set()) == false || n == 0)       
         return expr();
-    
+
+    // function name is not substituted
+
     int size_counter        = 0;
     bool any                = false;
 
@@ -289,7 +391,7 @@ expr do_subs_vis::eval(const ast::function_rep* h, const subs_context& sc)
     {
         expr v;
         bool evaled         = global_function_evaler()
-                                .eval_function(symbol(h->name()), buff_ptr, n, v);
+                                .eval_function(identifier(h->name()), buff_ptr, n, v);
 
         if (evaled == true)
             return v;

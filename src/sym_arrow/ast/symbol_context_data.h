@@ -29,11 +29,18 @@
 namespace sym_arrow { namespace ast { namespace details
 {
 
+namespace sd = sym_arrow ::details;
+
 // additional data stored in dag context for term nodes
 class symbol_context_data : public sym_dag::context_data_base
 {
     private:
-        registered_symbols  m_reg_symbols;
+        using reg_sym_ptr   = registered_symbols*;
+        using sym_tab_ptr   = sd::sym_table_impl*;
+
+    private:
+        reg_sym_ptr         m_reg_symbols;
+        sym_tab_ptr         m_sym_tab;
 
         virtual ~symbol_context_data() override;
 
@@ -41,15 +48,15 @@ class symbol_context_data : public sym_dag::context_data_base
         virtual void        close() override;
 
     public:
-        // return a code not used by other base symbols
-        size_t              get_fresh_base_symbol_code();
+        // return a code not used by other symbols
+        size_t              get_fresh_symbol_code();
 
         // newly created symbols must be registered by this function
-        void                register_symbol(const base_symbol_rep* h);
+        void                register_symbol(const identifier_rep* h);
 
         // symbols about be beining destroyed must be unregistered 
         // by this function
-        void                unregister_symbol(const base_symbol_rep* h);
+        void                unregister_symbol(const identifier_rep* h);
 };
 
 }}};

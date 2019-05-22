@@ -30,10 +30,14 @@ namespace sym_arrow
 class value;
 class scalar;
 class symbol;
+class identifier;
 class expr;
 class add_expr;
 class mult_expr;
 class function_expr;
+class index;
+
+class set;
 
 class data_provider;
 class subs_context;
@@ -47,6 +51,7 @@ namespace sym_arrow { namespace details
 class subs_context_impl;
 class diff_context_impl;
 class function_evaler_impl;
+class sym_table_impl;
 
 class value_mp;
 
@@ -61,11 +66,12 @@ struct term_tag{};
 // dag item tag for values
 struct value_tag{};
 
-// dag item tag for basic symbols
-struct symbol_tag{};
+// dag item tag for unique nodes
+struct unique_nodes_tag{};
 
-// basic symbols representations
-class base_symbol_rep;
+// other ast nodes
+class set_rep;
+class identifier_rep;
 
 // terms representations
 template<class Derived>
@@ -76,6 +82,7 @@ class mult_build;
 class add_rep;
 class mult_rep;
 class function_rep;
+class index_rep;
 class scalar_rep;
 class indexed_symbol_rep;
 
@@ -100,12 +107,16 @@ using expr_base             = sym_dag::dag_item_base<term_tag>;
 using expr_handle           = const expr_base*;
 using scalar_handle         = const scalar_rep*;
 using symbol_handle         = const indexed_symbol_rep*;
-using base_symbol_handle    = const base_symbol_rep*;
+using identifier_handle     = const identifier_rep*;
 
 using expr_ptr              = sym_dag::dag_ptr<expr_base, term_tag>;
 using scalar_ptr            = sym_dag::dag_ptr<scalar_rep, term_tag>;
 using symbol_ptr            = sym_dag::dag_ptr<indexed_symbol_rep, term_tag>;
-using base_symbol_ptr       = sym_dag::dag_ptr<base_symbol_rep, symbol_tag>;
+using index_ptr             = sym_dag::dag_ptr<index_rep, term_tag>;
+
+using identifier_ptr        = sym_dag::dag_ptr<identifier_rep, unique_nodes_tag>;
+using set_ptr               = sym_dag::dag_ptr<set_rep, unique_nodes_tag>;
+
 using weak_expr_ptr         = sym_dag::weak_dag_item<term_tag>;
 
 }}

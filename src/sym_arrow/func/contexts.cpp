@@ -136,7 +136,7 @@ void diff_context_impl::set_global()
     m_is_global = true;
 };
 
-void diff_context_impl::add_diff_rule(const symbol& func_name, size_t n_args,
+void diff_context_impl::add_diff_rule(const identifier& func_name, size_t n_args,
                     const symbol* args, size_t diff_arg, const expr& dif, bool make_diff)
 {
     using value_type    = diff_map::value_type;
@@ -150,7 +150,7 @@ void diff_context_impl::add_diff_rule(const symbol& func_name, size_t n_args,
     m_diff_map.insert(pos, value_type(k, diff_rule(n_args, args, dif, make_diff)));
 };
 
-bool diff_context_impl::diff(const symbol& func_name, size_t arg_num, const expr* args,
+bool diff_context_impl::diff(const identifier& func_name, size_t arg_num, const expr* args,
                     size_t n_args, expr& res)
 {
     key k       = key(func_name, n_args, arg_num);
@@ -174,7 +174,7 @@ bool diff_context_impl::diff(const symbol& func_name, size_t arg_num, const expr
     return pos->second.make_subs(n_args, args, res);
 };
 
-void diff_context_impl::error_rule_defined(const symbol& func_name, size_t n_args,
+void diff_context_impl::error_rule_defined(const identifier& func_name, size_t n_args,
                         const symbol* args, size_t diff_arg, const expr& dif, bool make_diff,
                         const diff_rule& prev_rule)
 {
@@ -204,7 +204,7 @@ void diff_context_impl::error_rule_defined(const symbol& func_name, size_t n_arg
     throw std::runtime_error(ef.str());
 };
 
-void diff_context_impl::disp_diff_def(std::ostream& os, const symbol& func_name, size_t n_args,
+void diff_context_impl::disp_diff_def(std::ostream& os, const identifier& func_name, size_t n_args,
                     const symbol* args, size_t diff_arg, const expr& dif, bool make_dif)
 {    
     os << "d/d"; disp(os, args[diff_arg], false);
@@ -218,7 +218,7 @@ void diff_context_impl::disp_diff_def(std::ostream& os, const symbol& func_name,
         os << "none";
 };
 
-void diff_context_impl::disp_function(std::ostream& os, const symbol& func_name, size_t n_args, 
+void diff_context_impl::disp_function(std::ostream& os, const identifier& func_name, size_t n_args, 
                     const symbol* args)
 {
     disp(os, func_name, false);
@@ -287,7 +287,7 @@ void function_evaler_impl::set_global()
     m_is_global = true;
 }
 
-bool function_evaler_impl::eval_function(const symbol& name, const value* subexpr, 
+bool function_evaler_impl::eval_function(const identifier& name, const value* subexpr, 
                     size_t n_size, value& res) const
 {
     key_type key(name, n_size);
@@ -306,7 +306,7 @@ bool function_evaler_impl::eval_function(const symbol& name, const value* subexp
     return true;
 };
 
-bool function_evaler_impl::eval_function(const symbol& name, const expr* subexpr, 
+bool function_evaler_impl::eval_function(const identifier& name, const expr* subexpr, 
                     size_t n_size, expr& res) const
 {
     bool all_values     = all_args_values(n_size, subexpr);
@@ -321,7 +321,7 @@ bool function_evaler_impl::eval_function(const symbol& name, const expr* subexpr
     };
 }
 
-bool function_evaler_impl::eval_function_expr(const symbol& name, const expr* subexpr, 
+bool function_evaler_impl::eval_function_expr(const identifier& name, const expr* subexpr, 
                     size_t n_size, expr& res) const
 {
     key_type key(name, n_size);
@@ -355,7 +355,7 @@ bool function_evaler_impl::all_args_values(size_t n_args, const expr* subexpr)
     return true;
 };
 
-bool function_evaler_impl::eval_function_value(const symbol& name, const expr* subexpr, 
+bool function_evaler_impl::eval_function_value(const identifier& name, const expr* subexpr, 
                     size_t n_size, expr& res) const
 {
     key_type key(name, n_size);
@@ -391,7 +391,7 @@ bool function_evaler_impl::eval_function_value(const symbol& name, const expr* s
     return true;
 };
 
-void function_evaler_impl::add_evaler(const symbol& func_name, size_t n_args,
+void function_evaler_impl::add_evaler(const identifier& func_name, size_t n_args,
                     const evaler_function& f)
 {
     key_type key(func_name, n_args);
@@ -406,7 +406,7 @@ void function_evaler_impl::add_evaler(const symbol& func_name, size_t n_args,
     error_evaler_defined(func_name, n_args);
 };
 
-void function_evaler_impl::add_partial_evaler(const symbol& func_name, size_t n_args,
+void function_evaler_impl::add_partial_evaler(const identifier& func_name, size_t n_args,
                     const evaler_function_partial& f)
 {
     key_type key(func_name, n_args);
@@ -421,7 +421,7 @@ void function_evaler_impl::add_partial_evaler(const symbol& func_name, size_t n_
     error_partial_evaler_defined(func_name, n_args);
 };
 
-void function_evaler_impl::error_evaler_defined(const symbol& name, size_t n_size)
+void function_evaler_impl::error_evaler_defined(const identifier& name, size_t n_size)
 {
     error::error_formatter ef;
     ef.head() << "function evaler for symbol " << name.get_name() << " with " << n_size 
@@ -430,7 +430,7 @@ void function_evaler_impl::error_evaler_defined(const symbol& name, size_t n_siz
     throw std::runtime_error(ef.str());
 }
 
-void function_evaler_impl::error_partial_evaler_defined(const symbol& name, size_t n_size)
+void function_evaler_impl::error_partial_evaler_defined(const identifier& name, size_t n_size)
 {
     error::error_formatter ef;
     ef.head() << "partial function evaler for symbol " << name.get_name() << " with " << n_size 
@@ -524,6 +524,7 @@ void subs_context::add_symbol(const symbol& sym, size_t code)
 
     m_impl->m_map[sym]  = code;
     m_impl->m_set       = m_impl->m_set.set(sym.get_ptr()->get_indexed_symbol_code());
+    m_impl->m_set       = m_impl->m_set.set(sym.get_ptr()->get_base_symbol_code());
 };
 
 void subs_context::remove_symbol(const symbol& sym)
@@ -616,13 +617,13 @@ diff_context::diff_context()
     :m_impl(new sym_arrow::details::diff_context_impl())
 {};
 
-bool diff_context::diff(const symbol& func_name, size_t arg_num, const expr* args,
+bool diff_context::diff(const identifier& func_name, size_t arg_num, const expr* args,
                     size_t n_args, expr& res)
 {
     return m_impl->diff(func_name, arg_num, args, n_args, res);
 };
 
-void diff_context::add_diff_rule(const symbol& func_name, size_t n_args,
+void diff_context::add_diff_rule(const identifier& func_name, size_t n_args,
                     const symbol* args, size_t diff_arg, const expr& dif,
                     bool make_diff)
 {
@@ -662,25 +663,25 @@ function_evaler::function_evaler()
     :m_impl(new sym_arrow::details::function_evaler_impl())
 {};
 
-bool function_evaler::eval_function(const symbol& name, const value* subexpr, 
+bool function_evaler::eval_function(const identifier& name, const value* subexpr, 
                     size_t n_size, value& res) const
 {
     return m_impl->eval_function(name, subexpr, n_size, res);
 };
 
-bool function_evaler::eval_function(const symbol& name, const expr* subexpr, 
+bool function_evaler::eval_function(const identifier& name, const expr* subexpr, 
                     size_t n_size, expr& res) const
 {
     return m_impl->eval_function(name, subexpr, n_size, res);
 };
 
-void function_evaler::add_evaler(const symbol& func_name, size_t n_args,
+void function_evaler::add_evaler(const identifier& func_name, size_t n_args,
                     const evaler_function& f)
 {
     return m_impl->add_evaler(func_name, n_args, f);
 }
 
-void function_evaler::add_partial_evaler(const symbol& func_name, size_t n_args,
+void function_evaler::add_partial_evaler(const identifier& func_name, size_t n_args,
                     const partial_evaler_function& f)
 {
     return m_impl->add_partial_evaler(func_name, n_args, f);

@@ -36,20 +36,20 @@ class function_rep_info
 {
     public:
         // function name
-        symbol_handle   m_name;
+        identifier_handle   m_name;
 
         // number of arguments
-        size_t          m_size;
+        size_t              m_size;
 
         // vector of arguments of length m_size
-        const expr*     m_args;
+        const expr*         m_args;
 
         // hash value; will be set later
-        mutable size_t  m_hash;
+        mutable size_t      m_hash;
 
     public:
         // constructor; arguments must be cannonized
-        function_rep_info(symbol_handle name, size_t size, const expr* args)
+        function_rep_info(identifier_handle name, size_t size, const expr* args)
             : m_name(name), m_size(size), m_args(args)
             , m_hash(0) 
         {};
@@ -69,7 +69,7 @@ class function_rep : public expr_symbols<function_rep>
         size_t          m_hash;
         size_t          m_size;
 
-        symbol_ptr      m_name;
+        identifier_ptr  m_name;
         expr_ptr*       m_expr;
 
     private:
@@ -103,7 +103,8 @@ class function_rep : public expr_symbols<function_rep>
         expr_handle     arg(size_t i) const             { return m_expr[i].get(); };
 
         // get function name
-        symbol_handle   name() const                    { return m_name.get(); };
+        identifier_handle
+                        name() const                    { return m_name.get(); };
 };
 
 };};

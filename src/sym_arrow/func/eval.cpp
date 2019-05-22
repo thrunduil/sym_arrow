@@ -29,6 +29,7 @@
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/functions/expr_functions.h"
 #include "sym_arrow/functions/sym_functions.h"
+#include "sym_arrow/error/error_formatter.h"
 
 #include <sstream>
 
@@ -36,6 +37,16 @@ namespace sym_arrow { namespace details
 {
 
 namespace sd = sym_arrow :: details;
+
+static value unable_evaluate_index(const ast::index_rep* h)
+{
+    error::error_formatter ef;
+    ef.head() << "unable to evaluate index ";
+
+    disp(ef.line(), expr(h), false);
+
+    throw std::runtime_error(ef.str());
+};
 
 class do_eval_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_eval_vis>
 {
@@ -53,6 +64,7 @@ class do_eval_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_eva
         value eval(const ast::add_rep* h, const data_provider& dp);
         value eval(const ast::mult_rep* h, const data_provider& dp);
         value eval(const ast::function_rep* h, const data_provider& dp);
+        value eval(const ast::index_rep* h, const data_provider& dp);
 };
 
 class do_eval_vis_log : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_eval_vis_log>
@@ -71,6 +83,7 @@ class do_eval_vis_log : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do
         value eval(const ast::add_rep* h, const data_provider& dp);
         value eval(const ast::mult_rep* h, const data_provider& dp);
         value eval(const ast::function_rep* h, const data_provider& dp);
+        value eval(const ast::index_rep* h, const data_provider& dp);
 };
 
 value do_eval_vis::eval(const ast::scalar_rep* h, const data_provider&)
@@ -201,7 +214,7 @@ value do_eval_vis::eval(const ast::function_rep* h, const data_provider& dp)
         ++size_counter;
     };
 
-    symbol sym  = symbol(ast::symbol_ptr::from_this(h->name()));
+    identifier sym  = identifier(ast::identifier_ptr::from_this(h->name()));
     value ret   = dp.eval_function(sym, buff_ptr, size);
     return ret;
 };
@@ -210,6 +223,17 @@ value do_eval_vis_log::eval(const ast::function_rep* h, const data_provider& dp)
 {
     value ret = do_eval_vis().eval(h, dp);
     return log(ret);
+};
+
+value do_eval_vis::eval(const ast::index_rep* h, const data_provider& dp)
+{
+    (void)dp;
+    return unable_evaluate_index(h);
+};
+value do_eval_vis_log::eval(const ast::index_rep* h, const data_provider& dp)
+{
+    (void)dp;
+    return unable_evaluate_index(h);
 };
 
 }};

@@ -95,6 +95,10 @@ expr::expr(const symbol& val)
     :expr(val.get_ptr())
 {};
 
+expr::expr(const index& val)
+    :expr(val.get_ptr())
+{};
+
 expr::expr(const add_expr& val)
     :expr(val.get_expr())
 {};

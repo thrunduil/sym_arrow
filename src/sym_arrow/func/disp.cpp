@@ -36,10 +36,11 @@ namespace sym_arrow { namespace details
 class do_disp_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_disp_vis>
 {
     public:
-        static const int prec_atom      = 5;
-        static const int prec_pow       = 4;
-        static const int prec_mult      = 3;
-        static const int prec_add       = 2;
+        static const int prec_atom      = 6;
+        static const int prec_pow       = 5;
+        static const int prec_mult      = 4;
+        static const int prec_add       = 3;
+        static const int prec_index     = 2;
         static const int prec_lowest    = 1;
 
     public:
@@ -55,6 +56,9 @@ class do_disp_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dis
         void eval(const ast::add_rep* h, std::ostream& os, int prec);
         void eval(const ast::mult_rep* h, std::ostream& os, int prec);
         void eval(const ast::function_rep* h, std::ostream& os, int prec);
+        void eval(const ast::index_rep* h, std::ostream& os, int prec);
+
+        void disp_identifier(const ast::identifier_rep* h, std::ostream& os);
 
     private:
         void add_paren(std::ostream& os, int this_prec, int min_prec, bool left);
@@ -69,8 +73,7 @@ class do_disp_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dis
 
         void disp_vlist_mult_value(const int* h, std::ostream& os, int prec);
         void disp_vlist_mult_value(const value* h, std::ostream& os, int prec);
-        void disp_real_power(const value& h, std::ostream& os, int prec);
-        void disp_symbol(const ast::base_symbol_rep* h, std::ostream& os);
+        void disp_real_power(const value& h, std::ostream& os, int prec);        
 };
 
 void do_disp_vis::add_paren(std::ostream& os, int this_prec, int min_prec, bool left)
@@ -96,7 +99,7 @@ void do_disp_vis::eval(const ast::indexed_symbol_rep* h, std::ostream& os, int p
 {
     (void)prec;
 
-    disp_symbol(h->get_name(), os);
+    disp_identifier(h->get_name(), os);
 
     size_t n = h->size();
 
@@ -116,7 +119,7 @@ void do_disp_vis::eval(const ast::indexed_symbol_rep* h, std::ostream& os, int p
     os << ">";
 };
 
-void do_disp_vis::disp_symbol(const ast::base_symbol_rep* h, std::ostream& os)
+void do_disp_vis::disp_identifier(const ast::identifier_rep* h, std::ostream& os)
 {
     os << h->get_name();
 };
@@ -262,7 +265,7 @@ void do_disp_vis::eval(const ast::function_rep* h, std::ostream& os, int prec)
 {
     (void)prec;
 
-    visit(h->name(), os, prec_lowest);
+    disp_identifier(h->name(), os);
 
     os << "[";
 
@@ -284,6 +287,19 @@ void do_disp_vis::eval(const ast::function_rep* h, std::ostream& os, int prec)
 
     os << "]";
 };
+
+void do_disp_vis::eval(const ast::index_rep* h, std::ostream& os, int prec)
+{
+    int this_prec   = prec_index;
+
+    add_paren(os, this_prec, prec, true);
+
+    visit(h->name(), os, this_prec);
+    os << ":";
+    disp_identifier(h->set_name(), os);
+
+    add_paren(os, this_prec, prec, false);
+}
 
 void do_disp_vis::disp_real_power(const value& h, std::ostream& os, int prec)
 {
@@ -506,12 +522,35 @@ void sym_arrow::disp(std::ostream& os, const expr& ex, bool add_newline)
         os << "\n";
 };
 
+void sym_arrow::disp(std::ostream& os, const identifier& ex, bool add_newline)
+{
+    const ast::identifier_rep* h    = ex.get_ptr().get();
+
+    details::do_disp_vis().disp_identifier(h, os);
+
+    if (add_newline)
+        os << "\n";
+};
+
 void sym_arrow::disp(const expr& ex, bool add_newline)
 {
     return disp(std::cout, ex, add_newline);
 };
 
+void sym_arrow::disp(const identifier& ex, bool add_newline)
+{
+    return disp(std::cout, ex, add_newline);
+};
+
 std::string sym_arrow::to_string(const expr& ex)
+{
+    std::ostringstream os;
+    disp(os, ex, false);
+
+    return os.str();
+};
+
+std::string sym_arrow::to_string(const identifier& ex)
 {
     std::ostringstream os;
     disp(os, ex, false);

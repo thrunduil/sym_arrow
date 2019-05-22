@@ -55,8 +55,11 @@ class do_check_rep_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::add_rep* h);
         bool eval(const ast::mult_rep* h);
         bool eval(const ast::function_rep* h);
+        bool eval(const ast::index_rep* h);
 
     private:
+        bool eval_indname(const ast::indexed_symbol_rep* h);
+        bool eval_funcname(const ast::identifier_rep* h);
         bool atom_add_check_rep_values(const ast::add_rep* h);
         bool atom_add_check_rep_expr(const ast::add_rep* h);
         bool atom_add_check_rep_log_expr(const ast::add_rep* h);
@@ -168,6 +171,11 @@ bool do_check_rep_vis::eval(const ast::mult_rep* h)
 
 bool do_check_rep_vis::eval(const ast::function_rep* h)
 {
+    bool ok = eval_funcname(h->name());
+
+    if (ok == false)
+        return false;
+
     size_t n_elem = h->size();
 
     for (size_t i = 0; i < n_elem; ++i)
@@ -190,6 +198,29 @@ bool do_check_rep_vis::eval(const ast::function_rep* h)
     return true;
 };
 
+bool do_check_rep_vis::eval(const ast::index_rep* h)
+{
+    bool ok = eval_indname(h->name());
+
+    if (ok == false)
+        return false;
+
+    return true;
+};
+
+bool do_check_rep_vis::eval_funcname(const ast::identifier_rep* h)
+{
+    (void)h;
+    return true;
+}
+
+bool do_check_rep_vis::eval_indname(const ast::indexed_symbol_rep* h)
+{
+    if (h->size() != 0)
+        return false;
+
+    return true;
+}
 bool do_check_rep_vis::atom_add_check_rep_values(const ast::add_rep* h)
 {
     size_t size = h->size();
@@ -452,10 +483,15 @@ bool do_check_rep_vis::is_simple(const ast::add_rep* h)
 
 bool do_check_rep_vis::is_atom(ast::expr_handle h)
 {
-    if (h->isa<ast::function_rep>() || h->isa<ast::indexed_symbol_rep>())
+    if (h->isa<ast::function_rep>() || h->isa<ast::indexed_symbol_rep>()
+        || h->isa<ast::index_rep>())
+    {
         return true;
+    }
     else
+    {
         return false;
+    };
 };
 
 bool do_check_rep_vis::is_add_free(ast::expr_handle h)

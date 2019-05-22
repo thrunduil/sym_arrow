@@ -24,6 +24,7 @@
 #include "sym_arrow/config.h"
 #include "sym_arrow/nodes/scalar.h"
 #include "sym_arrow/nodes/symbol.h"
+#include "sym_arrow/nodes/index.h"
 #include "sym_arrow/details/dag_traits.h"
 
 namespace sym_arrow
@@ -70,6 +71,9 @@ class SYM_ARROW_EXPORT expr
 
         // conversion from a symbol
         expr(const symbol& val);
+
+        // conversion from an index
+        expr(const index& val);
 
         // conversion from add expression
         expr(const add_expr& val);

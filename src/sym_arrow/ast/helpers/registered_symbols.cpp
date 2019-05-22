@@ -59,22 +59,35 @@ size_t symbol_codes::get_fresh_symbol_code()
     return m_current_symbol_code++;
 };
 
+registered_symbols::reg_sym_ptr registered_symbols::m_handle = nullptr;
+
 registered_symbols::registered_symbols()
-    :m_pool(sizeof(code_sym))
+    :m_pool(sizeof(code_sym)), m_refcount(0)
 {};
 
 registered_symbols::~registered_symbols()
 {
-    close();
+    release_memory();
 };
 
-void registered_symbols::close()
+void registered_symbols::release_memory()
 {
     m_code_sym_map.close();
     m_pool.purge_memory();
 };
 
-void registered_symbols::register_sym(const base_symbol_rep* h)
+void registered_symbols::close()
+{
+    --m_refcount;
+
+    if (m_refcount == 0)
+    {
+        m_handle = nullptr;
+        delete this;
+    };
+};
+
+void registered_symbols::register_sym(const identifier_rep* h)
 {
     size_t code     = h->get_base_symbol_code();
     code_sym* ptr   = (code_sym*)m_pool.malloc(); 
@@ -85,7 +98,13 @@ void registered_symbols::register_sym(const base_symbol_rep* h)
     pos.assign(ptr);
 };
 
-void registered_symbols::unregister_sym(const base_symbol_rep* h)
+void registered_symbols::register_sym(const indexed_symbol_rep* h)
+{
+    //TODO:
+    (void)h;
+}
+
+void registered_symbols::unregister_sym(const identifier_rep* h)
 {
     size_t code     = h->get_base_symbol_code();
     auto pos        = m_code_sym_map.get(code);
@@ -96,14 +115,21 @@ void registered_symbols::unregister_sym(const base_symbol_rep* h)
     m_free_codes.unregister_sym(code);
 };
 
-const base_symbol_rep* registered_symbols::get_symbol_from_code(size_t code) const
+void registered_symbols::unregister_sym(const indexed_symbol_rep* h)
+{
+    size_t code     = h->get_indexed_symbol_code();
+    //TODO
+    m_free_codes.unregister_sym(code);
+};
+
+const identifier_rep* registered_symbols::get_symbol_from_code(size_t code) const
 {
     auto pos = m_code_sym_map.find(code);
 
     if (pos == nullptr)
         return nullptr;
 
-    const base_symbol_rep* h = pos->second;
+    const identifier_rep* h = pos->second;
     return h;
 };
 
@@ -111,5 +137,14 @@ size_t registered_symbols::get_fresh_symbol_code()
 {
     return m_free_codes.get_fresh_symbol_code();
 };
+
+registered_symbols::reg_sym_ptr registered_symbols::get()
+{
+    if (m_handle == nullptr)
+        m_handle = new registered_symbols();
+
+    ++m_handle->m_refcount;
+    return m_handle;
+}
 
 };};

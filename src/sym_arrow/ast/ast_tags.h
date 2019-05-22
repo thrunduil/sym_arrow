@@ -96,6 +96,11 @@ struct dag_code_to_node<sym_arrow::ast::term_tag, (size_t)sym_arrow::ast::term_t
 {
     using type = sym_arrow::ast::function_rep;
 };
+template<>
+struct dag_code_to_node<sym_arrow::ast::term_tag, (size_t)sym_arrow::ast::term_types::index_rep>
+{
+    using type = sym_arrow::ast::index_rep;
+};
 
 // define mapping from type to code for term_tag
 template<>
@@ -135,6 +140,11 @@ struct dag_node_to_code<sym_arrow::ast::term_tag, sym_arrow::ast::function_rep>
 {
     static const size_t code    = (size_t)sym_arrow::ast::term_types::function_rep;
 };
+template<>
+struct dag_node_to_code<sym_arrow::ast::term_tag, sym_arrow::ast::index_rep>
+{
+    static const size_t code    = (size_t)sym_arrow::ast::term_types::index_rep;
+};
 
 //-------------------------------------------------------------
 //              value_tag
@@ -143,7 +153,6 @@ struct dag_node_to_code<sym_arrow::ast::term_tag, sym_arrow::ast::function_rep>
 template<>
 struct dag_context_data<sym_arrow::ast::value_tag>
 {    
-    // no context data
     using context_data_type = sym_arrow::ast::details::value_context_data;
 };
 
@@ -162,28 +171,42 @@ struct dag_node_to_code<sym_arrow::ast::value_tag, sym_arrow::details::value_mp>
 };
 
 //-------------------------------------------------------------
-//              symbol_tag
+//              unique_nodes_tag
 //-------------------------------------------------------------
-// type of additional data stored in the dag_context for symbol_tag
+// type of additional data stored in the dag_context for unique_nodes_tag
 template<>
-struct dag_context_data<sym_arrow::ast::symbol_tag>
+struct dag_context_data<sym_arrow::ast::unique_nodes_tag>
 {    
-    // no context data
     using context_data_type = sym_arrow::ast::details::symbol_context_data;
 };
 
-// define mapping from code to type for symbol_tag
+// define mapping from code to type for unique_nodes_tag
 template<>
-struct dag_code_to_node<sym_arrow::ast::symbol_tag, (size_t)sym_arrow::ast::symbol_types::base_symbol>
+struct dag_code_to_node<sym_arrow::ast::unique_nodes_tag, 
+                        (size_t)sym_arrow::ast::unique_nodes_types::base_symbol>
 {
-    using type = sym_arrow::ast::base_symbol_rep;
+    using type = sym_arrow::ast::identifier_rep;
 };
 
-// define mapping from type to code for symbol_tag
 template<>
-struct dag_node_to_code<sym_arrow::ast::symbol_tag, sym_arrow::ast::base_symbol_rep>
+struct dag_node_to_code<sym_arrow::ast::unique_nodes_tag, 
+                        sym_arrow::ast::identifier_rep>
 {
-    static const size_t code    = (size_t)sym_arrow::ast::symbol_types::base_symbol;
+    static const size_t code    = (size_t)sym_arrow::ast::unique_nodes_types::base_symbol;
+};
+
+template<>
+struct dag_code_to_node<sym_arrow::ast::unique_nodes_tag, 
+                            (size_t)sym_arrow::ast::unique_nodes_types::set>
+{
+    using type = sym_arrow::ast::set_rep;
+};
+
+template<>
+struct dag_node_to_code<sym_arrow::ast::unique_nodes_tag, 
+                            sym_arrow::ast::set_rep>
+{
+    static const size_t code    = (size_t)sym_arrow::ast::unique_nodes_types::set;
 };
 
 };

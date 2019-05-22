@@ -34,7 +34,7 @@ namespace sym_arrow { namespace ast
 {
 
 // data to construct a symbol with given name
-struct named_symbol_info
+struct identifier_info
 {
     const char*             m_name;
     size_t                  m_size;
@@ -42,36 +42,36 @@ struct named_symbol_info
     // create a named symbol with name stored in first 'size'
     // charackters of a char ptr 'name' (null terminator need not be
     // added)
-    named_symbol_info(const char* name, size_t size)
+    identifier_info(const char* name, size_t size)
         :m_name(name), m_size(size)
     {};
 };
 
 // class representing a symbol
-class base_symbol_rep : public sym_dag::dag_item<base_symbol_rep, symbol_tag, true>
+class identifier_rep : public sym_dag::dag_item<identifier_rep, unique_nodes_tag, true>
 {
     private:
-        using base_type         = sym_dag::dag_item<base_symbol_rep, symbol_tag, true>;
+        using base_type         = sym_dag::dag_item<identifier_rep, unique_nodes_tag, true>;
 
     private:
         details::string_data    m_name;
         size_t                  m_code;
 
     public:
-        base_symbol_rep(const named_symbol_info& info);
+        identifier_rep(const identifier_info& info);
 
-        base_symbol_rep(const base_symbol_rep&) = delete;
-        base_symbol_rep& operator=(const base_symbol_rep&) = delete;
+        identifier_rep(const identifier_rep&) = delete;
+        identifier_rep& operator=(const identifier_rep&) = delete;
 
     public:
         // destructor
-        ~base_symbol_rep();
+        ~identifier_rep();
         
         // evaluate hash function
-        static size_t       eval_hash(const named_symbol_info& info);
+        static size_t       eval_hash(const identifier_info& info);
 
         // test for equality
-        bool                equal(const named_symbol_info& info) const;
+        bool                equal(const identifier_info& info) const;
 
         // return hash value
         size_t              hash_value() const;
@@ -92,7 +92,7 @@ class indexed_symbol_info
 {
     public:
         // symbol name
-        base_symbol_handle  m_name;
+        identifier_handle   m_name;
 
         // number of arguments
         size_t              m_size;
@@ -105,24 +105,24 @@ class indexed_symbol_info
 
     public:
         // constructor; arguments must be cannonized
-        indexed_symbol_info(base_symbol_handle name, size_t size, const expr* args)
+        indexed_symbol_info(identifier_handle name, size_t size, const expr* args)
             : m_name(name), m_size(size), m_args(args)
             , m_hash(0) 
         {};
 };
 
 // class representing an indexed symbol
-class indexed_symbol_rep : public sym_dag::dag_item<indexed_symbol_rep, term_tag, true>
+class indexed_symbol_rep : public expr_symbols<indexed_symbol_rep>
 {
     private:
-        using base_type = sym_dag::dag_item<indexed_symbol_rep, term_tag, true>;
+        using base_type = expr_symbols<indexed_symbol_rep>;
 
     private:
         size_t          m_hash;
         size_t          m_size;
         size_t          m_code;
 
-        base_symbol_ptr m_name;
+        identifier_ptr  m_name;
         expr_ptr*       m_expr;
 
     private:
@@ -156,7 +156,7 @@ class indexed_symbol_rep : public sym_dag::dag_item<indexed_symbol_rep, term_tag
         expr_handle     arg(size_t i) const     { return m_expr[i].get(); };
 
         // null terminated pointer to name of this symbol
-        base_symbol_handle
+        identifier_handle
                         get_name() const        { return m_name.get();}
 
         // return code of this symbol; different symbols have

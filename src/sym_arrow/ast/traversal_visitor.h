@@ -53,6 +53,10 @@ class traversal_visitor : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, 
         // function name is not visited
         template<class ... Args>
         void eval(const ast::function_rep* h, Args&& ... args);
+
+        // index name is not visited
+        template<class ... Args>
+        void eval(const ast::index_rep* h, Args&& ... args);
 };
 
 //-------------------------------------------------------------------
@@ -68,6 +72,13 @@ void traversal_visitor<Derived>::eval(const ast::scalar_rep*, Args&& ...)
 template<class Derived>
 template<class ... Args>
 void traversal_visitor<Derived>::eval(const ast::indexed_symbol_rep*, Args&& ...)
+{
+    return;
+};
+
+template<class Derived>
+template<class ... Args>
+void traversal_visitor<Derived>::eval(const ast::index_rep* , Args&& ... )
 {
     return;
 };

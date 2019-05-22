@@ -76,9 +76,13 @@ struct expr_traversal_visitor : public expr_visitor<Derived>
     template<class ... Args>
     void eval(const sym_arrow::scalar& ex, Args&& ... args);
 
-    // visit symbol
+    // visit symbol; indices are not visited
     template<class ... Args>
     void eval(const sym_arrow::symbol& ex, Args&& ... args);
+
+    // visit index
+    template<class ... Args>
+    void eval(const sym_arrow::index& ex, Args&& ... args);
 
     // visit add expression
     template<class ... Args>

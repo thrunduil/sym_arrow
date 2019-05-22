@@ -37,7 +37,7 @@ value rand_data_provider::get_value(const symbol& sh) const
     return m_rand->get_symbol_value(sh); 
 };
 
-value rand_data_provider::eval_function(const symbol&, const value*, size_t) const
+value rand_data_provider::eval_function(const identifier&, const value*, size_t) const
 { 
     return value::make_zero(); 
 };

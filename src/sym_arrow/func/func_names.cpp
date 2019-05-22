@@ -24,69 +24,74 @@
 namespace sym_arrow { namespace details
 {
 
-symbol func_name::bool_eq()
+identifier func_name::bool_eq()
 {
-    return symbol("bool_eq");
+    return identifier("bool_eq");
 };
 
-symbol func_name::bool_neq()
+identifier func_name::bool_neq()
 {
-    return symbol("bool_neq");
+    return identifier("bool_neq");
 };
 
-symbol func_name::bool_lt()
+identifier func_name::bool_lt()
 {
-    return symbol("bool_lt");
+    return identifier("bool_lt");
 };
 
-symbol func_name::bool_gt()
+identifier func_name::bool_gt()
 {
-    return symbol("bool_gt");
+    return identifier("bool_gt");
 };
 
-symbol func_name::bool_leq()
+identifier func_name::bool_leq()
 {
-    return symbol("bool_leq");
+    return identifier("bool_leq");
 };
 
-symbol func_name::bool_geq()
+identifier func_name::bool_geq()
 {
-    return symbol("bool_geq");
+    return identifier("bool_geq");
 };
 
-symbol func_name::bool_or()
+identifier func_name::bool_or()
 {
-    return symbol("bool_or");
+    return identifier("bool_or");
 };
 
-symbol func_name::bool_and()
+identifier func_name::bool_and()
 {
-    return symbol("bool_and");
+    return identifier("bool_and");
 };
 
-symbol func_name::bool_xor()
+identifier func_name::bool_xor()
 {
-    return symbol("bool_xor");
+    return identifier("bool_xor");
 };
 
-symbol func_name::bool_andnot()
+identifier func_name::bool_andnot()
 {
-    return symbol("bool_andnot");
+    return identifier("bool_andnot");
 };
 
-symbol func_name::bool_not()
+identifier func_name::bool_not()
 {
-    return symbol("bool_not");
+    return identifier("bool_not");
 };
 
-symbol func_name::if_then()
+identifier func_name::if_then()
 {
-    return symbol("if_then");
+    return identifier("if_then");
 }
 
-symbol func_name::if_then_else()
+identifier func_name::if_then_else()
 {
-    return symbol("if_then_else");
+    return identifier("if_then_else");
+}
+
+identifier func_name::delta()
+{
+    return identifier("delta");
 }
 
 }}

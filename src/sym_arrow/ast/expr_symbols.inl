@@ -48,7 +48,7 @@ size_t expr_symbols<Derived>::number_symbols() const
 template<class Derived>
 void expr_symbols<Derived>::add_symbol(size_t c)
 {
-    m_symbols = m_symbols.set(h);
+    m_symbols = std::move(m_symbols).set(c);
 };
 
 template<class Derived>

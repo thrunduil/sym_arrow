@@ -26,6 +26,61 @@
 namespace sym_arrow 
 {
 
+//-------------------------------------------------------------------
+//                  identifier
+//-------------------------------------------------------------------
+inline identifier::identifier()
+{}
+
+inline identifier::identifier(const ptr_type& ex)
+    :m_expr(ex)
+{};
+
+inline identifier::identifier(const ast::identifier_rep* h)
+    : m_expr(ptr_type::from_this(h))
+{};
+
+inline identifier::identifier(const identifier& other)
+    :m_expr(other.m_expr)
+{};
+
+inline identifier::identifier(identifier&& other)
+    :m_expr(std::move(other.m_expr))
+{};
+
+inline identifier& identifier::operator=(const identifier& other)
+{
+    m_expr      = other.m_expr;
+    return *this;
+};
+
+inline identifier& identifier::operator=(identifier&& other)
+{
+    m_expr      = std::move(other.m_expr);
+    return *this;
+};
+
+inline identifier::identifier(const std::string& name)
+    :identifier(name.data(), name.size())
+{};
+
+inline identifier::identifier(const char* name)
+    :identifier(name, strlen(name))
+{};
+
+inline bool identifier::is_null() const
+{ 
+    return m_expr == ptr_type(); 
+};
+
+inline const identifier::ptr_type& identifier::get_ptr() const
+{ 
+    return m_expr; 
+};
+
+//-------------------------------------------------------------------
+//                  symbol
+//-------------------------------------------------------------------
 inline symbol::symbol()
 {}
 
@@ -104,6 +159,38 @@ inline bool sym_arrow::operator==(const symbol& s1, const symbol& s2)
 };
 
 inline bool sym_arrow::operator!=(const symbol& s1, const symbol& s2)
+{ 
+    return s1.get_ptr() != s2.get_ptr(); 
+};
+
+
+//
+inline bool sym_arrow::operator<(const identifier& s1, const identifier& s2)
+{ 
+    return s1.get_ptr() < s2.get_ptr(); 
+};
+
+inline bool sym_arrow::operator>(const identifier& s1, const identifier& s2)
+{ 
+    return s1.get_ptr() > s2.get_ptr(); 
+};
+
+inline bool sym_arrow::operator<=(const identifier& s1, const identifier& s2)
+{ 
+    return s1.get_ptr() <= s2.get_ptr(); 
+};
+
+inline bool sym_arrow::operator>=(const identifier& s1, const identifier& s2)
+{ 
+    return s1.get_ptr() >= s2.get_ptr(); 
+};
+
+inline bool sym_arrow::operator==(const identifier& s1, const identifier& s2)
+{ 
+    return s1.get_ptr() == s2.get_ptr(); 
+};
+
+inline bool sym_arrow::operator!=(const identifier& s1, const identifier& s2)
 { 
     return s1.get_ptr() != s2.get_ptr(); 
 };

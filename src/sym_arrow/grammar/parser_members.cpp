@@ -21,6 +21,8 @@
 
 #include "grammar/output/parser_sym_arrow.hpp"
 #include "sym_arrow/nodes/expr.h"
+#include "sym_arrow/nodes/set.h"
+#include "sym_arrow/sema/symbol_table.h"
 #include "sym_arrow/ast/ast.h"
 
 #pragma warning(push)
@@ -305,7 +307,7 @@ int parser_sym_arrow::to_int(const std::string& value_str)
     };
 };
 
-expr parser_sym_arrow::make_function(const symbol& sym, const std::vector<expr>& args)
+expr parser_sym_arrow::make_function(const identifier& sym, const std::vector<expr>& args)
 {
     if (sym.get_name() == std::string("exp") && args.size() == 1)
         return sym_arrow::exp(args[0]);
@@ -316,9 +318,40 @@ expr parser_sym_arrow::make_function(const symbol& sym, const std::vector<expr>&
     return sym_arrow::function(sym, args);
 };
 
-symbol parser_sym_arrow::make_indexed(const symbol& sym, const std::vector<expr>& args)
+symbol parser_sym_arrow::make_indexed(const identifier& sym, const std::vector<expr>& args)
 {
     std::initializer_list<expr> il(args.data(), args.data() + args.size());
 
-    return sym.index(il);
+    return sym.indexed(il);
 };
+
+symbol parser_sym_arrow::make_symbol(const identifier& sym)
+{
+    return symbol::from_identifier(sym);
+};
+
+index parser_sym_arrow::make_indexer(const identifier& sym, const identifier& set)
+{
+    return index(sym, set);
+};
+
+set parser_sym_arrow::make_set(const std::vector<identifier>& args)
+{
+    return sym_arrow::set(args);
+}
+
+void parser_sym_arrow::def_set(const identifier& sym, const set& ex)
+{
+    sym_table::get().define_set(sym, ex);
+}
+
+void parser_sym_arrow::def_sym(const identifier& sym, const std::vector<identifier>& args,
+                            const identifier& type)
+{
+    sym_table::get().define_symbol(sym, args, type);
+}
+
+void parser_sym_arrow::def_type(const identifier& sym)
+{
+    sym_table::get().define_type(sym);
+}

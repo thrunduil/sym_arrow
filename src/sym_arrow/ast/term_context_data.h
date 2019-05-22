@@ -33,8 +33,11 @@ namespace sym_arrow { namespace ast { namespace details
 // additional data stored in dag context for term nodes
 class term_context_data : public sym_dag::context_data_base
 {
+    private:
+        using reg_sym_ptr   = registered_symbols*;
+
     public:
-        using expr_ptr      = sym_dag::dag_ptr<expr_base, sym_arrow::ast::term_tag>;
+        using expr_ptr      = sym_dag::dag_ptr<expr_base, sym_arrow::ast::term_tag>;       
 
     private:
         scalar              m_scalar_zero;
@@ -42,7 +45,7 @@ class term_context_data : public sym_dag::context_data_base
         scalar              m_scalar_minus_one;
         scalar              m_scalar_nan;
 
-        symbol_codes        m_free_codes;
+        reg_sym_ptr         m_reg_symbols;
 
         virtual ~term_context_data() override;
 
@@ -62,8 +65,8 @@ class term_context_data : public sym_dag::context_data_base
         // scalar representing value NaN
         const scalar&       get_scalar_nan();
 
-        // return a code not used by other indexed symbols
-        size_t              get_fresh_indexed_symbol_code();
+        // return a code not used by other symbols
+        size_t              get_fresh_symbol_code();
 
         // newly created symbols must be registered by this function
         void                register_symbol(const indexed_symbol_rep* h);

@@ -27,34 +27,34 @@
 namespace sym_arrow
 {
 
-expr sym_arrow::function(const symbol& sym)
+expr sym_arrow::function(const identifier& sym)
 {
     return sym_arrow::function(sym, nullptr, 0);
 };
 
-expr sym_arrow::function(const symbol& sym, const expr& arg1)
+expr sym_arrow::function(const identifier& sym, const expr& arg1)
 {
     expr args[] = {arg1};
     return sym_arrow::function(sym, args, 1);
 };
 
-expr sym_arrow::function(const symbol& sym, const expr& arg1, const expr& arg2)
+expr sym_arrow::function(const identifier& sym, const expr& arg1, const expr& arg2)
 {
     expr args[] = {arg1, arg2};
     return sym_arrow::function(sym, args, 2);
 };
 
-expr sym_arrow::function(const symbol& sym, const std::vector<expr>& arg)
+expr sym_arrow::function(const identifier& sym, const std::vector<expr>& arg)
 {
     return sym_arrow::function(sym, arg.data(), arg.size());
 };
 
-expr sym_arrow::function(const symbol& sym, std::initializer_list<expr> arg)
+expr sym_arrow::function(const identifier& sym, std::initializer_list<expr> arg)
 {
     return sym_arrow::function(sym, arg.begin(), arg.size());
 };
 
-expr sym_arrow::function(const symbol& sym, const expr* arg, size_t n)
+expr sym_arrow::function(const identifier& sym, const expr* arg, size_t n)
 {
     for (size_t i = 0; i < n; ++i)
         arg[i].cannonize(do_cse_default);

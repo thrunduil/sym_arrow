@@ -36,9 +36,6 @@ bool has_any_symbol(expr_handle h, const dbs_lib::dbs& set);
 // return true in an expression contains all symbols from the set
 bool has_all_symbols(expr_handle h, const dbs_lib::dbs& set);
 
-// return number of different symbols in expression
-size_t get_number_symbols(expr_handle h);
-
 // add symbols in expression h to given set
 void add_symbols(expr_handle h, dbs_lib::dbs& set);   
 

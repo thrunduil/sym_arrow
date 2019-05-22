@@ -22,6 +22,7 @@
 #include "symbol_context_data.inl"
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/func/contexts_impl.h"
+#include "sym_arrow/sema/symbol_table_impl.h"
 
 namespace sym_arrow { namespace ast { namespace details
 {
@@ -30,11 +31,15 @@ symbol_context_data::~symbol_context_data()
 {};
 
 void symbol_context_data::initialize()
-{};
+{
+    m_reg_symbols   = registered_symbols::get();
+    m_sym_tab       = sd::sym_table_impl::get();
+};
 
 void symbol_context_data::close()
 {
-    m_reg_symbols.close(); 
+    m_sym_tab->close();
+    m_reg_symbols->close();   
 };
 
 }}};

@@ -38,6 +38,56 @@ stringUnit returns[expr x]
 ;
 
 //------------------------------------------------------------------------------
+//                  DEFINITIONS
+//------------------------------------------------------------------------------
+any_def
+{}
+    :   set_def
+    |   type_def
+    |   sym_def
+;
+
+set_def 
+{
+    identifier sym;
+    set ex;
+}
+    :   SET
+        sym   = sym_name
+        ex    = set_initializer                 { def_set(sym, ex); }
+;
+
+type_def 
+{
+    identifier sym;
+}
+    :   TYPE
+        sym   = sym_name                        { def_type(sym); }
+;
+
+sym_def 
+{
+    identifier sym;
+    std::vector<identifier> args;
+    identifier t;
+}
+    :   SYM
+        sym   = sym_name
+        (
+            index_postfix_def[args]
+        )?
+        (
+            t = type_postfix
+        )?                                      { def_sym(sym, args, t); }
+;
+
+set_initializer returns[set x]
+{}
+    : DOTEQ
+      x = set_literal
+;
+
+//------------------------------------------------------------------------------
 //                  EXPRESSIONS
 //------------------------------------------------------------------------------
 term returns[expr x]
@@ -110,7 +160,7 @@ atoms returns[expr x]
 }
     :   (
             x = final_values
-        |   x = star_or_symbol
+        |   x = symbol_postfix
         |   OR
                 x = term                    { x = abs(x); }
             OR
@@ -120,48 +170,123 @@ atoms returns[expr x]
         )
 ;
 
-scoped_symbol returns[symbol x]
-{
-    std::vector<expr> args;
-    expr y;
-}
-    :   x = atom_symbol
-        (
-            LANGLE
-            (
-                y = term                    { args.push_back(y); }
-                (
-                    COMMA
-                    y = term                { args.push_back(y); }
-                )*
-            )?
-            RANGLE                          { x = make_indexed(x, args); }
-        )?
-;
 
-atom_symbol returns[symbol x]
+sym_name returns[identifier x]
 {}
-    :   i2:ID                               { x = symbol(i2->getText()); }
+    :   i2:ID                               { x = identifier(i2->getText()); }
 ;
 
-star_or_symbol returns[expr x]
+symbol_postfix returns[expr x]
 {
-    symbol sym;
-    expr y;
+    identifier sym;    
     std::vector<expr> args;
 }
-    :   sym = scoped_symbol                 { x = sym; }
+    :   sym = sym_name
         (
-            LBRACK
+            (LBRACK) 
+                => function_postfix[args]   { x = make_function(sym, args); }
+        |   (LANGLE) 
+                => index_postfix[args]      { x = make_indexed(sym, args); }
+        |   (COLON)
+                => x = indexer_postfix[sym]
+        |                                   { x = make_symbol(sym); }
+        )
+;
+
+index_def returns[index x]
+{
+    identifier sym;    
+    std::vector<expr> args;
+}
+    :   sym = sym_name
+        x = indexer_postfix[sym]
+;
+
+symbol_def returns[symbol x]
+{
+    identifier sym;    
+    std::vector<expr> args;
+}
+    :   sym = sym_name
+        (
+            index_postfix[args]             { x = make_indexed(sym, args); }
+        |                                   { x = make_symbol(sym); }
+        )
+;
+
+function_postfix[std::vector<expr>& args]
+{
+    expr y;
+}
+    :   LBRACK
+        (
+            y = term                    { args.push_back(y); }
             (
-                y = term                    { args.push_back(y); }
-                (
-                    COMMA
-                    y = term                { args.push_back(y); }
-                )*
-            )?
-            RBRACK                          { x = make_function(sym, args); }
+                COMMA
+                y = term                { args.push_back(y); }
+            )*
         )?
+        RBRACK                         
+;
+
+index_postfix[std::vector<expr>& args]
+{
+    expr y;
+}
+    :   LANGLE
+        (
+            y = term                    { args.push_back(y); }
+            (
+                COMMA
+                y = term                { args.push_back(y); }
+            )*
+        )?
+        RANGLE                         
+;
+
+index_postfix_def[std::vector<identifier>& args]
+{
+    identifier y;
+}
+    :   LANGLE
+        (
+            y = sym_name                { args.push_back(y); }
+            (
+                COMMA
+                y = sym_name            { args.push_back(y); }
+            )*
+        )?
+        RANGLE                         
+;
+
+indexer_postfix[const identifier& sym] returns[index x]
+{
+    identifier y;
+}
+    :   COLON
+        y = sym_name                    { x = make_indexer(sym, y); }
+;
+
+type_postfix returns[identifier y]
+{}
+    :   COLON
+        y = sym_name
+;
+
+set_literal returns[set x]
+{
+    identifier y;
+    std::vector<identifier> args;
+}
+    :   LCURL
+        (
+            y = sym_name                { args.push_back(y); }
+            (
+                COMMA
+                y = sym_name            { args.push_back(y); }
+            )*
+        )?
+        RCURL                           { x = make_set(args); }
 ;
 
 final_values returns[expr x]
@@ -208,6 +333,15 @@ options
     codeGenBitsetTestThreshold          = 5;    
 }
 
+tokens 
+{
+    //keywords
+
+    SET                     = "set";
+    SYM                     = "sym";
+    TYPE                    = "type";
+}
+
 LPAREN  options {paraphrase = "'('";}
             :       '('    ;
 RPAREN  options {paraphrase = "')'";}
@@ -238,9 +372,15 @@ SEMI    options {paraphrase = "';'";}
             :       ';'    ;
 COMMA   options {paraphrase = "','";}
             :       ','    ;
+
+COLON   options {paraphrase = "':'";}
+            :       ':'    ;
                         
 OR      options {paraphrase = "|";}
             :       "|";
+
+DOTEQ   options {paraphrase = ":=";}
+            :       ":=";
 
             
 protected

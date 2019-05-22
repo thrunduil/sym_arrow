@@ -144,21 +144,15 @@ void factorizations::add(const mult_subexpr& item)
 };
 
 factor_group_stats::factor_group_stats::factor_group_stats()
-    :n_symbols(0),  m_base(nullptr)
+    :m_base(nullptr)
 {}
 
-factor_group_stats::factor_group_stats(size_t symbols, const dbs& syms, 
-                                       expr_handle eh_best)
-    :n_symbols(symbols), m_symbol_set(syms), m_base(eh_best)
+factor_group_stats::factor_group_stats(const dbs& syms, expr_handle eh_best)
+    :m_symbol_set(syms), m_base(eh_best)
 {}
 
 bool factor_group_stats::operator<(const factor_group_stats& other) const
 {
-    if (this->n_symbols < other.n_symbols)
-        return true;
-    if (this->n_symbols > other.n_symbols)
-        return false;
-
     dbs_lib::order_type ord  = compare(this->m_symbol_set, other.m_symbol_set);
 
     if (ord == dbs_lib::order_type::less)
@@ -1057,7 +1051,7 @@ factor_group_stats subexpr_collector::measure_group(const mult_subexpr* ptr, siz
 
     expr_handle eh      = ptr[0].get_base();
     expr_handle eh_best = eh;
-    size_t n_symbols    = details::get_number_symbols(eh);    
+    
     dbs syms;
 
     details::add_symbols(eh, syms);
@@ -1065,15 +1059,13 @@ factor_group_stats subexpr_collector::measure_group(const mult_subexpr* ptr, siz
     for (size_t i = 1; i < size; ++i)
     {
         expr_handle el  = ptr[i].get_base();
-        n_symbols       += details::get_number_symbols(el);
-
         details::add_symbols(el, syms);
 
         if (el < eh_best)
             eh_best     = el;
     };
 
-    return factor_group_stats(n_symbols, syms, eh_best);
+    return factor_group_stats(syms, eh_best);
 }
 
 void subexpr_collector::select_subexpr(sub_type_vector& sub_types,

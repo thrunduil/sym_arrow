@@ -25,6 +25,8 @@
 #include <iostream>
 //#include <vld.h>
 
+namespace sa = sym_arrow;
+
 int main(int argc, const char* argv[])
 {
     using namespace sym_arrow::testing;
@@ -39,30 +41,63 @@ int main(int argc, const char* argv[])
     try
     {
         {
-            //auto x              = sym_arrow::symbol("x");
-            //sym_arrow::expr ex  = sym_arrow::parse("A0");
-            sym_arrow::expr ex  = sym_arrow::parse("A<0> - (A<0> - A<1>)^2 / (A<2> - A<1> + A<0> - A<1>)");
+            sa::parse_def("type real");
+            sa::parse_def("set A := {a1, a2, a3}");
+            sa::parse_def("set B := {b1, b2, b3}");
+            sa::parse_def("sym x<A,B> : real");
+
+            sa::parse_def("set S := {a,b,c}");
+            sa::parse_def("set T := {a,b,c}");
+                        
+            sa::index i         = sa::parse_index("i : S");
+            sa::index j         = sa::parse_index("j : T");
+
+            sa::expr e          = sa::identifier("A").indexed(i) + sa::symbol("x");
+
+            disp(e);
+
+            sa::expr e2         = sa::subs(e, sa::symbol("i"), j);
+            sa::expr e3         = sa::subs(e, sa::symbol("i"), sa::symbol("a"));
+            //sa::expr e4         = sa::subs(e, sa::symbol("i"), sa::symbol("d"));
+
+            disp(e2);
+            disp(e3);
+            //disp(e4);
+        }
+
+        sym_dag::registered_dag_context::get().close();
+        sym_dag::registered_dag_context::get().print_memory_leaks(std::cout);
+
+        {
+            sa::index i         = sa::index(sa::identifier("i"), sa::identifier("A"));
+            sa::expr k          = i + i;
+            disp(i);
+            disp(k);
+
+            sa::expr ex  = sa::parse("A<0> - (A<0> - A<1>)^2 / (A<2> - A<1> + A<0> - A<1>)");
             disp(ex);
 
-            auto v0             = sym_arrow::scalar::make_zero();
-            auto v1             = sym_arrow::scalar::make_one();
-            auto v2             = sym_arrow::scalar(2.0);
+            auto v0             = sa::scalar::make_zero();
+            auto v1             = sa::scalar::make_one();
+            auto v2             = sa::scalar(2.0);
 
-            auto dif_A0         = diff(ex, sym_arrow::symbol("A").index(v0));
-            auto dif_A1         = diff(ex, sym_arrow::symbol("A").index(v1));
-            auto dif_A2         = diff(ex, sym_arrow::symbol("A").index(v2));
+            auto dif_A          = diff(ex, sa::identifier("A").indexed(i));
+            auto dif_A0         = diff(ex, sa::identifier("A").indexed(v0));
+            auto dif_A1         = diff(ex, sa::identifier("A").indexed(v1));
+            auto dif_A2         = diff(ex, sa::identifier("A").indexed(v2));
 
+            disp(dif_A);
             disp(dif_A0);
             disp(dif_A1);
             disp(dif_A2);
         }
         {
-            //auto x              = sym_arrow::symbol("x");
-            //sym_arrow::expr ex  = sym_arrow::parse("A0");
-            sym_arrow::expr ex  = sym_arrow::parse("A0 - (A0 - A1)^2 / (A2 - A1 + A0 - A1)");
-            auto dif_A0         = diff(ex, sym_arrow::symbol("A0"));
-            auto dif_A1         = diff(ex, sym_arrow::symbol("A1"));
-            auto dif_A2         = diff(ex, sym_arrow::symbol("A2"));
+            //auto x              = sa::symbol("x");
+            //sa::expr ex  = sa::parse("A0");
+            sa::expr ex  = sa::parse("A0 - (A0 - A1)^2 / (A2 - A1 + A0 - A1)");
+            auto dif_A0         = diff(ex, sa::symbol("A0"));
+            auto dif_A1         = diff(ex, sa::symbol("A1"));
+            auto dif_A2         = diff(ex, sa::symbol("A2"));
 
             disp(ex);
             disp(dif_A0);
@@ -71,16 +106,16 @@ int main(int argc, const char* argv[])
         }
         /*
         {
-            sym_arrow::set_disp_precision(-1);
-            sym_arrow::set_default_precision(53);
+            sa::set_disp_precision(-1);
+            sa::set_default_precision(53);
 
-            sym_arrow::symbol x("x");
-            sym_arrow::expr ex  = log(3.564+x) * 1.007;
-            //sym_arrow::expr ex  = (exp(x) - 1.0)/x;
+            sa::symbol x("x");
+            sa::expr ex  = log(3.564+x) * 1.007;
+            //sa::expr ex  = (exp(x) - 1.0)/x;
             disp(ex);
 
-            std::vector<sym_arrow::expr> coef;
-            sym_arrow::taylor_coef(ex, x, 0.0, 5, coef);
+            std::vector<sa::expr> coef;
+            sa::taylor_coef(ex, x, 0.0, 5, coef);
 
             for (const auto& it : coef)
                 disp(it);
@@ -113,7 +148,7 @@ int main(int argc, const char* argv[])
     {
         std::cout << ex.what();
     }
-    catch(sym_arrow::assert_exception& ex)
+    catch(sa::assert_exception& ex)
     {
         std::cout << ex.what();
     }    

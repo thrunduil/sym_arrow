@@ -31,6 +31,78 @@
 namespace sym_arrow
 {
 
+// representation of a symbol name
+class SYM_ARROW_EXPORT identifier
+{
+    private:
+        using ptr_type      = ast::identifier_ptr;
+
+    private:
+        ptr_type            m_expr;
+
+    public:
+        // create uninitialized symbol
+        identifier();
+
+        // create symbol with given name; name != nullptr; name must be null
+        // terminated and cannot begin with '$' sign
+        explicit identifier(const char* name);
+
+        // create symbol with given name; name.size() > 0
+        // name cannot begin with '$' sign
+        explicit identifier(const std::string& name);
+
+        // create symbol with given name; name must point to an array with
+        // at least num_char characters; num_char > 0; 
+        identifier(const char* name, size_t num_char);
+
+        // destructor
+        ~identifier();
+
+        // copy and move constructors
+        identifier(const identifier& other);
+        identifier(identifier&& other);
+
+        // assignment and move assignment
+        identifier& operator=(const identifier& other);
+        identifier& operator=(identifier&& other);
+
+    public:
+        // return true if this symbol is not initialized
+        bool                is_null() const;
+
+        // null terminated pointer to name of this symbol
+        const char*         get_name() const;
+
+        // return code of base symbol of this symbol; different 
+        // base symbols have differrent codes
+        size_t              get_base_symbol_code() const;
+
+    public:
+        // create function f[], where f is this symbol name
+        expr                operator()() const;
+
+        // create function f[x1, x2, ...], where f is this symbol name
+        expr                operator()(const expr& x1) const;
+        expr                operator()(const expr& x1, const expr& x2) const;
+        expr                operator()(std::initializer_list<expr> args) const;
+        expr                operator()(const std::vector<expr>& args) const;
+
+        // create function f<x1, x2, ...>, where f is this symbol name
+        symbol              indexed(const expr& x1) const;
+        symbol              indexed(const expr& x1, const expr& x2) const;
+        symbol              indexed(std::initializer_list<expr> args) const;
+        symbol              indexed(const std::vector<expr>& args) const;
+
+    public:
+        // create a symbol from internal representation; internal use only
+        explicit identifier(const ptr_type& ex);
+        explicit identifier(const ast::identifier_rep* h);
+
+        // access to internal pointers; internal use only
+        const ptr_type&     get_ptr() const;
+};
+
 // representation of a symbol
 class SYM_ARROW_EXPORT symbol
 {
@@ -88,21 +160,8 @@ class SYM_ARROW_EXPORT symbol
         // base symbols have differrent codes
         size_t              get_base_symbol_code() const;
 
-    public:
-        // create function f[], where f is this symbol name
-        expr                operator()() const;
-
-        // create function f[x1, x2, ...], where f is this symbol name
-        expr                operator()(const expr& x1) const;
-        expr                operator()(const expr& x1, const expr& x2) const;
-        expr                operator()(std::initializer_list<expr> args) const;
-        expr                operator()(const std::vector<expr>& args) const;
-
-        // create function f<x1, x2, ...>, where f is this symbol name
-        symbol              index(const expr& x1) const;
-        symbol              index(const expr& x1, const expr& x2) const;
-        symbol              index(std::initializer_list<expr> args) const;
-        symbol              index(const std::vector<expr>& args) const;
+        // convert an identifier to symbol
+        static symbol       from_identifier(const identifier& id);
 
     public:
         // create a symbol from internal representation; internal use only
@@ -122,6 +181,16 @@ bool SYM_ARROW_EXPORT    operator<=(const symbol& s1, const symbol& s2);
 bool SYM_ARROW_EXPORT    operator>=(const symbol& s1, const symbol& s2);
 bool SYM_ARROW_EXPORT    operator==(const symbol& s1, const symbol& s2);
 bool SYM_ARROW_EXPORT    operator!=(const symbol& s1, const symbol& s2);
+
+// comparison function based on addresses of pointers;
+// these functions may return different results than 
+// corresponding functions defined for class expr
+bool SYM_ARROW_EXPORT    operator<(const identifier& s1, const identifier& s2);
+bool SYM_ARROW_EXPORT    operator>(const identifier& s1, const identifier& s2);
+bool SYM_ARROW_EXPORT    operator<=(const identifier& s1, const identifier& s2);
+bool SYM_ARROW_EXPORT    operator>=(const identifier& s1, const identifier& s2);
+bool SYM_ARROW_EXPORT    operator==(const identifier& s1, const identifier& s2);
+bool SYM_ARROW_EXPORT    operator!=(const identifier& s1, const identifier& s2);
 
 };
 

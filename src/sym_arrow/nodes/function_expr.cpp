@@ -77,10 +77,10 @@ expr function_expr::arg(size_t i) const
     return expr(h->arg(i));
 };
 
-symbol function_expr::name() const
+identifier function_expr::name() const
 {
     const ast::function_rep* h = m_expr.get_ptr()->static_cast_to<ast::function_rep>();
-    return symbol(ast::symbol_ptr::from_this(h->name()));
+    return identifier(ast::identifier_ptr::from_this(h->name()));
 };
 
 };

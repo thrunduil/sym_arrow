@@ -24,8 +24,11 @@
 #include "sym_arrow/ast/builder/mult_build.h"
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/functions/expr_functions.h"
+
 namespace sym_arrow { namespace details
 {
+
+//TODO: check if expr is real
 
 //----------------------------------------------------------------------
 //                      ROOTS OF CONSTRUCTORS

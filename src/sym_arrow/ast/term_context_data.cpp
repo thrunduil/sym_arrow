@@ -31,6 +31,8 @@ term_context_data::~term_context_data()
 
 void term_context_data::initialize()
 {
+    m_reg_symbols = registered_symbols::get();
+
     // force initialization of values
     sd::initialize_values();
 
@@ -49,7 +51,7 @@ void term_context_data::close()
     m_scalar_minus_one  = scalar();
     m_scalar_nan        = scalar();
 
-    m_free_codes.close(); 
+    m_reg_symbols->close();
 };
 
 }}};

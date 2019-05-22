@@ -33,6 +33,8 @@
 #include "sym_arrow/functions/sym_functions.h"
 
 #include "sym_arrow/error/error_formatter.h"
+#include "sym_arrow/functions/expr_functions.h"
+#include "sym_arrow/func/func_names.h"
 
 #include <sstream>
 #include <map>
@@ -41,6 +43,7 @@ namespace sym_arrow { namespace details
 {
 
 namespace sd = sym_arrow :: details;
+namespace sa = sym_arrow::ast;
 
 class do_diff_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_diff_vis>
 {
@@ -65,12 +68,15 @@ class do_diff_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dif
         expr eval(const ast::add_rep* h, const symbol& sym);
         expr eval(const ast::mult_rep* h, const symbol& sym);
         expr eval(const ast::function_rep* h, const symbol& sym);
+        expr eval(const ast::index_rep* h, const symbol& sym);
 
     private:
-        expr func_derivative(const symbol& func, size_t arg, const expr* args, 
+        expr func_derivative(const identifier& func, size_t arg, const expr* args, 
                 size_t n_args, const symbol& sym);
-        void error_diff_rule_not_defined(const symbol& func_name, size_t n_args, 
+        void error_diff_rule_not_defined(const identifier& func_name, size_t n_args, 
                 size_t arg);
+
+        expr make_delta(const ast::expr_handle h1, const ast::expr_handle h2);
 };
 
 do_diff_vis::do_diff_vis(const diff_context& dc)
@@ -98,8 +104,41 @@ expr do_diff_vis::eval(const ast::indexed_symbol_rep* h, const symbol& sym)
     if (h == sym.get_ptr().get())
         return ast::scalar_rep::make_one();
 
-    //TODO: impl!!
-    return ast::scalar_rep::make_zero();
+    if (h->size() != sym.size())
+        return ast::scalar_rep::make_zero();
+
+    size_t n    = h->size();
+
+    expr ret    = ast::scalar_rep::make_one();
+
+    for (size_t i = 0; i < n; ++i)
+    {
+        sa::expr_handle h1 = h->arg(i);
+        sa::expr_handle h2 = sym.arg(i).get_expr_handle();
+
+        bool ind1           = h1->isa<sa::index_rep>();
+        bool ind2           = h2->isa<sa::index_rep>();
+
+        if (ind1 == false && ind2 == false)
+        {
+            if (h1 != h2)
+                return ast::scalar_rep::make_zero();
+        }
+        else
+        {
+            ret             = std::move(ret) * make_delta(h1, h2);
+        }
+    };
+
+    return ret;
+};
+
+expr do_diff_vis::eval(const ast::index_rep* h, const symbol& sym)
+{
+    (void)h;
+    (void)sym;
+    //TODO: error
+    return expr();
 };
 
 expr do_diff_vis::eval(const ast::add_build* h, const symbol&)
@@ -376,7 +415,7 @@ expr do_diff_vis::eval(const ast::function_rep* h, const symbol& sym)
     };
 
     //build symbol
-    symbol func = symbol(ast::symbol_ptr::from_this(h->name()));
+    identifier func     = identifier(ast::identifier_ptr::from_this(h->name()));
 
     using item          = ast::build_item_ptr<value>;
     using item_pod      = sd::pod_type<item>;
@@ -419,7 +458,7 @@ expr do_diff_vis::eval(const ast::function_rep* h, const symbol& sym)
     return ret;
 };
 
-expr do_diff_vis::func_derivative(const symbol& func_name, size_t arg, const expr* args, 
+expr do_diff_vis::func_derivative(const identifier& func_name, size_t arg, const expr* args, 
                                   size_t n_args, const symbol& sym)
 {
     expr dif;
@@ -446,7 +485,7 @@ expr do_diff_vis::func_derivative(const symbol& func_name, size_t arg, const exp
     return std::move(dif) * std::move(arg_dif);
 };
 
-void do_diff_vis::error_diff_rule_not_defined(const symbol& func_name, size_t n_args, 
+void do_diff_vis::error_diff_rule_not_defined(const identifier& func_name, size_t n_args, 
         size_t arg)
 {
     error::error_formatter ef;
@@ -467,6 +506,11 @@ void do_diff_vis::error_diff_rule_not_defined(const symbol& func_name, size_t n_
 
     throw std::runtime_error(ef.str());
 };
+
+expr do_diff_vis::make_delta(const ast::expr_handle h1, const ast::expr_handle h2)
+{
+    return function(details::func_name::delta(), expr(h1), expr(h2));
+}
 
 }};
 

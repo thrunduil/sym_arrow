@@ -76,3 +76,12 @@ const sym_arrow::function_expr& sym_arrow::cast_function(const expr& ex)
     
     return reinterpret_cast<const sym_arrow::function_expr&>(ex);
 };
+
+const sym_arrow::index& sym_arrow::cast_index(const expr& ex)
+{
+    #ifdef SYM_ARROW_DEBUG_EXPR
+        assertion(ex.get_ptr()->isa<ast::index_rep>(), "invalid cast");
+    #endif
+    
+    return reinterpret_cast<const sym_arrow::index&>(ex);
+};

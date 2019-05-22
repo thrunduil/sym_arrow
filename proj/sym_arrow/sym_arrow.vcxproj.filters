@@ -52,6 +52,12 @@
     <Filter Include="Source Files\include\sym_arrow\utils">
       <UniqueIdentifier>{3f08116b-bfce-43f1-8761-ca719e4c0ade}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\include\sym_arrow\sema">
+      <UniqueIdentifier>{ad8f18e0-b237-4063-a435-831fa81c9303}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sema">
+      <UniqueIdentifier>{96158e0d-b563-4ab3-ad6e-1f491689deb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\config.h">
@@ -267,6 +273,30 @@
     <ClInclude Include="..\..\src\sym_arrow\ast\symbol_context_data.h">
       <Filter>Source Files\ast</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\index.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\index_rep.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\error\sema_error.h">
+      <Filter>Source Files\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\set.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\set_rep.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\sema\symbol_table.h">
+      <Filter>Source Files\include\sym_arrow\sema</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\sema\symbol_table_impl.h">
+      <Filter>Source Files\sema</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\set_functions.h">
+      <Filter>Source Files\include\sym_arrow\functions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp">
@@ -446,6 +476,30 @@
     <ClCompile Include="..\..\src\sym_arrow\ast\symbol_context_data.cpp">
       <Filter>Source Files\ast</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\index.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\index_rep.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\error\sema_error.cpp">
+      <Filter>Source Files\error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\set.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\set_rep.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\sema\symbol_table.cpp">
+      <Filter>Source Files\sema</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\sema\symbol_table_impl.cpp">
+      <Filter>Source Files\sema</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\set_functions.cpp">
+      <Filter>Source Files\func</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr.inl">
@@ -543,6 +597,9 @@
     </None>
     <None Include="..\..\src\sym_arrow\ast\symbol_context_data.inl">
       <Filter>Source Files\ast</Filter>
+    </None>
+    <None Include="..\..\src\sym_arrow\nodes\index.inl">
+      <Filter>Source Files\nodes</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
