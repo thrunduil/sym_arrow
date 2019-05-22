@@ -28,9 +28,7 @@ private:
     int                     get_int(const std::string& s);
 
     expr                    make_function(const identifier& sym, const std::vector<expr>& args);
-    symbol                  make_indexed(const identifier& sym, const std::vector<expr>& args);
-    symbol                  make_symbol(const identifier& sym);
-    index                   make_indexer(const identifier& sym, const identifier& set);
+    symbol                  make_symbol(const identifier& sym, const std::vector<expr>& args, const identifier& t);
     set                     make_set(const std::vector<identifier>& args);
 
     void                    to_number(const std::string& value_str0, bool is_complex, double& ret);

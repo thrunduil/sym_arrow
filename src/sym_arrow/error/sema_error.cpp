@@ -28,6 +28,36 @@
 namespace sym_arrow { namespace error
 {
 
+void sema_error::null_expr()
+{
+    error::error_formatter ef;
+    ef.head() << "expr not initialized";
+
+    throw std::runtime_error(ef.str());
+}
+
+void sema_error::bind_array_not_set()
+{
+    error::error_formatter ef;
+    ef.head() << "bind array is required but not initialized (substitution context)";
+
+    throw std::runtime_error(ef.str());
+}
+
+void sema_error::invalid_bind_size(size_t size, size_t exp_size)
+{
+    error::error_formatter ef;
+    ef.head() << "invalid size of bind array";
+
+    ef.new_info();
+    ef.line() << "expecting array of size: " << exp_size;
+
+    ef.new_info();
+    ef.line() << "supplied array has size: " << size;
+
+    throw std::runtime_error(ef.str());
+};
+
 void sema_error::set_not_defined(const identifier& set)
 {
     error::error_formatter ef;
@@ -97,6 +127,131 @@ void sema_error::set_elem_multiply_defined(const identifier& set_elem)
     throw std::runtime_error(ef.str());
 };
 
+void sema_error::const_symbol_substitution(const symbol& sym)
+{
+    error::error_formatter ef;
+    ef.head() << "invalid substitution";
+
+    ef.new_info();
+    ef.line() << "unable to substitute constant symbol: ";
+        disp(ef.line(), sym, false);
+
+    throw std::runtime_error(ef.str());
+}
+
+void sema_error::invalid_substitution_no_convertion(const symbol& sym, const identifier& ty_ex)
+{
+    error::error_formatter ef;
+    ef.head() << "invalid substitution";
+
+    ef.new_info();
+    ef.line() << "unable to substitute symbol: ";
+        disp(ef.line(), sym, false);
+
+    ef.new_info();
+    ef.line() << "with expression of type ";
+        disp(ef.line(), ty_ex, false);
+
+    throw std::runtime_error(ef.str());
+}
+
+void sema_error::undefined_symbol(const identifier& sym, size_t n_args)
+{
+    error::error_formatter ef;
+    ef.head() << "symbol not defined";
+
+    ef.new_info();
+    ef.line() << "symbol: ";
+        disp(ef.line(), sym, false);
+        ef.line() << " with " << n_args << " indices is not defined";
+
+    throw std::runtime_error(ef.str());
+};
+
+void sema_error::invalid_symbol_args(const identifier& sym, size_t n_args, 
+            const std::vector<identifier>& def_args, const identifier& def_type)
+{
+    error::error_formatter ef;
+    ef.head() << "invalid number of symbol indices";
+
+    ef.new_info();
+    ef.line() << "symbol: ";
+        disp_symbol_def(ef.line(), sym, def_args, def_type);
+        ef.line() << " requires " << def_args.size() << " indices";
+
+    ef.new_info();
+    ef.line() << "number of supplied indices: " << n_args;
+
+    throw std::runtime_error(ef.str());
+}
+
+void sema_error::invalid_symbol_arg(const identifier& sym, size_t arg, const identifier& t_arg, 
+            const std::vector<identifier>& def_args, const identifier& def_type)
+{
+    error::error_formatter ef;
+    ef.head() << "invalid symbol index";
+
+    ef.new_info();
+    ef.line() << "symbol: ";
+        disp_symbol_def(ef.line(), sym, def_args, def_type);
+        ef.line() << " requires index of type ";
+        disp(ef.line(), def_args[arg], false);
+        ef.line() << " as " << arg + 1 << " index";
+
+    ef.new_info();
+    ef.line() << "supplied index has type: ";
+    disp(ef.line(), t_arg, false);
+
+    throw std::runtime_error(ef.str());
+}
+
+void sema_error::invalid_explicit_symbol_type(const identifier& sym, 
+            const std::vector<identifier>& def_args, const identifier&  def_type, 
+            const identifier& loc_type)
+{
+    error::error_formatter ef;
+    ef.head() << "invalid explicit symbol type";
+
+    ef.new_info();
+    ef.line() << "symbol definition: ";
+        disp_symbol_def(ef.line(), sym, def_args, def_type);
+
+    ef.new_info();
+    ef.line() << "assigned type: ";
+    disp(ef.line(), loc_type, false);
+
+    throw std::runtime_error(ef.str());
+
+}
+
+void sema_error::disp_symbol_def(std::ostream& os, const identifier& sym, 
+            const std::vector<identifier>& def_args, const identifier&  def_type)
+{
+    disp(os, sym, false);
+
+    if (def_args.size() > 0)
+    {
+        os << "<";
+
+        disp(os, def_args[0], false);
+
+        for (size_t i = 1; i < def_args.size(); ++i)
+        {
+            os << ", ";
+            disp(os, def_args[i], false);
+        }
+        os << ">";
+    }
+
+    if (def_type.is_null() == false)
+    {
+        os << " : ";
+        disp(os, def_type, false);
+    }
+}
+
+/*
+TODO
 void sema_error::unable_subs_index_set_different(const index& i1, const index& i2)
 {
     error::error_formatter ef;
@@ -113,7 +268,9 @@ void sema_error::unable_subs_index_set_different(const index& i1, const index& i
 
     throw std::runtime_error(ef.str());
 }
-
+*/
+/*
+TODO
 void sema_error::unable_subs_index_not_member(const index& i1, const expr& member)
 {
     error::error_formatter ef;
@@ -131,6 +288,6 @@ void sema_error::unable_subs_index_not_member(const index& i1, const expr& membe
 
     throw std::runtime_error(ef.str());
 }
-
+*/
 
 }}

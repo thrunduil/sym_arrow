@@ -73,12 +73,7 @@ sym_def
 }
     :   SYM
         sym   = sym_name
-        (
-            index_postfix_def[args]
-        )?
-        (
-            t = type_postfix
-        )?                                      { def_sym(sym, args, t); }
+        symbol_postfix_def[args, t]             { def_sym(sym, args, t); }
 ;
 
 set_initializer returns[set x]
@@ -178,40 +173,28 @@ sym_name returns[identifier x]
 
 symbol_postfix returns[expr x]
 {
-    identifier sym;    
+    identifier sym;  
+    identifier t;
     std::vector<expr> args;
 }
     :   sym = sym_name
         (
             (LBRACK) 
                 => function_postfix[args]   { x = make_function(sym, args); }
-        |   (LANGLE) 
-                => index_postfix[args]      { x = make_indexed(sym, args); }
-        |   (COLON)
-                => x = indexer_postfix[sym]
-        |                                   { x = make_symbol(sym); }
+        |   (LANGLE | COLON) 
+                => index_postfix[args, t]   { x = make_symbol(sym, args, t); }
+        |                                   { x = make_symbol(sym, args, t); }
         )
-;
-
-index_def returns[index x]
-{
-    identifier sym;    
-    std::vector<expr> args;
-}
-    :   sym = sym_name
-        x = indexer_postfix[sym]
 ;
 
 symbol_def returns[symbol x]
 {
     identifier sym;    
     std::vector<expr> args;
+    identifier t;    
 }
     :   sym = sym_name
-        (
-            index_postfix[args]             { x = make_indexed(sym, args); }
-        |                                   { x = make_symbol(sym); }
-        )
+        index_postfix[args, t]              { x = make_symbol(sym, args, t); }
 ;
 
 function_postfix[std::vector<expr>& args]
@@ -229,42 +212,47 @@ function_postfix[std::vector<expr>& args]
         RBRACK                         
 ;
 
-index_postfix[std::vector<expr>& args]
+index_postfix[std::vector<expr>& args, identifier& t]
 {
     expr y;
 }
-    :   LANGLE
-        (
-            y = term                    { args.push_back(y); }
+    :   (
+            LANGLE
             (
-                COMMA
                 y = term                { args.push_back(y); }
-            )*
+                (
+                    COMMA
+                    y = term            { args.push_back(y); }
+                )*
+            )?
+            RANGLE
         )?
-        RANGLE                         
-;
 
-index_postfix_def[std::vector<identifier>& args]
-{
-    identifier y;
-}
-    :   LANGLE
         (
-            y = sym_name                { args.push_back(y); }
-            (
-                COMMA
-                y = sym_name            { args.push_back(y); }
-            )*
+            COLON
+            t = sym_name
         )?
-        RANGLE                         
 ;
 
-indexer_postfix[const identifier& sym] returns[index x]
+symbol_postfix_def[std::vector<identifier>& args, identifier& t]
 {
     identifier y;
 }
-    :   COLON
-        y = sym_name                    { x = make_indexer(sym, y); }
+    :   (
+            LANGLE
+            (
+                y = sym_name            { args.push_back(y); }
+                (
+                    COMMA
+                    y = sym_name        { args.push_back(y); }
+                )*
+            )?
+            RANGLE                         
+        )?
+        (
+            COLON
+            t = sym_name
+        )?
 ;
 
 type_postfix returns[identifier y]

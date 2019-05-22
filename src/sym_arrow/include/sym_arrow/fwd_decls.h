@@ -35,7 +35,6 @@ class expr;
 class add_expr;
 class mult_expr;
 class function_expr;
-class index;
 
 class set;
 
@@ -82,7 +81,6 @@ class mult_build;
 class add_rep;
 class mult_rep;
 class function_rep;
-class index_rep;
 class scalar_rep;
 class indexed_symbol_rep;
 
@@ -112,7 +110,6 @@ using identifier_handle     = const identifier_rep*;
 using expr_ptr              = sym_dag::dag_ptr<expr_base, term_tag>;
 using scalar_ptr            = sym_dag::dag_ptr<scalar_rep, term_tag>;
 using symbol_ptr            = sym_dag::dag_ptr<indexed_symbol_rep, term_tag>;
-using index_ptr             = sym_dag::dag_ptr<index_rep, term_tag>;
 
 using identifier_ptr        = sym_dag::dag_ptr<identifier_rep, unique_nodes_tag>;
 using set_ptr               = sym_dag::dag_ptr<set_rep, unique_nodes_tag>;

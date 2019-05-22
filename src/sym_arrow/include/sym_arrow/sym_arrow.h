@@ -29,7 +29,6 @@
 #include "sym_arrow/nodes/expr.h"
 #include "sym_arrow/nodes/scalar.h"
 #include "sym_arrow/nodes/symbol.h"
-#include "sym_arrow/nodes/index.h"
 #include "sym_arrow/nodes/add_expr.h"
 #include "sym_arrow/nodes/mult_expr.h"
 #include "sym_arrow/nodes/function_expr.h"

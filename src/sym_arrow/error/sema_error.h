@@ -33,6 +33,13 @@ namespace sa = sym_arrow::ast;
 class sema_error
 {
     public:
+        void    null_expr();
+        void    bind_array_not_set();
+        void    invalid_bind_size(size_t size, size_t exp_size);
+
+        void    const_symbol_substitution(const symbol& sym);
+        void    invalid_substitution_no_convertion(const symbol& sym, const identifier& ty_ex);
+
         void    set_not_defined(const identifier& set);
         void    type_not_defined(const identifier& ty);
 
@@ -41,8 +48,18 @@ class sema_error
         void    symbol_already_defined(const identifier& set);
         void    set_elem_multiply_defined(const identifier& set_elem);
 
-        void    unable_subs_index_set_different(const index& i1, const index& i2);
-        void    unable_subs_index_not_member(const index& i1, const expr& member);
+        void    undefined_symbol(const identifier& sym, size_t n_args);
+        void    invalid_symbol_args(const identifier& sym, size_t n_args, 
+                    const std::vector<identifier>& def_args, const identifier& def_type);
+        void    invalid_symbol_arg(const identifier& sym, size_t arg, const identifier& t_arg, 
+                    const std::vector<identifier>& def_args, const identifier& def_type);
+        void    invalid_explicit_symbol_type(const identifier& sym, 
+                    const std::vector<identifier>& def_args, const identifier&  def_type, 
+                    const identifier& loc_type);
+
+    private:
+        void    disp_symbol_def(std::ostream& os, const identifier& sym, 
+                    const std::vector<identifier>& def_args, const identifier&  def_type);
 };
 
 }}

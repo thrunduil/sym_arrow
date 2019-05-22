@@ -80,10 +80,6 @@ struct expr_traversal_visitor : public expr_visitor<Derived>
     template<class ... Args>
     void eval(const sym_arrow::symbol& ex, Args&& ... args);
 
-    // visit index
-    template<class ... Args>
-    void eval(const sym_arrow::index& ex, Args&& ... args);
-
     // visit add expression
     template<class ... Args>
     void eval(const sym_arrow::add_expr& ex, Args&& ... args);

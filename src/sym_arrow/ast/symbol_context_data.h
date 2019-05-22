@@ -42,6 +42,8 @@ class symbol_context_data : public sym_dag::context_data_base
         reg_sym_ptr         m_reg_symbols;
         sym_tab_ptr         m_sym_tab;
 
+        identifier          m_default_id;
+
         virtual ~symbol_context_data() override;
 
         virtual void        initialize() override;
@@ -57,6 +59,8 @@ class symbol_context_data : public sym_dag::context_data_base
         // symbols about be beining destroyed must be unregistered 
         // by this function
         void                unregister_symbol(const identifier_rep* h);
+
+        const identifier&   default_id() const;
 };
 
 }}};

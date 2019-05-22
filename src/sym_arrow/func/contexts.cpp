@@ -28,6 +28,8 @@
 #include "sym_arrow/error/error_formatter.h"
 #include "sym_arrow/functions/global_context_initializers.h"
 #include "sym_arrow/utils/stack_array.h"
+#include "sym_arrow/error/sema_error.h"
+#include "sym_arrow/sema/typing.h"
 
 #include <sstream>
 
@@ -42,24 +44,185 @@ subs_context_impl::subs_context_impl()
     :m_bind(nullptr)
 {};
 
+expr subs_context_impl::subs(const symbol& sh) const
+{
+    auto pos = m_map.find(sh);
+
+    if (pos == m_map.end())
+        return expr();
+
+    size_t code = pos->second;
+
+    if (m_buffer[code].is_null() == false)
+    {
+        expr ex     = m_buffer[code];
+        return ex;
+    }
+
+    if (m_bind == nullptr)
+        error::sema_error().bind_array_not_set();
+
+    return m_bind[code];
+}
+
+void subs_context_impl::visit_substitutions(substitution_vis& info) const
+{
+    size_t n        = this->size();
+    size_t n_codes  = this->bind_array_length();
+
+    info.report_size(n, n_codes);
+
+    for (const auto& elem :  m_map)
+    {
+        const symbol& sym   = elem.first;
+        size_t code         = elem.second;
+        const expr* ex      = &m_buffer[code];
+
+        if (ex->is_null() == true)
+        {            
+            if (m_bind == nullptr)
+                error::sema_error().bind_array_not_set();
+
+            ex              = &m_bind[code];
+        };
+
+        info.report_subs(sym, *ex, code);
+    };
+}
+
+void subs_context_impl::check_bind() const
+{
+    for (const auto& elem :  m_map)
+    {
+        const symbol& sym   = elem.first;
+        size_t code         = elem.second;
+        const expr* ex      = &m_buffer[code];
+
+        if (ex->is_null() == true)
+        {            
+            if (m_bind == nullptr)
+                error::sema_error().bind_array_not_set();
+
+            ex              = &m_bind[code];
+
+            if (ex->is_null() == true)
+                error::sema_error().null_expr();
+        };
+
+        check_substitution(sym, *ex);
+    };
+}
+
+void subs_context_impl::check_substitution(const symbol& sym, const expr& ex) const
+{
+    bool is_const       = is_constant(sym);
+
+    if (is_const == true)
+        error::sema_error().const_symbol_substitution(sym);
+
+    identifier ty_s     = sym.get_type();
+    identifier ty_e     = get_type(ex);
+
+    bool is_convert     = is_convertible(ty_e, ty_s);
+
+    if (is_convert == false)
+        error::sema_error().invalid_substitution_no_convertion(sym, ty_e);
+}
+
+void subs_context_impl::add_symbol(const symbol& sym, size_t code)
+{
+    remove_bind();
+
+    m_map[sym]  = code;
+    m_set       = m_set.set(sym.get_ptr()->get_indexed_symbol_code());
+    m_set       = m_set.set(sym.get_ptr()->get_base_symbol_code());
+}
+
+void subs_context_impl::remove_symbol(const symbol& sym)
+{
+    remove_bind();
+
+    m_map.erase(sym);
+    m_set = m_set.reset(sym.get_ptr()->get_indexed_symbol_code());
+}
+
+size_t subs_context_impl::add_symbol(const symbol& sym)
+{
+    remove_bind();
+
+    size_t code = m_buffer.size();
+    m_buffer.push_back(expr());
+
+    add_symbol(sym, code);
+    return code;
+}
+
+void subs_context_impl::add_symbol(const symbol& sym, const expr& ex)
+{
+    remove_bind();   
+
+    if (ex.is_null())
+        error::sema_error().null_expr();
+
+    check_substitution(sym, ex);
+
+    size_t code = m_buffer.size();
+    m_buffer.push_back(ex);
+
+    return add_symbol(sym, code);
+}
+
 void subs_context_impl::remove_bind()
 {
     m_bind = nullptr;
 }
 
-void subs_context_impl::error_invalid_bind_size(size_t size, size_t exp_size) const
+void subs_context_impl::set_bind(size_t size, const expr* ex)
 {
-    error::error_formatter ef;
-    ef.head() << "invalid size of bind array";
+    remove_bind();
 
-    ef.new_info();
-    ef.line() << "expecting array of size: " << exp_size;
+    m_bind  = ex;
+    size_t exp_size = this->bind_array_length();
 
-    ef.new_info();
-    ef.line() << "supplied array has size: " << size;
+    if (size != exp_size)
+        error::sema_error().invalid_bind_size(size, exp_size);
 
-    throw std::runtime_error(ef.str());
-};
+    check_bind();
+}
+
+size_t subs_context_impl::bind_array_length() const
+{
+    return m_buffer.size();
+}
+
+const dbs_lib::dbs& subs_context_impl::get_symbol_set() const
+{
+    return m_set;
+}
+
+size_t subs_context_impl::size() const
+{
+    return m_map.size();
+}
+
+void subs_context_impl::disp(std::ostream& os) const
+{
+    for (auto pos = m_map.begin(); pos != m_map.end(); ++pos)
+    {
+        sym_arrow::disp(os, pos->first, false);
+        os << " -> ";
+
+        size_t code = pos->second;
+        expr subs   = m_buffer[code];
+
+        if (subs.is_null() == false)
+            sym_arrow::disp(os, subs, false);
+        else
+            os << "$[" << code << "]";
+
+        os << "\n";
+    };
+}
 
 //-------------------------------------------------------------------
 //                        diff_rule
@@ -484,33 +647,17 @@ subs_context::subs_context()
 
 void subs_context::add_symbol(const symbol& sym, const expr& ex)
 {
-    m_impl->remove_bind();
-    
-    size_t code = m_impl->m_buffer.size();
-    m_impl->m_buffer.push_back(ex);
-    return add_symbol(sym, code);
+    return m_impl->add_symbol(sym, ex);
 };
 
 size_t subs_context::add_symbol(const symbol& sym)
 {
-    m_impl->remove_bind();
-
-    size_t code = m_impl->m_buffer.size();
-    m_impl->m_buffer.push_back(expr());
-
-    add_symbol(sym, code);
-    return code;
+    return m_impl->add_symbol(sym);
 };
 
 void subs_context::set_bind(size_t size, const expr* ex)
 {
-    m_impl->remove_bind();
-
-    m_impl->m_bind  = ex;
-    size_t exp_size = this->bind_array_length();
-
-    if (size != exp_size)
-        m_impl->error_invalid_bind_size(size, exp_size);
+    m_impl->set_bind(size, ex);
 };
 
 void subs_context::remove_bind()
@@ -520,93 +667,42 @@ void subs_context::remove_bind()
 
 void subs_context::add_symbol(const symbol& sym, size_t code)
 {
-    m_impl->remove_bind();
-
-    m_impl->m_map[sym]  = code;
-    m_impl->m_set       = m_impl->m_set.set(sym.get_ptr()->get_indexed_symbol_code());
-    m_impl->m_set       = m_impl->m_set.set(sym.get_ptr()->get_base_symbol_code());
+    m_impl->add_symbol(sym, code);
 };
 
 void subs_context::remove_symbol(const symbol& sym)
 {
-    remove_bind();
-
-    m_impl->m_map.erase(sym);
-    m_impl->m_set = m_impl->m_set.reset(sym.get_ptr()->get_indexed_symbol_code());
+    m_impl->remove_symbol(sym);
 };
 
 size_t subs_context::size() const
 {
-    return m_impl->m_map.size();
+    return m_impl->size();    
 };
 
 size_t subs_context::bind_array_length() const
 {
-    return m_impl->m_buffer.size();
+    return m_impl->bind_array_length();
 };
 
 const dbs_lib::dbs& subs_context::get_symbol_set() const
 {
-    return m_impl->m_set;
+    return m_impl->get_symbol_set();    
 };
 
 void subs_context::disp(std::ostream& os) const
 {
-    for (auto pos = m_impl->m_map.begin(); pos != m_impl->m_map.end(); ++pos)
-    {
-        sym_arrow::disp(os, pos->first, false);
-        os << " -> ";
-
-        size_t code = pos->second;
-        expr subs   = m_impl->m_buffer[code];
-
-        if (subs.is_null() == false)
-            sym_arrow::disp(os, subs, false);
-        else
-            os << "$[" << code << "]";
-
-        os << "\n";
-    };
+    return m_impl->disp(os);
 };
 
 expr subs_context::subs(const symbol& sh) const
 {
-    auto pos = m_impl->m_map.find(sh);
-
-    if (pos == m_impl->m_map.end())
-        return expr();
-
-    size_t code = pos->second;
-
-    if (m_impl->m_bind == nullptr)
-    {
-        expr ex     = m_impl->m_buffer[code];
-        return ex;
-    }
-    else
-    {
-        return m_impl->m_bind[code];
-    };
+    return m_impl->subs(sh);
 };
 
 void subs_context::visit_substitutions(substitution_vis& info) const
 {
-    size_t n        = this->size();
-    size_t n_codes  = this->bind_array_length();
-
-    info.report_size(n, n_codes);
-
-    for (const auto& elem :  m_impl->m_map)
-    {
-        const symbol& sym   = elem.first;
-        size_t code         = elem.second;
-        const expr* ex      = &m_impl->m_buffer[code];
-
-        if (ex->is_null() == true)
-            ex              = &m_impl->m_bind[code];
-
-        info.report_subs(sym, *ex, code);
-    };
+    return m_impl->visit_substitutions(info);
 };
 
 //-------------------------------------------------------------------

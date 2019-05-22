@@ -41,4 +41,9 @@ inline void symbol_context_data::unregister_symbol(const identifier_rep* h)
     m_reg_symbols->unregister_sym(h); 
 };
 
+inline const identifier& symbol_context_data::default_id() const
+{
+    return m_default_id;
+}
+
 }}};

@@ -318,21 +318,9 @@ expr parser_sym_arrow::make_function(const identifier& sym, const std::vector<ex
     return sym_arrow::function(sym, args);
 };
 
-symbol parser_sym_arrow::make_indexed(const identifier& sym, const std::vector<expr>& args)
+symbol parser_sym_arrow::make_symbol(const identifier& sym, const std::vector<expr>& args, const identifier& t)
 {
-    std::initializer_list<expr> il(args.data(), args.data() + args.size());
-
-    return sym.indexed(il);
-};
-
-symbol parser_sym_arrow::make_symbol(const identifier& sym)
-{
-    return symbol::from_identifier(sym);
-};
-
-index parser_sym_arrow::make_indexer(const identifier& sym, const identifier& set)
-{
-    return index(sym, set);
+    return sym_arrow::make_symbol(sym, args, t);
 };
 
 set parser_sym_arrow::make_set(const std::vector<identifier>& args)

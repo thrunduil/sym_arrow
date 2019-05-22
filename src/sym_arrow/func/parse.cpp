@@ -54,7 +54,6 @@ class parser
 
     public:
         expr    make_expr();
-        index   make_index();
         symbol  make_symbol();
 
         void    make_def();
@@ -134,13 +133,6 @@ expr parser::make_expr()
     return make<expr>([p, this](){return p->stringUnit();});
 };
 
-index parser::make_index()
-{
-    parser_sym_arrow* p = m_parser;
-
-    return make<index>([p, this](){return p->index_def();});
-}
-
 symbol parser::make_symbol()
 {
     parser_sym_arrow* p = m_parser;
@@ -175,14 +167,6 @@ void sym_arrow::parse_def(const std::string& v)
 
     p.make_def();
 };
-
-index sym_arrow::parse_index(const std::string& v)
-{
-    parser p(v);
-
-    index i = p.make_index();
-    return i;
-}
 
 symbol sym_arrow::parse_sym(const std::string& v)
 {

@@ -100,13 +100,17 @@ class indexed_symbol_info
         // vector of arguments of length m_size
         const expr*         m_args;
 
+        // symbol type
+        identifier_handle   m_type;
+
         // hash value; will be set later
         mutable size_t      m_hash;
 
     public:
         // constructor; arguments must be cannonized
-        indexed_symbol_info(identifier_handle name, size_t size, const expr* args)
-            : m_name(name), m_size(size), m_args(args)
+        indexed_symbol_info(identifier_handle name, size_t size, const expr* args,
+                    identifier_handle type)
+            : m_name(name), m_size(size), m_args(args), m_type(type)
             , m_hash(0) 
         {};
 };
@@ -124,6 +128,7 @@ class indexed_symbol_rep : public expr_symbols<indexed_symbol_rep>
 
         identifier_ptr  m_name;
         expr_ptr*       m_expr;
+        identifier_ptr  m_type;
 
     private:
         indexed_symbol_rep(const indexed_symbol_rep&) = delete;
@@ -155,9 +160,13 @@ class indexed_symbol_rep : public expr_symbols<indexed_symbol_rep>
         // get i-th index
         expr_handle     arg(size_t i) const     { return m_expr[i].get(); };
 
-        // null terminated pointer to name of this symbol
+        // name of this symbol
         identifier_handle
                         get_name() const        { return m_name.get();}
+
+        // type of this symbol; can be nullpr
+        identifier_handle
+                        get_type() const        { return m_type.get();}
 
         // return code of this symbol; different symbols have
         // differrent codes

@@ -51,7 +51,7 @@ using matcl::mp_float;
 #pragma warning(push)
 #pragma warning(disable: 4251)  // needs to have dll-interface to be used by clients
 
-// floating point value represented using the symmetric level index representation
+// floating point value represented using multiple precision representation
 class SYM_ARROW_EXPORT value
 {
     public:

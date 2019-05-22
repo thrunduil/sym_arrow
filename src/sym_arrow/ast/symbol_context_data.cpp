@@ -34,10 +34,14 @@ void symbol_context_data::initialize()
 {
     m_reg_symbols   = registered_symbols::get();
     m_sym_tab       = sd::sym_table_impl::get();
+
+    m_default_id    = identifier("default");
 };
 
 void symbol_context_data::close()
 {
+    m_default_id    = identifier();
+
     m_sym_tab->close();
     m_reg_symbols->close();   
 };

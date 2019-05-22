@@ -43,16 +43,32 @@ class subs_context_impl
     public:
         subs_context_impl();
 
+    private:
         dbs                 m_set;
-        sym_map             m_map;        
+        sym_map             m_map;
         expr_vec            m_buffer;
         const expr*         m_bind;
 
     public:
-        void                remove_bind();
+        void                add_symbol(const symbol& sym, const expr& ex);
+        void                add_symbol(const symbol& sym, size_t code);
+        size_t              add_symbol(const symbol& sym);
 
-    public:
-        void                error_invalid_bind_size(size_t size, size_t exp_size) const;
+        void                remove_bind();
+        void                set_bind(size_t size, const expr* ex);
+        void                remove_symbol(const symbol& sym);
+
+        const dbs_lib::dbs& get_symbol_set() const;
+        size_t              size() const;
+        size_t              bind_array_length() const;
+
+        void                disp(std::ostream& os) const;
+        expr                subs(const symbol& sh) const;
+        void                visit_substitutions(substitution_vis& info) const;
+
+    private:                   
+        void                check_bind() const;
+        void                check_substitution(const symbol& sym, const expr& ex) const;
 };    
 
 //-------------------------------------------------------------------

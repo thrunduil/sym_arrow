@@ -42,7 +42,6 @@ enum class term_types : size_t
     add_rep,
     mult_rep,
     function_rep,
-    index_rep,
     number_codes
 };
 

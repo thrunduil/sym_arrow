@@ -38,6 +38,9 @@ identifier_rep::identifier_rep(const identifier_info& info)
     size_t hash         = eval_hash(info);
     m_name              = details::string_data(info.m_name, N, hash);
 
+    if (N == 0 || info.m_name[0] == '$')
+        throw std::runtime_error("invalid symbol name");
+
     context_type::get().get_context_data().register_symbol(this);
 };
 
@@ -78,8 +81,12 @@ indexed_symbol_rep::indexed_symbol_rep(const indexed_symbol_info& pi)
     :base_type(this), m_hash(pi.m_hash)
     , m_size(pi.m_size), m_expr(nullptr), m_name(identifier_ptr::from_this(pi.m_name))
     , m_code(context_type::get().get_context_data().get_fresh_symbol_code())
+    , m_type(identifier_ptr::from_this(pi.m_type))
 {
     context_type::get().get_context_data().register_symbol(this);
+
+    if (m_type.get() == nullptr)
+        m_type          = sym_dag::dag_context<unique_nodes_tag>::get().get_context_data().default_id().get_ptr();
 
     //TODO: only one code if number of indices is zero
     add_symbol(pi.m_name->get_base_symbol_code());

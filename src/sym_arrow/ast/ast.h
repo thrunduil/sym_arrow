@@ -30,7 +30,6 @@
 #include "sym_arrow/ast/add_rep.h"
 #include "sym_arrow/ast/mult_rep.h"
 #include "sym_arrow/ast/function_rep.h"
-#include "sym_arrow/ast/index_rep.h"
 
 #include "sym_arrow/ast/set_rep.h"
 

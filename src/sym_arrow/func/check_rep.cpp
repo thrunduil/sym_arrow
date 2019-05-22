@@ -55,7 +55,6 @@ class do_check_rep_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::add_rep* h);
         bool eval(const ast::mult_rep* h);
         bool eval(const ast::function_rep* h);
-        bool eval(const ast::index_rep* h);
 
     private:
         bool eval_indname(const ast::indexed_symbol_rep* h);
@@ -194,16 +193,6 @@ bool do_check_rep_vis::eval(const ast::function_rep* h)
         if (visit(e) == false)
             return false;
     };
-
-    return true;
-};
-
-bool do_check_rep_vis::eval(const ast::index_rep* h)
-{
-    bool ok = eval_indname(h->name());
-
-    if (ok == false)
-        return false;
 
     return true;
 };
@@ -483,8 +472,7 @@ bool do_check_rep_vis::is_simple(const ast::add_rep* h)
 
 bool do_check_rep_vis::is_atom(ast::expr_handle h)
 {
-    if (h->isa<ast::function_rep>() || h->isa<ast::indexed_symbol_rep>()
-        || h->isa<ast::index_rep>())
+    if (h->isa<ast::function_rep>() || h->isa<ast::indexed_symbol_rep>())
     {
         return true;
     }

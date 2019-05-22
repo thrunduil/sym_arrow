@@ -47,12 +47,14 @@ int main(int argc, const char* argv[])
             sa::parse_def("sym x<A,B> : real");
 
             sa::parse_def("set S := {a,b,c}");
-            sa::parse_def("set T := {a,b,c}");
+            sa::parse_def("set T := {aa,bb,cc}");
                         
-            sa::index i         = sa::parse_index("i : S");
-            sa::index j         = sa::parse_index("j : T");
+            sa::symbol i        = sa::parse_sym("i : S");
+            sa::symbol j        = sa::parse_sym("j : S");
 
-            sa::expr e          = sa::identifier("A").indexed(i) + sa::symbol("x");
+            sa::parse_def("sym W<S>");
+
+            sa::expr e          = sa::identifier("W").index(i) + sa::symbol("y");
 
             disp(e);
 
@@ -69,22 +71,25 @@ int main(int argc, const char* argv[])
         sym_dag::registered_dag_context::get().print_memory_leaks(std::cout);
 
         {
-            sa::index i         = sa::index(sa::identifier("i"), sa::identifier("A"));
+            sa::parse_def("set S := {a0, a1, a2}");
+            sa::parse_def("sym A<S>");
+
+            sa::symbol i        = sa::identifier("i").index(sa::identifier("S"));
             sa::expr k          = i + i;
             disp(i);
             disp(k);
 
-            sa::expr ex  = sa::parse("A<0> - (A<0> - A<1>)^2 / (A<2> - A<1> + A<0> - A<1>)");
+            sa::expr ex  = sa::parse("A<a0> - (A<a0> - A<a1>)^2 / (A<a2> - A<a1> + A<a0> - A<a1>)");
             disp(ex);
 
-            auto v0             = sa::scalar::make_zero();
-            auto v1             = sa::scalar::make_one();
-            auto v2             = sa::scalar(2.0);
+            auto v0             = sa::symbol("a0");
+            auto v1             = sa::symbol("a1");
+            auto v2             = sa::symbol("a2");
 
-            auto dif_A          = diff(ex, sa::identifier("A").indexed(i));
-            auto dif_A0         = diff(ex, sa::identifier("A").indexed(v0));
-            auto dif_A1         = diff(ex, sa::identifier("A").indexed(v1));
-            auto dif_A2         = diff(ex, sa::identifier("A").indexed(v2));
+            auto dif_A          = diff(ex, sa::identifier("A").index(i));
+            auto dif_A0         = diff(ex, sa::identifier("A").index(v0));
+            auto dif_A1         = diff(ex, sa::identifier("A").index(v1));
+            auto dif_A2         = diff(ex, sa::identifier("A").index(v2));
 
             disp(dif_A);
             disp(dif_A0);

@@ -49,10 +49,9 @@ public:
 	public: void sym_def();
 	public: identifier  sym_name();
 	public: set  set_initializer();
-	public: void index_postfix_def(
-		std::vector<identifier>& args
+	public: void symbol_postfix_def(
+		std::vector<identifier>& args, identifier& t
 	);
-	public: identifier  type_postfix();
 	public: set  set_literal();
 	public: expr  addExpr();
 	public: expr  multExpr();
@@ -68,13 +67,10 @@ public:
 		std::vector<expr>& args
 	);
 	public: void index_postfix(
-		std::vector<expr>& args
+		std::vector<expr>& args, identifier& t
 	);
-	public: index  indexer_postfix(
-		const identifier& sym
-	);
-	public: index  index_def();
 	public: symbol  symbol_def();
+	public: identifier  type_postfix();
 	public: expr  atom_number();
 	public: int  atom_int();
 public:

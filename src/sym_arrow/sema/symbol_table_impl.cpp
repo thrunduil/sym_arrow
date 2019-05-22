@@ -23,6 +23,9 @@
 #include "sym_arrow/error/sema_error.h"
 #include "dag/details/leak_detector.h"
 
+#include "sym_arrow/ast/ast.h"
+#include "sym_arrow/ast/symbol_context_data.h"
+
 namespace sym_arrow { namespace details
 {
 
@@ -54,6 +57,12 @@ def_data_type::~def_data_type()
 def_data_symbol::def_data_symbol(const std::vector<identifier>& args, const identifier& t)
     :def_data(symbol_kind::indexed_symbol), m_args(args), m_type(t)
 {};
+
+void def_data_symbol::get_def(std::vector<identifier>& args, identifier& t) const
+{
+    args    = m_args;
+    t       = m_type;
+}
 
 def_data_symbol::~def_data_symbol()
 {};
@@ -141,6 +150,27 @@ bool symbol_map::get_set(const identifier& sym, set& s) const
     return true;
 }
 
+bool symbol_map::get_symbol(const identifier& sym, 
+                            std::vector<identifier>& args, identifier& t) const
+{
+    size_t code     = sym.get_base_symbol_code();
+    auto pos        = m_code_sym_map.get(code);
+
+    if (pos.empty() == true)
+        return false;
+
+    const def_data* def  = pos.get()->get_data();
+
+    if (def == nullptr)
+        return false;
+
+    if (def->get_kind() != symbol_kind::indexed_symbol)
+        return false;
+
+    dynamic_cast<const def_data_symbol*>(def)->get_def(args, t);
+    return true;
+}
+
 //----------------------------------------------------------------------
 //                        sym_table_impl
 //----------------------------------------------------------------------
@@ -182,9 +212,21 @@ void sym_table_impl::define_set(const identifier& sym, const set& s)
             error::sema_error().set_already_defined(sym);
         else
             error::sema_error().symbol_already_defined(sym);
-
-        return;
     };
+
+    // register type
+    //define_type(sym);
+
+    // define set members
+    size_t n    = s.size();
+
+    std::vector<identifier> args;
+
+    for (size_t i = 0; i < n; ++i)
+    {
+        identifier id   = s.arg(i);
+        define_symbol(id, args, sym);
+    }
 };
 
 void sym_table_impl::define_type(const identifier& sym)
@@ -212,6 +254,8 @@ void sym_table_impl::define_type(const identifier& sym)
 void sym_table_impl::define_symbol(const identifier& sym, 
                             const std::vector<identifier>& args, const identifier& t)
 {
+    identifier t_fin;
+
     if (t.is_null() == false)
     {
         // type name must be defined
@@ -219,7 +263,13 @@ void sym_table_impl::define_symbol(const identifier& sym,
         bool is_def = this->is_defined_type(t);
 
         if (is_def == false)
-            error::sema_error().type_not_defined(t);        
+            error::sema_error().type_not_defined(t); 
+
+        t_fin   = t;
+    }
+    else
+    {
+        t_fin   = sym_dag::dag_context<ast::unique_nodes_tag>::get().get_context_data().default_id();
     }
 
     for (const auto& it : args)
@@ -232,7 +282,7 @@ void sym_table_impl::define_symbol(const identifier& sym,
             error::sema_error().set_not_defined(it); 
     };
 
-    symbol_data_maker f = [&](){return new def_data_symbol(args, t);};
+    symbol_data_maker f = [&](){return new def_data_symbol(args, t_fin);};
     const entry* ptr    = m_sym_map.define(sym, f);
 
     //1. symbol name cannot be already defined
@@ -263,13 +313,21 @@ bool sym_table_impl::is_defined_type(const identifier& sym) const
 
     if (!ptr)
         return false;
-    else
-        return (ptr->get_kind() == symbol_kind::type);
+
+    symbol_kind k       = ptr->get_kind();
+
+    return (k == symbol_kind::type || k == symbol_kind::set);
 };
 
 bool sym_table_impl::get_set_definition(const identifier& sym, set& def) const
 {
     return m_sym_map.get_set(sym, def);
+}
+
+bool sym_table_impl::get_symbol_definition(const identifier& sym, 
+                            std::vector<identifier>& args, identifier& t) const
+{
+    return m_sym_map.get_symbol(sym, args, t);
 }
 
 }};

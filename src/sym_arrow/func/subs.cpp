@@ -56,7 +56,6 @@ class do_subs_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_sub
         expr eval(const ast::add_rep* h, const subs_context& sub);
         expr eval(const ast::mult_rep* h, const subs_context& sub);
         expr eval(const ast::function_rep* h, const subs_context& sub);
-        expr eval(const ast::index_rep* h, const subs_context& sub);
 
     private:
         expr subs_indexed_final(const ast::indexed_symbol_rep* h, const subs_context& sc);
@@ -72,6 +71,8 @@ expr do_subs_vis::eval(const ast::scalar_rep* h, const subs_context& sub)
 
 expr do_subs_vis::eval(const ast::indexed_symbol_rep* h, const subs_context& sc)
 {
+    //TODO: type checking 
+
     if (h->size() == 0)
         return subs_indexed_final(h, sc);
 
@@ -106,9 +107,8 @@ expr do_subs_vis::eval(const ast::indexed_symbol_rep* h, const subs_context& sc)
         return subs_indexed_final(h, sc);
 
     // make substituted index
-    ast::indexed_symbol_info info(h->get_name(), n, buff_ptr);
-
-    ast::symbol_ptr h_sub = ast::indexed_symbol_rep::make(info);
+    ast::symbol_ptr h_sub = make_symbol(identifier(h->get_name()), buff_ptr, n, 
+                                identifier(h->get_type())).get_ptr();
 
     // final substitution
     expr res = subs_indexed_final(h_sub.get(), sc);
@@ -127,16 +127,13 @@ expr do_subs_vis::subs_indexed_final(const ast::indexed_symbol_rep* h, const sub
 
 expr do_subs_vis::subs_index(ast::expr_handle h, const subs_context& sc)
 {
-    // only symbolic index can be substituted
-    if (h->isa<ast::index_rep>() == false)
-        return expr();
-
-    const ast::index_rep* i = h->static_cast_to<ast::index_rep>();
-    return visit(i, sc);
+    return visit(h, sc);
 }
 
+/*
 expr do_subs_vis::eval(const ast::index_rep* h, const subs_context& sc)
 {
+    TODO
     expr res2 = sc.subs(symbol(h->name()));
 
     if (res2.is_null() == true)
@@ -144,6 +141,7 @@ expr do_subs_vis::eval(const ast::index_rep* h, const subs_context& sc)
 
     ast::identifier_handle sh1  = h->set_name();
 
+    //TODO
     //1. if result is an index, then index set must be the same
     bool is_ind                 = res2.get_ptr()->isa<ast::index_rep>();    
 
@@ -168,6 +166,7 @@ expr do_subs_vis::eval(const ast::index_rep* h, const subs_context& sc)
 
     return res2;
 }
+*/
 
 expr do_subs_vis::eval(const ast::add_build* h, const subs_context& sub)
 {

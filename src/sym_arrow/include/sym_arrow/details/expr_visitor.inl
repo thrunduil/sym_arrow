@@ -48,8 +48,6 @@ auto expr_visitor<Derived>::visit(const expr& ex, Args&& ... args)
             return d->eval(cast_mult(ex), std::forward<Args>(args)...);
         case ast::term_types::function_rep:
             return d->eval(cast_function(ex), std::forward<Args>(args)...);
-        case ast::term_types::index_rep:
-            return d->eval(cast_index(ex), std::forward<Args>(args)...);
 
         case ast::term_types::add_build:
         case ast::term_types::mult_build:
@@ -92,11 +90,6 @@ inline void expr_traversal_visitor<Derived>::eval(const sym_arrow::scalar& s, Ar
 template<class Derived>
 template<class ... Args>
 inline void expr_traversal_visitor<Derived>::eval(const sym_arrow::symbol&, Args&& ...)
-{};
-
-template<class Derived>
-template<class ... Args>
-inline void expr_traversal_visitor<Derived>::eval(const sym_arrow::index&, Args&& ...)
 {};
 
 template<class Derived>

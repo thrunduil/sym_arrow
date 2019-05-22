@@ -276,9 +276,6 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\index.h">
       <Filter>Source Files\include\sym_arrow\nodes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\sym_arrow\ast\index_rep.h">
-      <Filter>Source Files\ast</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\sym_arrow\error\sema_error.h">
       <Filter>Source Files\error</Filter>
     </ClInclude>
@@ -296,6 +293,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\set_functions.h">
       <Filter>Source Files\include\sym_arrow\functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\sema\typing.h">
+      <Filter>Source Files\sema</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -476,12 +476,6 @@
     <ClCompile Include="..\..\src\sym_arrow\ast\symbol_context_data.cpp">
       <Filter>Source Files\ast</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\sym_arrow\nodes\index.cpp">
-      <Filter>Source Files\nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sym_arrow\ast\index_rep.cpp">
-      <Filter>Source Files\ast</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\sym_arrow\error\sema_error.cpp">
       <Filter>Source Files\error</Filter>
     </ClCompile>
@@ -499,6 +493,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\sym_arrow\func\set_functions.cpp">
       <Filter>Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\sema\typing.cpp">
+      <Filter>Source Files\sema</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -597,9 +594,6 @@
     </None>
     <None Include="..\..\src\sym_arrow\ast\symbol_context_data.inl">
       <Filter>Source Files\ast</Filter>
-    </None>
-    <None Include="..\..\src\sym_arrow\nodes\index.inl">
-      <Filter>Source Files\nodes</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

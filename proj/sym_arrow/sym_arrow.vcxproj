@@ -43,7 +43,6 @@
     <ClInclude Include="..\..\src\sym_arrow\ast\helpers\registered_symbols.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\helpers\string_data.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\helpers\utils.h" />
-    <ClInclude Include="..\..\src\sym_arrow\ast\index_rep.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\mult_rep.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\scalar_rep.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\set_rep.h" />
@@ -93,6 +92,7 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\utils\timer.h" />
     <ClInclude Include="..\..\src\sym_arrow\nodes\value_functions_common.h" />
     <ClInclude Include="..\..\src\sym_arrow\sema\symbol_table_impl.h" />
+    <ClInclude Include="..\..\src\sym_arrow\sema\typing.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\pool_hash_map.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\sort.h" />
     <ClInclude Include="..\..\src\sym_arrow\utils\stack_array.h" />
@@ -116,7 +116,6 @@
     <ClCompile Include="..\..\src\sym_arrow\ast\function_rep.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\helpers\registered_symbols.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\helpers\string_data.cpp" />
-    <ClCompile Include="..\..\src\sym_arrow\ast\index_rep.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\mult_rep.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\scalar_rep.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\set_rep.cpp" />
@@ -172,7 +171,6 @@
     <ClCompile Include="..\..\src\sym_arrow\nodes\add_expr.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\expr.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\function_expr.cpp" />
-    <ClCompile Include="..\..\src\sym_arrow\nodes\index.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\mult_expr.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\scalar.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\set.cpp" />
@@ -183,6 +181,7 @@
     <ClCompile Include="..\..\src\sym_arrow\nodes\value_gsli.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\sema\symbol_table.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\sema\symbol_table_impl.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\sema\typing.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\utils\temp_value.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\utils\timer.cpp" />
   </ItemGroup>
@@ -216,7 +215,6 @@
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_double.inl" />
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_mp.inl" />
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_gsli.inl" />
-    <None Include="..\..\src\sym_arrow\nodes\index.inl" />
     <None Include="..\..\src\sym_arrow\nodes\symbol.inl" />
     <None Include="..\..\src\sym_arrow\utils\pool_hash_map.inl" />
     <None Include="..\..\src\sym_arrow\utils\sort.inl" />

@@ -24,11 +24,15 @@
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/functions/expr_functions.h"
 #include "sym_arrow/utils/stack_array.h"
+#include "sym_arrow/sema/symbol_table_impl.h"
+#include "sym_arrow/sema/typing.h"
+#include "sym_arrow/error/sema_error.h"
 
 namespace sym_arrow 
 {
 
 namespace sd = sym_arrow::details;
+namespace se = sym_arrow::error;
 
 //-------------------------------------------------------------------
 //                  identifier
@@ -81,63 +85,122 @@ expr identifier::operator()(const std::vector<expr>& ex) const
     return sym_arrow::function(*this, ex);
 }
 
-symbol identifier::indexed(const expr& x1) const
+symbol identifier::index(const identifier& t) const
 {
-    return sym_arrow::indexed(*this, x1);
+    return sym_arrow::make_symbol(*this, t);
 }
 
-symbol identifier::indexed(const expr& x1, const expr& x2) const
+symbol identifier::index(const expr& x1, const identifier& t) const
 {
-    return sym_arrow::indexed(*this, x1, x2);
+    return sym_arrow::make_symbol(*this, x1, t);
 }
 
-symbol identifier::indexed(std::initializer_list<expr> ex) const
+symbol identifier::index(const expr& x1, const expr& x2, const identifier& t) const
 {
-    return sym_arrow::indexed(*this, ex);
+    return sym_arrow::make_symbol(*this, x1, x2, t);
 }
 
-symbol identifier::indexed(const std::vector<expr>& ex) const
+symbol identifier::index(std::initializer_list<expr> ex, const identifier& t) const
 {
-    return sym_arrow::indexed(*this, ex);
+    return sym_arrow::make_symbol(*this, ex, t);
 }
 
+symbol identifier::index(const std::vector<expr>& ex, const identifier& t) const
+{
+    return sym_arrow::make_symbol(*this, ex, t);
+}
 
-symbol sym_arrow::indexed(const identifier& sym, const expr& arg1)
+symbol sym_arrow::make_symbol(const identifier& sym, const identifier& t)
+{
+    return sym_arrow::make_symbol(sym, nullptr, 0, t);
+};
+
+symbol sym_arrow::make_symbol(const identifier& sym, const expr& arg1, const identifier& t)
 {
     expr args[] = {arg1};
-    return sym_arrow::indexed(sym, args, 1);
+    return sym_arrow::make_symbol(sym, args, 1, t);
 };
 
-symbol sym_arrow::indexed(const identifier& sym, const expr& arg1, const expr& arg2)
+symbol sym_arrow::make_symbol(const identifier& sym, const expr& arg1, const expr& arg2,
+                        const identifier& t)
 {
     expr args[] = {arg1, arg2};
-    return sym_arrow::indexed(sym, args, 2);
+    return sym_arrow::make_symbol(sym, args, 2, t);
 };
 
-symbol sym_arrow::indexed(const identifier& sym, const std::vector<expr>& arg)
+symbol sym_arrow::make_symbol(const identifier& sym, const std::vector<expr>& arg, 
+                        const identifier& t)
 {
-    return sym_arrow::indexed(sym, arg.data(), arg.size());
+    return sym_arrow::make_symbol(sym, arg.data(), arg.size(), t);
 };
 
-symbol sym_arrow::indexed(const identifier& sym, std::initializer_list<expr> arg)
+symbol sym_arrow::make_symbol(const identifier& sym, std::initializer_list<expr> arg,
+                        const identifier& t)
 {
-    return sym_arrow::indexed(sym, arg.begin(), arg.size());
+    return sym_arrow::make_symbol(sym, arg.begin(), arg.size(), t);
 };
 
-symbol sym_arrow::indexed(const identifier& sym, const expr* arg, size_t n)
+symbol sym_arrow::make_symbol(const identifier& sym, const expr* arg, size_t n,
+                        const identifier& t)
 {
-    if (n == 0)
-        return symbol::from_identifier(sym);
-
     for (size_t i = 0; i < n; ++i)
         arg[i].cannonize(do_cse_default);
 
-    using info              = ast::indexed_symbol_info;
+    using info          = ast::indexed_symbol_info;
 
-    info f_info         = info(sym.get_ptr().get(), n, arg);
+    std::vector<identifier> def_args;
+    identifier t_def;
+
+    bool defined        = sd::sym_table_impl::get()->get_symbol_definition(sym, def_args, t_def);
+
+    if (defined == false)
+    {
+        if (n == 0)
+        {
+            sd::sym_table_impl::get()->define_symbol(sym, def_args, t);
+            t_def       = t;
+        }
+        else
+        {
+            se::sema_error().undefined_symbol(sym, n);
+        }
+    }
+    else
+    {
+        // check indices
+        if (def_args.size() != n)
+        {
+            error::sema_error().invalid_symbol_args(sym, n, def_args, t_def);
+        }
+        else
+        {
+            for (size_t i = 0; i < n; ++i)
+            {
+                identifier t_arg    = details::get_type(arg[i]);
+                bool match          = details::is_convertible(t_arg, def_args[i]);
+
+                if (match == false)
+                    error::sema_error().invalid_symbol_arg(sym, i, t_arg, def_args, t_def);
+            }
+        }
+    }
+    
+    identifier t_fin;
+
+    if (t.is_null() == true)
+        t_fin           = t_def;
+    else
+        t_fin           = t;
+    
+    info f_info         = info(sym.get_ptr().get(), n, arg, t_fin.get_ptr().get());
 
     ast::symbol_ptr ep  = ast::indexed_symbol_rep::make(f_info);
-    return symbol(ep);
+    symbol ret          = symbol(ep);
+
+    if (t_fin != t_def)
+        se::sema_error().invalid_explicit_symbol_type(sym, def_args, t_def, t);
+    
+    return ret;
 };
 
 
@@ -152,21 +215,17 @@ symbol::symbol(const char* name, size_t num_char)
     :m_expr()
 {
     ast::identifier_ptr n = ast::identifier_rep::make(ast::identifier_info(name, num_char));
-    m_expr = ast::indexed_symbol_rep::make(ast::indexed_symbol_info(n.get(), 0, nullptr));
-
-    if (num_char == 0 || name[0] == '$')
-        throw std::runtime_error("invalid symbol name");
+    m_expr = make_symbol(identifier(n)).get_ptr();
 };
 
-symbol symbol::from_identifier(const identifier& sym)
+identifier symbol::get_name() const
 {
-    ast::symbol_ptr ex = ast::indexed_symbol_rep::make(ast::indexed_symbol_info(sym.get_ptr().get(), 0, nullptr));
-    return symbol(ex);
-};
+    return identifier(get_ptr()->get_name());
+}
 
-const char* symbol::get_name() const
+identifier symbol::get_type() const
 {
-    return get_ptr()->get_name()->get_name();
+    return identifier(get_ptr()->get_type());
 }
 
 size_t symbol::size() const

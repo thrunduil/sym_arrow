@@ -77,6 +77,8 @@ class def_data_symbol : public def_data
     public:
         def_data_symbol(const std::vector<identifier>& args, const identifier& t);
         ~def_data_symbol();
+
+        void    get_def(std::vector<identifier>& args, identifier& t) const;
 };
 
 //----------------------------------------------------------------------
@@ -164,6 +166,10 @@ class symbol_map
 
         // return false if sym does not define a set
         bool                    get_set(const identifier& sym, set& s) const;
+
+        // return false if sym does not define a symbol
+        bool                    get_symbol(const identifier& sym, 
+                                    std::vector<identifier>& args, identifier& t) const;
 };
 
 //----------------------------------------------------------------------
@@ -223,6 +229,12 @@ class sym_table_impl
         // return a set defined by the symbol sym; return true if sym defines a
         // set, otherwise false is returned
         bool                    get_set_definition(const identifier& sym, set& def) const;
+
+        // return a symbol defined by the identifier sym; return true if sym defines a
+        // symbol, otherwise false is returned; if true is returned, then args contains
+        // index sets and t is defined type
+        bool                    get_symbol_definition(const identifier& sym, 
+                                    std::vector<identifier>& args, identifier& t) const;
 };
 
 }};

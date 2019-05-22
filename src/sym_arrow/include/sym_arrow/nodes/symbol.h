@@ -79,7 +79,7 @@ class SYM_ARROW_EXPORT identifier
         size_t              get_base_symbol_code() const;
 
     public:
-        // create function f[], where f is this symbol name
+        // create function f[], where f is this identifier name
         expr                operator()() const;
 
         // create function f[x1, x2, ...], where f is this symbol name
@@ -88,11 +88,16 @@ class SYM_ARROW_EXPORT identifier
         expr                operator()(std::initializer_list<expr> args) const;
         expr                operator()(const std::vector<expr>& args) const;
 
-        // create function f<x1, x2, ...>, where f is this symbol name
-        symbol              indexed(const expr& x1) const;
-        symbol              indexed(const expr& x1, const expr& x2) const;
-        symbol              indexed(std::initializer_list<expr> args) const;
-        symbol              indexed(const std::vector<expr>& args) const;
+        // create symbol f<x1, x2, ...> of type t, where f is this identifier name;
+        // if t is not initialized, then type is infered based on existing declarations
+        symbol              index(const identifier& t = identifier()) const;
+        symbol              index(const expr& x1, const identifier& t = identifier()) const;
+        symbol              index(const expr& x1, const expr& x2,
+                                const identifier& t = identifier()) const;
+        symbol              index(std::initializer_list<expr> args,
+                                const identifier& t = identifier()) const;
+        symbol              index(const std::vector<expr>& args,
+                                const identifier& t = identifier()) const;
 
     public:
         // create a symbol from internal representation; internal use only
@@ -143,8 +148,11 @@ class SYM_ARROW_EXPORT symbol
         // return true if this symbol is not initialized
         bool                is_null() const;
 
-        // null terminated pointer to name of this symbol
-        const char*         get_name() const;
+        // name of this symbol
+        identifier          get_name() const;
+
+        // type of this symbol; can be nullpr
+        identifier          get_type() const;
 
         // return number of indices
         size_t              size() const;
@@ -159,9 +167,6 @@ class SYM_ARROW_EXPORT symbol
         // return code of base symbol of this symbol; different 
         // base symbols have differrent codes
         size_t              get_base_symbol_code() const;
-
-        // convert an identifier to symbol
-        static symbol       from_identifier(const identifier& id);
 
     public:
         // create a symbol from internal representation; internal use only

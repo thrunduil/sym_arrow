@@ -28,6 +28,9 @@
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/functions/expr_functions.h"
 
+#include "sym_arrow/ast/ast.h"
+#include "sym_arrow/ast/symbol_context_data.h"
+
 #include <sstream>
 
 namespace sym_arrow { namespace details
@@ -56,7 +59,6 @@ class do_disp_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dis
         void eval(const ast::add_rep* h, std::ostream& os, int prec);
         void eval(const ast::mult_rep* h, std::ostream& os, int prec);
         void eval(const ast::function_rep* h, std::ostream& os, int prec);
-        void eval(const ast::index_rep* h, std::ostream& os, int prec);
 
         void disp_identifier(const ast::identifier_rep* h, std::ostream& os);
 
@@ -103,20 +105,29 @@ void do_disp_vis::eval(const ast::indexed_symbol_rep* h, std::ostream& os, int p
 
     size_t n = h->size();
 
-    if (n == 0)
-        return;
-
-    os << "<";
-    
-    visit(h->arg(0), os, prec_lowest);
-
-    for (size_t j = 1; j < n; ++j)
+    if (n > 0)
     {
-        os << ",";
-        visit(h->arg(j), os, prec_lowest);
+        os << "<";
+    
+        visit(h->arg(0), os, prec_lowest);
+
+        for (size_t j = 1; j < n; ++j)
+        {
+            os << ",";
+            visit(h->arg(j), os, prec_lowest);
+        };
+
+        os << ">";
     };
 
-    os << ">";
+    ast::identifier_handle t = h->get_type();
+    identifier t_default    = sym_dag::dag_context<ast::unique_nodes_tag>::get().get_context_data().default_id();
+
+    if (t && t_default.get_ptr().get() != t)
+    {
+        os << ":";
+        disp_identifier(t, os);
+    }
 };
 
 void do_disp_vis::disp_identifier(const ast::identifier_rep* h, std::ostream& os)
@@ -287,19 +298,6 @@ void do_disp_vis::eval(const ast::function_rep* h, std::ostream& os, int prec)
 
     os << "]";
 };
-
-void do_disp_vis::eval(const ast::index_rep* h, std::ostream& os, int prec)
-{
-    int this_prec   = prec_index;
-
-    add_paren(os, this_prec, prec, true);
-
-    visit(h->name(), os, this_prec);
-    os << ":";
-    disp_identifier(h->set_name(), os);
-
-    add_paren(os, this_prec, prec, false);
-}
 
 void do_disp_vis::disp_real_power(const value& h, std::ostream& os, int prec)
 {

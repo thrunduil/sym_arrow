@@ -96,11 +96,6 @@ struct dag_code_to_node<sym_arrow::ast::term_tag, (size_t)sym_arrow::ast::term_t
 {
     using type = sym_arrow::ast::function_rep;
 };
-template<>
-struct dag_code_to_node<sym_arrow::ast::term_tag, (size_t)sym_arrow::ast::term_types::index_rep>
-{
-    using type = sym_arrow::ast::index_rep;
-};
 
 // define mapping from type to code for term_tag
 template<>
@@ -139,11 +134,6 @@ template<>
 struct dag_node_to_code<sym_arrow::ast::term_tag, sym_arrow::ast::function_rep>
 {
     static const size_t code    = (size_t)sym_arrow::ast::term_types::function_rep;
-};
-template<>
-struct dag_node_to_code<sym_arrow::ast::term_tag, sym_arrow::ast::index_rep>
-{
-    static const size_t code    = (size_t)sym_arrow::ast::term_types::index_rep;
 };
 
 //-------------------------------------------------------------

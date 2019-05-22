@@ -79,9 +79,6 @@ expr SYM_ARROW_EXPORT   parse(const std::string& expression_string);
 //parse a definition
 void SYM_ARROW_EXPORT   parse_def(const std::string& def_string);
 
-//parse an index
-index SYM_ARROW_EXPORT  parse_index(const std::string& index_string);
-
 //parse a symbol
 symbol SYM_ARROW_EXPORT parse_sym(const std::string& sym_string);
 
@@ -184,12 +181,19 @@ expr SYM_ARROW_EXPORT   function(const identifier& sym, std::initializer_list<ex
 expr SYM_ARROW_EXPORT   function(const identifier& sym, const std::vector<expr>& args);
 expr SYM_ARROW_EXPORT   function(const identifier& sym, const expr* arg, size_t n);
 
-// make indexed symbol
-symbol SYM_ARROW_EXPORT indexed(const identifier& sym, const expr& a1);
-symbol SYM_ARROW_EXPORT indexed(const identifier& sym, const expr& a1, const expr& a2);
-symbol SYM_ARROW_EXPORT indexed(const identifier& sym, std::initializer_list<expr> args);
-symbol SYM_ARROW_EXPORT indexed(const identifier& sym, const std::vector<expr>& args);
-symbol SYM_ARROW_EXPORT indexed(const identifier& sym, const expr* arg, size_t n);
+// make symbol with name sym, indexers args and type t, if t is not
+// initialized, then type is infered based on existing declarations
+symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const identifier& t = identifier());
+symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const expr& a1,
+                            const identifier& t = identifier());
+symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const expr& a1, const expr& a2,
+                            const identifier& t = identifier());
+symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, std::initializer_list<expr> args,
+                            const identifier& t = identifier());
+symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const std::vector<expr>& args,
+                            const identifier& t = identifier());
+symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const expr* arg, size_t n,
+                            const identifier& t = identifier());
 
 // create an expression defined only when a condition is satisfied:
 //      cond == 1.0  => ex
@@ -221,7 +225,6 @@ SYM_ARROW_EXPORT const symbol&          cast_symbol(const expr& ex);
 SYM_ARROW_EXPORT const add_expr&        cast_add(const expr& ex);
 SYM_ARROW_EXPORT const mult_expr&       cast_mult(const expr& ex);
 SYM_ARROW_EXPORT const function_expr&   cast_function(const expr& ex);
-SYM_ARROW_EXPORT const index&           cast_index(const expr& ex);
 
 //----------------------------------------------------------------------
 //                        boolean functions

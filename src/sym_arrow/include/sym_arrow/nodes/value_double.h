@@ -41,7 +41,7 @@ namespace sym_arrow
 #pragma warning(push)
 #pragma warning(disable: 4251)  // needs to have dll-interface to be used by clients
 
-// floating point value represented using the symmetric level index representation
+// floating point value represented using floating point implementation
 class SYM_ARROW_EXPORT value
 {
     private:
