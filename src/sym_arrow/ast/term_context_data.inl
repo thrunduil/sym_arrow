@@ -51,12 +51,12 @@ inline size_t term_context_data::get_fresh_symbol_code()
     return m_reg_symbols->get_fresh_symbol_code(); 
 };
 
-inline void term_context_data::register_symbol(const indexed_symbol_rep* h)
+inline void term_context_data::register_symbol(const symbol_rep* h)
 {
     m_reg_symbols->register_sym(h); 
 };
 
-inline void term_context_data::unregister_symbol(const indexed_symbol_rep* h)
+inline void term_context_data::unregister_symbol(const symbol_rep* h)
 {
     m_reg_symbols->unregister_sym(h);
 };

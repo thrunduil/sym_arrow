@@ -82,7 +82,7 @@ class add_rep;
 class mult_rep;
 class function_rep;
 class scalar_rep;
-class indexed_symbol_rep;
+class symbol_rep;
 
 class item_collector_add;
 class item_collector_mult;
@@ -104,12 +104,12 @@ using expr_base             = sym_dag::dag_item_base<term_tag>;
 
 using expr_handle           = const expr_base*;
 using scalar_handle         = const scalar_rep*;
-using symbol_handle         = const indexed_symbol_rep*;
+using symbol_handle         = const symbol_rep*;
 using identifier_handle     = const identifier_rep*;
 
 using expr_ptr              = sym_dag::dag_ptr<expr_base, term_tag>;
 using scalar_ptr            = sym_dag::dag_ptr<scalar_rep, term_tag>;
-using symbol_ptr            = sym_dag::dag_ptr<indexed_symbol_rep, term_tag>;
+using symbol_ptr            = sym_dag::dag_ptr<symbol_rep, term_tag>;
 
 using identifier_ptr        = sym_dag::dag_ptr<identifier_rep, unique_nodes_tag>;
 using set_ptr               = sym_dag::dag_ptr<set_rep, unique_nodes_tag>;

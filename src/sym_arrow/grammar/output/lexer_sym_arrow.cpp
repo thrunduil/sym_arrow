@@ -32,6 +32,7 @@ lexer_sym_arrow::lexer_sym_arrow(antlr::pool_parser pool,const ANTLR_USE_NAMESPA
 void lexer_sym_arrow::initLiterals()
 {
 	literals["type"] = 5;
+	literals["const"] = 23;
 	literals["sym"] = 6;
 	literals["set"] = 4;
 }
@@ -836,11 +837,11 @@ void lexer_sym_arrow::mID(bool _createToken) {
 				matchRange('0','9');
 			}
 			else {
-				goto _loop80;
+				goto _loop81;
 			}
 			
 		}
-		_loop80:;
+		_loop81:;
 		} // ( ... )*
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
@@ -873,11 +874,11 @@ void lexer_sym_arrow::mWHITESPACE(bool _createToken) {
 				mNON_NEWLINE_WHITESPACE(false);
 			}
 			else {
-				goto _loop83;
+				goto _loop84;
 			}
 			
 		}
-		_loop83:;
+		_loop84:;
 		} // ( ... )*
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
@@ -1011,10 +1012,10 @@ void lexer_sym_arrow::mCOMMENT(bool _createToken) {
 	
 	try {      // for error handling
 		{
-		bool synPredMatched93 = false;
+		bool synPredMatched94 = false;
 		if (((LA(1) == 0x25 /* '%' */ ) && (LA(2) == 0x7b /* '{' */ ) && ((LA(3) >= 0x3 /* '\3' */  && LA(3) <= 0xff)))) {
-			int _m93 = mark();
-			synPredMatched93 = true;
+			int _m94 = mark();
+			synPredMatched94 = true;
 			inputState->guessing++;
 			try {
 				{
@@ -1023,12 +1024,12 @@ void lexer_sym_arrow::mCOMMENT(bool _createToken) {
 			}
 			catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& pe) {
 				(void) pe; /* suppress warnings about unreferenced var 'pe' */
-				synPredMatched93 = false;
+				synPredMatched94 = false;
 			}
-			rewind(_m93);
+			rewind(_m94);
 			inputState->guessing--;
 		}
-		if ( synPredMatched93 ) {
+		if ( synPredMatched94 ) {
 			mML_COMMENT(false);
 			if ( inputState->guessing==0 ) {
 				_ttype = ML_COMMENT;
@@ -1056,11 +1057,11 @@ void lexer_sym_arrow::mCOMMENT(bool _createToken) {
 					mNOT_NEWLINE(false);
 				}
 				else {
-					goto _loop96;
+					goto _loop97;
 				}
 				
 			}
-			_loop96:;
+			_loop97:;
 			} // ( ... )*
 			{
 			if ((LA(1) == 0xa /* '\n' */  || LA(1) == 0xd /* '\r' */ )) {
@@ -1108,10 +1109,10 @@ void lexer_sym_arrow::mML_COMMENT(bool _createToken) {
 		}
 		{ // ( ... )*
 		for (;;) {
-			bool synPredMatched103 = false;
+			bool synPredMatched104 = false;
 			if (((LA(1) == 0x22 /* '\"' */  || LA(1) == 0x60 /* '`' */ ) && (_tokenSet_3.member(LA(2))) && ((LA(3) >= 0x3 /* '\3' */  && LA(3) <= 0xff)))) {
-				int _m103 = mark();
-				synPredMatched103 = true;
+				int _m104 = mark();
+				synPredMatched104 = true;
 				inputState->guessing++;
 				try {
 					{
@@ -1129,12 +1130,12 @@ void lexer_sym_arrow::mML_COMMENT(bool _createToken) {
 				}
 				catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& pe) {
 					(void) pe; /* suppress warnings about unreferenced var 'pe' */
-					synPredMatched103 = false;
+					synPredMatched104 = false;
 				}
-				rewind(_m103);
+				rewind(_m104);
 				inputState->guessing--;
 			}
-			if ( synPredMatched103 ) {
+			if ( synPredMatched104 ) {
 				mSTRING_LITERAL(false);
 			}
 			else if (((LA(1) == 0x25 /* '%' */ ) && ((LA(2) >= 0x3 /* '\3' */  && LA(2) <= 0xff)) && ((LA(3) >= 0x3 /* '\3' */  && LA(3) <= 0xff)))&&( LA(2)!='}' && LA(2)!='{' )) {
@@ -1161,11 +1162,11 @@ void lexer_sym_arrow::mML_COMMENT(bool _createToken) {
 				mNEWLINE(false);
 			}
 			else {
-				goto _loop105;
+				goto _loop106;
 			}
 			
 		}
-		_loop105:;
+		_loop106:;
 		} // ( ... )*
 		match("%}");
 	}
@@ -1238,10 +1239,10 @@ void lexer_sym_arrow::mSTRING_LITERAL(bool _createToken) {
 	
 	try {      // for error handling
 		{
-		bool synPredMatched109 = false;
+		bool synPredMatched110 = false;
 		if (((LA(1) == 0x22 /* '\"' */ ))) {
-			int _m109 = mark();
-			synPredMatched109 = true;
+			int _m110 = mark();
+			synPredMatched110 = true;
 			inputState->guessing++;
 			try {
 				{
@@ -1252,12 +1253,12 @@ void lexer_sym_arrow::mSTRING_LITERAL(bool _createToken) {
 			}
 			catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& pe) {
 				(void) pe; /* suppress warnings about unreferenced var 'pe' */
-				synPredMatched109 = false;
+				synPredMatched110 = false;
 			}
-			rewind(_m109);
+			rewind(_m110);
 			inputState->guessing--;
 		}
-		if ( synPredMatched109 ) {
+		if ( synPredMatched110 ) {
 			mMULTILINE_STRING(false);
 			if ( inputState->guessing==0 ) {
 				_ttype = MULTILINE_STRING;
@@ -1273,11 +1274,11 @@ void lexer_sym_arrow::mSTRING_LITERAL(bool _createToken) {
 					}
 				}
 				else {
-					goto _loop112;
+					goto _loop113;
 				}
 				
 			}
-			_loop112:;
+			_loop113:;
 			} // ( ... )*
 			match('`' /* charlit */ );
 		}
@@ -1327,11 +1328,11 @@ void lexer_sym_arrow::mMULTILINE_STRING(bool _createToken) {
 				mNEWLINE(false);
 			}
 			else {
-				goto _loop117;
+				goto _loop118;
 			}
 			
 		}
-		_loop117:;
+		_loop118:;
 		} // ( ... )*
 		match('\"' /* charlit */ );
 		match('\"' /* charlit */ );
@@ -1367,11 +1368,11 @@ void lexer_sym_arrow::mCONTINUATION(bool _createToken) {
 				mNOT_NEWLINE(false);
 			}
 			else {
-				goto _loop120;
+				goto _loop121;
 			}
 			
 		}
-		_loop120:;
+		_loop121:;
 		} // ( ... )*
 		mNEWLINE(false);
 	}
@@ -1397,26 +1398,26 @@ void lexer_sym_arrow::mNUMBER(bool _createToken) {
 	ANTLR_USE_NAMESPACE(std)string::size_type _saveIndex;
 	
 	try {      // for error handling
-		bool synPredMatched126 = false;
+		bool synPredMatched127 = false;
 		if ((((LA(1) >= 0x30 /* '0' */  && LA(1) <= 0x39 /* '9' */ )) && (_tokenSet_7.member(LA(2))) && (_tokenSet_8.member(LA(3))))) {
-			int _m126 = mark();
-			synPredMatched126 = true;
+			int _m127 = mark();
+			synPredMatched127 = true;
 			inputState->guessing++;
 			try {
 				{
 				{ // ( ... )+
-				int _cnt124=0;
+				int _cnt125=0;
 				for (;;) {
 					if (((LA(1) >= 0x30 /* '0' */  && LA(1) <= 0x39 /* '9' */ ))) {
 						mDIGIT(false);
 					}
 					else {
-						if ( _cnt124>=1 ) { goto _loop124; } else {throw ANTLR_USE_NAMESPACE(antlr)NoViableAltForCharException(LA(1), getFilename(), getLine(), getColumn());}
+						if ( _cnt125>=1 ) { goto _loop125; } else {throw ANTLR_USE_NAMESPACE(antlr)NoViableAltForCharException(LA(1), getFilename(), getLine(), getColumn());}
 					}
 					
-					_cnt124++;
+					_cnt125++;
 				}
-				_loop124:;
+				_loop125:;
 				}  // ( ... )+
 				{
 				if ((LA(1) == 0x2e /* '.' */ )) {
@@ -1438,42 +1439,42 @@ void lexer_sym_arrow::mNUMBER(bool _createToken) {
 			}
 			catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& pe) {
 				(void) pe; /* suppress warnings about unreferenced var 'pe' */
-				synPredMatched126 = false;
+				synPredMatched127 = false;
 			}
-			rewind(_m126);
+			rewind(_m127);
 			inputState->guessing--;
 		}
-		if ( synPredMatched126 ) {
+		if ( synPredMatched127 ) {
 			{ // ( ... )+
-			int _cnt128=0;
+			int _cnt129=0;
 			for (;;) {
 				if (((LA(1) >= 0x30 /* '0' */  && LA(1) <= 0x39 /* '9' */ ))) {
 					mDIGIT(false);
 				}
 				else {
-					if ( _cnt128>=1 ) { goto _loop128; } else {throw ANTLR_USE_NAMESPACE(antlr)NoViableAltForCharException(LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt129>=1 ) { goto _loop129; } else {throw ANTLR_USE_NAMESPACE(antlr)NoViableAltForCharException(LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt128++;
+				_cnt129++;
 			}
-			_loop128:;
+			_loop129:;
 			}  // ( ... )+
 			{
 			if ((LA(1) == 0x2e /* '.' */ )) {
 				match('.' /* charlit */ );
 				{ // ( ... )+
-				int _cnt131=0;
+				int _cnt132=0;
 				for (;;) {
 					if (((LA(1) >= 0x30 /* '0' */  && LA(1) <= 0x39 /* '9' */ ))) {
 						mDIGIT(false);
 					}
 					else {
-						if ( _cnt131>=1 ) { goto _loop131; } else {throw ANTLR_USE_NAMESPACE(antlr)NoViableAltForCharException(LA(1), getFilename(), getLine(), getColumn());}
+						if ( _cnt132>=1 ) { goto _loop132; } else {throw ANTLR_USE_NAMESPACE(antlr)NoViableAltForCharException(LA(1), getFilename(), getLine(), getColumn());}
 					}
 					
-					_cnt131++;
+					_cnt132++;
 				}
-				_loop131:;
+				_loop132:;
 				}  // ( ... )+
 				{
 				if ((LA(1) == 0x45 /* 'E' */  || LA(1) == 0x65 /* 'e' */ )) {
@@ -1494,10 +1495,10 @@ void lexer_sym_arrow::mNUMBER(bool _createToken) {
 			}
 		}
 		else {
-			bool synPredMatched134 = false;
+			bool synPredMatched135 = false;
 			if (((LA(1) == 0x2e /* '.' */ ) && (LA(2) == 0x2e /* '.' */ ) && (LA(3) == 0x2e /* '.' */ ))) {
-				int _m134 = mark();
-				synPredMatched134 = true;
+				int _m135 = mark();
+				synPredMatched135 = true;
 				inputState->guessing++;
 				try {
 					{
@@ -1506,22 +1507,22 @@ void lexer_sym_arrow::mNUMBER(bool _createToken) {
 				}
 				catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& pe) {
 					(void) pe; /* suppress warnings about unreferenced var 'pe' */
-					synPredMatched134 = false;
+					synPredMatched135 = false;
 				}
-				rewind(_m134);
+				rewind(_m135);
 				inputState->guessing--;
 			}
-			if ( synPredMatched134 ) {
+			if ( synPredMatched135 ) {
 				mCONTINUATION(false);
 				if ( inputState->guessing==0 ) {
 					_ttype = CONTINUATION;
 				}
 			}
 			else {
-				bool synPredMatched136 = false;
+				bool synPredMatched137 = false;
 				if (((LA(1) == 0x2e /* '.' */ ) && (LA(2) == 0x2e /* '.' */ ) && (true))) {
-					int _m136 = mark();
-					synPredMatched136 = true;
+					int _m137 = mark();
+					synPredMatched137 = true;
 					inputState->guessing++;
 					try {
 						{
@@ -1530,12 +1531,12 @@ void lexer_sym_arrow::mNUMBER(bool _createToken) {
 					}
 					catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& pe) {
 						(void) pe; /* suppress warnings about unreferenced var 'pe' */
-						synPredMatched136 = false;
+						synPredMatched137 = false;
 					}
-					rewind(_m136);
+					rewind(_m137);
 					inputState->guessing--;
 				}
-				if ( synPredMatched136 ) {
+				if ( synPredMatched137 ) {
 					match("..");
 					if ( inputState->guessing==0 ) {
 						_ttype = DDOT;
@@ -1549,18 +1550,18 @@ void lexer_sym_arrow::mNUMBER(bool _createToken) {
 					{
 					if (((LA(1) >= 0x30 /* '0' */  && LA(1) <= 0x39 /* '9' */ ))) {
 						{ // ( ... )+
-						int _cnt139=0;
+						int _cnt140=0;
 						for (;;) {
 							if (((LA(1) >= 0x30 /* '0' */  && LA(1) <= 0x39 /* '9' */ ))) {
 								mDIGIT(false);
 							}
 							else {
-								if ( _cnt139>=1 ) { goto _loop139; } else {throw ANTLR_USE_NAMESPACE(antlr)NoViableAltForCharException(LA(1), getFilename(), getLine(), getColumn());}
+								if ( _cnt140>=1 ) { goto _loop140; } else {throw ANTLR_USE_NAMESPACE(antlr)NoViableAltForCharException(LA(1), getFilename(), getLine(), getColumn());}
 							}
 							
-							_cnt139++;
+							_cnt140++;
 						}
-						_loop139:;
+						_loop140:;
 						}  // ( ... )+
 						{
 						if ((LA(1) == 0x45 /* 'E' */  || LA(1) == 0x65 /* 'e' */ )) {
@@ -1587,11 +1588,11 @@ void lexer_sym_arrow::mNUMBER(bool _createToken) {
 							mDIGIT(false);
 						}
 						else {
-							goto _loop142;
+							goto _loop143;
 						}
 						
 					}
-					_loop142:;
+					_loop143:;
 					} // ( ... )*
 					if ( inputState->guessing==0 ) {
 						_ttype = INT;
@@ -1675,18 +1676,18 @@ void lexer_sym_arrow::mEXPONENT(bool _createToken) {
 		
 		}
 		{ // ( ... )+
-		int _cnt148=0;
+		int _cnt149=0;
 		for (;;) {
 			if (((LA(1) >= 0x30 /* '0' */  && LA(1) <= 0x39 /* '9' */ ))) {
 				mDIGIT(false);
 			}
 			else {
-				if ( _cnt148>=1 ) { goto _loop148; } else {throw ANTLR_USE_NAMESPACE(antlr)NoViableAltForCharException(LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt149>=1 ) { goto _loop149; } else {throw ANTLR_USE_NAMESPACE(antlr)NoViableAltForCharException(LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt148++;
+			_cnt149++;
 		}
-		_loop148:;
+		_loop149:;
 		}  // ( ... )+
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
@@ -1829,31 +1830,31 @@ const ANTLR_USE_NAMESPACE(antlr)BitSet lexer_sym_arrow::_tokenSet_1(_tokenSet_1_
 const unsigned long lexer_sym_arrow::_tokenSet_2_data_[] = { 4294967288UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL };
 // 0x3 0x4 0x5 0x6 0x7 0x8 0x9 0xa 0xb 0xc 0xd 0xe 0xf 0x10 0x11 0x12 0x13 
 // 0x14 0x15 0x16 0x17 0x18 0x19 0x1a 0x1b 0x1c 0x1d 0x1e 0x1f   ! \" # 
-// $ % & \' ( ) * + , 
+// $ % & \' ( ) * + , - 
 const ANTLR_USE_NAMESPACE(antlr)BitSet lexer_sym_arrow::_tokenSet_2(_tokenSet_2_data_,16);
 const unsigned long lexer_sym_arrow::_tokenSet_3_data_[] = { 4294958072UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL };
 // 0x3 0x4 0x5 0x6 0x7 0x8 0x9 0xb 0xc 0xe 0xf 0x10 0x11 0x12 0x13 0x14 
 // 0x15 0x16 0x17 0x18 0x19 0x1a 0x1b 0x1c 0x1d 0x1e 0x1f   ! \" # $ % 
-// & \' ( ) * + , 
+// & \' ( ) * + , - 
 const ANTLR_USE_NAMESPACE(antlr)BitSet lexer_sym_arrow::_tokenSet_3(_tokenSet_3_data_,16);
 const unsigned long lexer_sym_arrow::_tokenSet_4_data_[] = { 4294958072UL, 4294967263UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL };
 // 0x3 0x4 0x5 0x6 0x7 0x8 0x9 0xb 0xc 0xe 0xf 0x10 0x11 0x12 0x13 0x14 
 // 0x15 0x16 0x17 0x18 0x19 0x1a 0x1b 0x1c 0x1d 0x1e 0x1f   ! \" # $ & 
-// \' ( ) * + , 
+// \' ( ) * + , - 
 const ANTLR_USE_NAMESPACE(antlr)BitSet lexer_sym_arrow::_tokenSet_4(_tokenSet_4_data_,16);
 const unsigned long lexer_sym_arrow::_tokenSet_5_data_[] = { 4294958072UL, 4294967295UL, 4294967295UL, 4294967294UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL };
 // 0x3 0x4 0x5 0x6 0x7 0x8 0x9 0xb 0xc 0xe 0xf 0x10 0x11 0x12 0x13 0x14 
 // 0x15 0x16 0x17 0x18 0x19 0x1a 0x1b 0x1c 0x1d 0x1e 0x1f   ! \" # $ % 
-// & \' ( ) * + , 
+// & \' ( ) * + , - 
 const ANTLR_USE_NAMESPACE(antlr)BitSet lexer_sym_arrow::_tokenSet_5(_tokenSet_5_data_,16);
 const unsigned long lexer_sym_arrow::_tokenSet_6_data_[] = { 4294958072UL, 4294967291UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 4294967295UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL };
 // 0x3 0x4 0x5 0x6 0x7 0x8 0x9 0xb 0xc 0xe 0xf 0x10 0x11 0x12 0x13 0x14 
 // 0x15 0x16 0x17 0x18 0x19 0x1a 0x1b 0x1c 0x1d 0x1e 0x1f   ! # $ % & \' 
-// ( ) * + , 
+// ( ) * + , - 
 const ANTLR_USE_NAMESPACE(antlr)BitSet lexer_sym_arrow::_tokenSet_6(_tokenSet_6_data_,16);
 const unsigned long lexer_sym_arrow::_tokenSet_7_data_[] = { 0UL, 67059712UL, 32UL, 32UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL };
 const ANTLR_USE_NAMESPACE(antlr)BitSet lexer_sym_arrow::_tokenSet_7(_tokenSet_7_data_,10);
 const unsigned long lexer_sym_arrow::_tokenSet_8_data_[] = { 0UL, 67069952UL, 32UL, 32UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL };
-// + 
+// + - 
 const ANTLR_USE_NAMESPACE(antlr)BitSet lexer_sym_arrow::_tokenSet_8(_tokenSet_8_data_,10);
 

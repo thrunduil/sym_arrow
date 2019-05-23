@@ -61,5 +61,12 @@ void SYM_ARROW_EXPORT   taylor_coef(const expr& ex, const symbol& x, const expr&
 void SYM_ARROW_EXPORT   taylor_coef(const expr& ex, const symbol& x, const value& x0,
                             int order, std::vector<expr>& coef);
 
+
+// function evaluates to 1 if expressions x and y are equal as expressions
+// and to 0 is x and y are constant (cannot change after substitution) and 
+// different; notice the difference to bool_eq function, which evaluates to
+// value only when both x and y evaluates to value
+expr SYM_ARROW_EXPORT   delta(const expr& x, const expr& y);
+
 };
 

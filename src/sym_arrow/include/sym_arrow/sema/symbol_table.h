@@ -63,7 +63,7 @@ class SYM_ARROW_EXPORT sym_table
         // function, if type name t is not initialized, then sym has
         // default type
         void                define_symbol(const identifier& sym, const std::vector<identifier>& args,
-                                const identifier& t);
+                                const identifier& t, bool is_const);
 
     public:
         // return true is symbol sym defines a set

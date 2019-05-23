@@ -68,6 +68,7 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\config.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\details\dag_traits.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\exception.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\constructor_functions.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\contexts.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\expr_functions.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\global_context_initializers.h" />
@@ -126,9 +127,9 @@
     <ClCompile Include="..\..\src\sym_arrow\error\error_formatter.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\error\exception.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\error\sema_error.cpp" />
-    <ClCompile Include="..\..\src\sym_arrow\func\boolean.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\check_rep.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\compound.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\constructor_functions.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\contexts.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\diff.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\diff_hash.cpp" />
@@ -136,8 +137,9 @@
     <ClCompile Include="..\..\src\sym_arrow\func\eval.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\expr_cast.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\exp_log.cpp" />
-    <ClCompile Include="..\..\src\sym_arrow\func\function.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\func_names.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\lib\boolean.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\func\lib\special.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\mult_div_pow.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\parse.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\func\plus_minus.cpp" />

@@ -40,7 +40,7 @@ auto expr_visitor<Derived>::visit(const expr& ex, Args&& ... args)
     {
         case ast::term_types::scalar:
             return d->eval(cast_scalar(ex), std::forward<Args>(args)...);
-        case ast::term_types::indexed_symbol:
+        case ast::term_types::symbol:
             return d->eval(cast_symbol(ex), std::forward<Args>(args)...);
         case ast::term_types::add_rep:
             return d->eval(cast_add(ex), std::forward<Args>(args)...);

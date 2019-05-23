@@ -74,14 +74,15 @@ bool identifier_rep::equal(const identifier_info& info) const
 };
 
 //----------------------------------------------------------------------
-//                          indexed_symbol_rep
+//                          symbol_rep
 //----------------------------------------------------------------------
 
-indexed_symbol_rep::indexed_symbol_rep(const indexed_symbol_info& pi)
+symbol_rep::symbol_rep(const symbol_info& pi)
     :base_type(this), m_hash(pi.m_hash)
     , m_size(pi.m_size), m_expr(nullptr), m_name(identifier_ptr::from_this(pi.m_name))
     , m_code(context_type::get().get_context_data().get_fresh_symbol_code())
     , m_type(identifier_ptr::from_this(pi.m_type))
+    , m_is_const(pi.m_is_const)
 {
     context_type::get().get_context_data().register_symbol(this);
 
@@ -109,7 +110,7 @@ indexed_symbol_rep::indexed_symbol_rep(const indexed_symbol_info& pi)
     }
 };
 
-indexed_symbol_rep::~indexed_symbol_rep()
+symbol_rep::~symbol_rep()
 {
     context_type::get().get_context_data().unregister_symbol(this);
 
@@ -125,7 +126,7 @@ indexed_symbol_rep::~indexed_symbol_rep()
     c.free(m_expr, m_size * sizeof(expr_ptr));
 };
 
-bool indexed_symbol_rep::equal(const indexed_symbol_info& pi) const
+bool symbol_rep::equal(const symbol_info& pi) const
 {
     size_t elem_size = size();
 
@@ -144,7 +145,7 @@ bool indexed_symbol_rep::equal(const indexed_symbol_info& pi) const
     return true;
 };
 
-size_t indexed_symbol_rep::eval_hash(const indexed_symbol_info& pi)
+size_t symbol_rep::eval_hash(const symbol_info& pi)
 {
     if (pi.m_hash != 0)
         return pi.m_hash;
@@ -158,7 +159,7 @@ size_t indexed_symbol_rep::eval_hash(const indexed_symbol_info& pi)
     return seed;
 };
 
-void indexed_symbol_rep::release(stack_type& st)
+void symbol_rep::release(stack_type& st)
 {
     for (size_t i = 0; i < m_size; ++i)
         st.push_back(m_expr[i].release());

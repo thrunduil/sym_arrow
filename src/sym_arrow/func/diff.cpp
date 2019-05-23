@@ -34,6 +34,7 @@
 
 #include "sym_arrow/error/error_formatter.h"
 #include "sym_arrow/functions/expr_functions.h"
+#include "sym_arrow/functions/constructor_functions.h"
 #include "sym_arrow/func/func_names.h"
 #include "sym_arrow/sema/typing.h"
 
@@ -63,7 +64,7 @@ class do_diff_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dif
         expr eval(const Node* ast, const symbol& sym);
 
         expr eval(const ast::scalar_rep* h, const symbol& sym);
-        expr eval(const ast::indexed_symbol_rep* h, const symbol& sym);
+        expr eval(const ast::symbol_rep* h, const symbol& sym);
         expr eval(const ast::add_build* h, const symbol& sym);
         expr eval(const ast::mult_build* h, const symbol& sym);
         expr eval(const ast::add_rep* h, const symbol& sym);
@@ -75,8 +76,6 @@ class do_diff_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dif
                 size_t n_args, const symbol& sym);
         void error_diff_rule_not_defined(const identifier& func_name, size_t n_args, 
                 size_t arg);
-
-        expr make_delta(const ast::expr_handle h1, const ast::expr_handle h2);
 };
 
 do_diff_vis::do_diff_vis(const diff_context& dc)
@@ -95,7 +94,7 @@ expr do_diff_vis::eval(const ast::scalar_rep* h, const symbol&)
     return ast::scalar_rep::make_zero();
 };
 
-expr do_diff_vis::eval(const ast::indexed_symbol_rep* h, const symbol& sym)
+expr do_diff_vis::eval(const ast::symbol_rep* h, const symbol& sym)
 {
     if (h->get_base_symbol_code() != sym.get_base_symbol_code())
         return ast::scalar_rep::make_zero();
@@ -119,13 +118,17 @@ expr do_diff_vis::eval(const ast::indexed_symbol_rep* h, const symbol& sym)
         if (h1 == h2)
             continue;
 
-        bool is_const1      = is_constant(expr(h1));
-        bool is_const2      = is_constant(expr(h2));
+        expr d              = delta(expr(h1), expr(h2));
 
-        if (is_const1 == true && is_const2 == true)
-            return ast::scalar_rep::make_zero();
+        if (d.get_ptr()->isa<sa::scalar_rep>() == true)
+        {
+            scalar ds       = cast_scalar(d);
 
-        ret                 = std::move(ret) * make_delta(h1, h2);
+            if (ds.get_value().is_zero() == true)
+                return ds;
+        }
+
+        ret                 = std::move(ret) * std::move(d);
     };
 
     return ret;
@@ -496,11 +499,6 @@ void do_diff_vis::error_diff_rule_not_defined(const identifier& func_name, size_
 
     throw std::runtime_error(ef.str());
 };
-
-expr do_diff_vis::make_delta(const ast::expr_handle h1, const ast::expr_handle h2)
-{
-    return function(details::func_name::delta(), expr(h1), expr(h2));
-}
 
 }};
 

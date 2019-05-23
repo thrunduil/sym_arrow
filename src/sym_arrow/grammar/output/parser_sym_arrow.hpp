@@ -50,7 +50,7 @@ public:
 	public: identifier  sym_name();
 	public: set  set_initializer();
 	public: void symbol_postfix_def(
-		std::vector<identifier>& args, identifier& t
+		std::vector<identifier>& args, identifier& t, bool& is_const
 	);
 	public: set  set_literal();
 	public: expr  addExpr();
@@ -67,10 +67,12 @@ public:
 		std::vector<expr>& args
 	);
 	public: void index_postfix(
-		std::vector<expr>& args, identifier& t
+		std::vector<expr>& args, identifier& t, bool& is_const
 	);
 	public: symbol  symbol_def();
-	public: identifier  type_postfix();
+	public: void type_postfix(
+		identifier& y, bool& is_const
+	);
 	public: expr  atom_number();
 	public: int  atom_int();
 public:
@@ -84,10 +86,10 @@ protected:
 private:
 	static const char* tokenNames[];
 #ifndef NO_STATIC_CONSTS
-	static const int NUM_TOKENS = 45;
+	static const int NUM_TOKENS = 46;
 #else
 	enum {
-		NUM_TOKENS = 45
+		NUM_TOKENS = 46
 	};
 #endif
 	

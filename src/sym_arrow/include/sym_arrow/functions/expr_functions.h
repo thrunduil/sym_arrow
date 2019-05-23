@@ -27,6 +27,25 @@
 namespace sym_arrow
 {
 
+// set/get precision used to display values; when precision is negative, then
+// values will be displayed with precision allowing to read it back exactly
+// (assuming that the input and output variables are represented with the same
+// precision); when precision is zero, then values will be displayed according
+// to the format of the output steam; when precision is positive, then values 
+// will be displayed with specified number of significant digits
+int SYM_ARROW_EXPORT    get_disp_precision();
+void SYM_ARROW_EXPORT   set_disp_precision(int prec);
+
+// set/get default precision (in bits) used to represent floating point numbers, 
+// for example precision used to represent double precision values is 53; these 
+// functions have effect only when SYM_ARROW_VALUE_TYPE == SYM_ARROW_VALUE_MP
+int SYM_ARROW_EXPORT    get_default_precision();
+void SYM_ARROW_EXPORT   set_default_precision(int prec);
+
+//----------------------------------------------------------------------
+//                        IO functions
+//----------------------------------------------------------------------
+
 // display expression on a stream; add new line at the end if 
 // add_newline = true; expression is cannonized
 void SYM_ARROW_EXPORT   disp(std::ostream& os, const expr& ex, 
@@ -50,21 +69,6 @@ void SYM_ARROW_EXPORT   disp(const identifier& ex, bool add_newline = true);
 void SYM_ARROW_EXPORT   disp_nocannonize(std::ostream& os, const expr& ex, 
                             bool add_newline = true);
 
-// set/get precision used to display values; when precision is negative, then
-// values will be displayed with precision allowing to read it back exactly
-// (assuming that the input and output variables are represented with the same
-// precision); when precision is zero, then values will be displayed according
-// to the format of the output steam; when precision is positive, then values 
-// will be displayed with specified number of significant digits
-int SYM_ARROW_EXPORT    get_disp_precision();
-void SYM_ARROW_EXPORT   set_disp_precision(int prec);
-
-// set/get default precision (in bits) used to represent floating point numbers, 
-// for example precision used to represent double precision values is 53; these 
-// functions have effect only when SYM_ARROW_VALUE_TYPE == SYM_ARROW_VALUE_MP
-int SYM_ARROW_EXPORT    get_default_precision();
-void SYM_ARROW_EXPORT   set_default_precision(int prec);
-
 // convert expression to a string; expression is cannonized
 std::string SYM_ARROW_EXPORT 
                         to_string(const expr& ex);
@@ -73,35 +77,9 @@ std::string SYM_ARROW_EXPORT
 std::string SYM_ARROW_EXPORT 
                         to_string(const identifier& ex);
 
-// create expression for a string representation
-expr SYM_ARROW_EXPORT   parse(const std::string& expression_string);
-
-//parse a definition
-void SYM_ARROW_EXPORT   parse_def(const std::string& def_string);
-
-//parse a symbol
-symbol SYM_ARROW_EXPORT parse_sym(const std::string& sym_string);
-
-// check internal representation; for debug purpose only
-bool SYM_ARROW_EXPORT   check_expression(const expr& ex);
-
-// calculate hash value; expression ex is not cannonized
-size_t SYM_ARROW_EXPORT hash_value(const expr& ex);
-
-// calculate hash value
-size_t SYM_ARROW_EXPORT hash_value(const identifier& ex);
-
-// return true in an expression contains a symbol sym;
-// expression ex is cannonized first
-bool SYM_ARROW_EXPORT   contain_symbol(const expr& ex, const symbol& sym);
-
-// return true in an expression contains any of symbol syms;
-// expression ex is cannonized first
-bool SYM_ARROW_EXPORT   contain_any(const expr& ex, const std::vector<symbol>& syms);
-
-// return true in an expression contains all of symbol syms;
-// expression ex is cannonized first
-bool SYM_ARROW_EXPORT   contain_all(const expr& ex, const std::vector<symbol>& syms);        
+//----------------------------------------------------------------------
+//                        arithmetic functions
+//----------------------------------------------------------------------
 
 // addition
 expr SYM_ARROW_EXPORT   operator+(const expr& a, const expr& b);
@@ -173,40 +151,9 @@ expr SYM_ARROW_EXPORT   log(expr&& a);
 expr SYM_ARROW_EXPORT   abs(const expr& a);
 expr SYM_ARROW_EXPORT   abs(expr&& a);
 
-// make function 
-expr SYM_ARROW_EXPORT   function(const identifier& sym);
-expr SYM_ARROW_EXPORT   function(const identifier& sym, const expr& a1);
-expr SYM_ARROW_EXPORT   function(const identifier& sym, const expr& a1, const expr& a2);
-expr SYM_ARROW_EXPORT   function(const identifier& sym, std::initializer_list<expr> args);
-expr SYM_ARROW_EXPORT   function(const identifier& sym, const std::vector<expr>& args);
-expr SYM_ARROW_EXPORT   function(const identifier& sym, const expr* arg, size_t n);
-
-// make symbol with name sym, indexers args and type t, if t is not
-// initialized, then type is infered based on existing declarations
-symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const identifier& t = identifier());
-symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const expr& a1,
-                            const identifier& t = identifier());
-symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const expr& a1, const expr& a2,
-                            const identifier& t = identifier());
-symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, std::initializer_list<expr> args,
-                            const identifier& t = identifier());
-symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const std::vector<expr>& args,
-                            const identifier& t = identifier());
-symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const expr* arg, size_t n,
-                            const identifier& t = identifier());
-
-// create an expression defined only when a condition is satisfied:
-//      cond == 1.0  => ex
-//      cond != 1.0  => NaN
-// where cond is en expression which evaluetes to 1 or 0
-expr SYM_ARROW_EXPORT   if_then(const expr& cond, const expr& ex);
-
-// create a conditional expression defined as:
-//      cond == 1.0  => ex_true
-//      cond != 1.0  => ex_false
-// where cond is en expression which evaluetes to 1 or 0
-expr SYM_ARROW_EXPORT   if_then_else(const expr& cond, const expr& ex_true, 
-                            const expr& ex_false);
+//----------------------------------------------------------------------
+//                        comparison functions
+//----------------------------------------------------------------------
 
 // comparison function based on addresses of pointers
 bool SYM_ARROW_EXPORT   operator<(const expr& s1, const expr& s2);
@@ -216,19 +163,12 @@ bool SYM_ARROW_EXPORT   operator>=(const expr& s1, const expr& s2);
 bool SYM_ARROW_EXPORT   operator==(const expr& s1, const expr& s2);
 bool SYM_ARROW_EXPORT   operator!=(const expr& s1, const expr& s2);
 
-// return expression type code
-SYM_ARROW_EXPORT ast::term_types     get_expression_type(const expr& ex);
-
-// cast functions; expression must has valid type
-SYM_ARROW_EXPORT const scalar&          cast_scalar(const expr& ex);
-SYM_ARROW_EXPORT const symbol&          cast_symbol(const expr& ex);
-SYM_ARROW_EXPORT const add_expr&        cast_add(const expr& ex);
-SYM_ARROW_EXPORT const mult_expr&       cast_mult(const expr& ex);
-SYM_ARROW_EXPORT const function_expr&   cast_function(const expr& ex);
-
 //----------------------------------------------------------------------
 //                        boolean functions
 //----------------------------------------------------------------------
+
+// boolean functions are reduced to values, when all arguments are 
+// reduced to values
 
 // return expression that evaluates to 1 if x == y and to 0 otherwise
 expr SYM_ARROW_EXPORT   bool_eq(const expr& x, const expr& y);
@@ -267,6 +207,56 @@ expr SYM_ARROW_EXPORT   bool_andnot(const expr& x, const expr& y);
 // return expression that evaluates to 1 if !(x == 1) 
 // and to 0 otherwise
 expr SYM_ARROW_EXPORT   bool_not(const expr& x);
+
+// create an expression defined only when a condition is satisfied:
+//      cond == 1.0  => ex
+//      cond != 1.0  => NaN
+// where cond is en expression which evaluetes to 1 or 0
+// simplification is performed, when cond is a value
+expr SYM_ARROW_EXPORT   if_then(const expr& cond, const expr& ex);
+
+// create a conditional expression defined as:
+//      cond == 1.0  => ex_true
+//      cond != 1.0  => ex_false
+// where cond is en expression which evaluetes to 1 or 0
+// evaluation is performed, when cond is a value
+expr SYM_ARROW_EXPORT   if_then_else(const expr& cond, const expr& ex_true, 
+                            const expr& ex_false);
+
+//----------------------------------------------------------------------
+//                   internal representation
+//----------------------------------------------------------------------
+
+// check internal representation; for debug purpose only
+bool SYM_ARROW_EXPORT   check_expression(const expr& ex);
+
+// calculate hash value; expression ex is not cannonized
+size_t SYM_ARROW_EXPORT hash_value(const expr& ex);
+
+// calculate hash value
+size_t SYM_ARROW_EXPORT hash_value(const identifier& ex);
+
+// return true in an expression contains a symbol sym;
+// expression ex is cannonized first
+bool SYM_ARROW_EXPORT   contain_symbol(const expr& ex, const symbol& sym);
+
+// return true in an expression contains any of symbol syms;
+// expression ex is cannonized first
+bool SYM_ARROW_EXPORT   contain_any(const expr& ex, const std::vector<symbol>& syms);
+
+// return true in an expression contains all of symbol syms;
+// expression ex is cannonized first
+bool SYM_ARROW_EXPORT   contain_all(const expr& ex, const std::vector<symbol>& syms);        
+
+// return expression type code
+SYM_ARROW_EXPORT ast::term_types        get_expression_type(const expr& ex);
+
+// cast functions; expression must has valid type
+SYM_ARROW_EXPORT const scalar&          cast_scalar(const expr& ex);
+SYM_ARROW_EXPORT const symbol&          cast_symbol(const expr& ex);
+SYM_ARROW_EXPORT const add_expr&        cast_add(const expr& ex);
+SYM_ARROW_EXPORT const mult_expr&       cast_mult(const expr& ex);
+SYM_ARROW_EXPORT const function_expr&   cast_function(const expr& ex);
 
 };
 

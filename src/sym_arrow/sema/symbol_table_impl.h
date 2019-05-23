@@ -34,7 +34,7 @@ namespace sym_arrow { namespace details
 
 enum class symbol_kind
 {
-    set, type, indexed_symbol
+    set, type, symbol
 };
 
 class def_data
@@ -73,12 +73,15 @@ class def_data_symbol : public def_data
     private:
         std::vector<identifier> m_args;
         identifier              m_type;
+        bool                    m_is_const;
 
     public:
-        def_data_symbol(const std::vector<identifier>& args, const identifier& t);
+        def_data_symbol(const std::vector<identifier>& args, const identifier& t,
+                bool is_const);
+
         ~def_data_symbol();
 
-        void    get_def(std::vector<identifier>& args, identifier& t) const;
+        void    get_def(std::vector<identifier>& args, identifier& t, bool& is_const) const;
 };
 
 //----------------------------------------------------------------------
@@ -169,7 +172,8 @@ class symbol_map
 
         // return false if sym does not define a symbol
         bool                    get_symbol(const identifier& sym, 
-                                    std::vector<identifier>& args, identifier& t) const;
+                                    std::vector<identifier>& args, identifier& t,
+                                    bool& is_const) const;
 };
 
 //----------------------------------------------------------------------
@@ -217,7 +221,8 @@ class sym_table_impl
         // function, if type name t is not initialized, then sym has
         // default type
         void                    define_symbol(const identifier& sym, 
-                                    const std::vector<identifier>& args, const identifier& t);
+                                    const std::vector<identifier>& args, const identifier& t,
+                                    bool is_const);
 
     public:
         // return true is symbol sym defines a set
@@ -234,7 +239,8 @@ class sym_table_impl
         // symbol, otherwise false is returned; if true is returned, then args contains
         // index sets and t is defined type
         bool                    get_symbol_definition(const identifier& sym, 
-                                    std::vector<identifier>& args, identifier& t) const;
+                                    std::vector<identifier>& args, identifier& t, 
+                                    bool& is_const) const;
 };
 
 }};

@@ -149,6 +149,8 @@ void parser_sym_arrow::type_def() {
 void parser_sym_arrow::sym_def() {
 	
 	identifier sym;
+	bool is_const = false;
+	
 	std::vector<identifier> args;
 	identifier t;
 	
@@ -156,9 +158,9 @@ void parser_sym_arrow::sym_def() {
 	try {      // for error handling
 		match(SYM);
 		sym=sym_name();
-		symbol_postfix_def(args, t);
+		symbol_postfix_def(args, t, is_const);
 		if ( inputState->guessing==0 ) {
-			def_sym(sym, args, t);
+			def_sym(sym, args, t, is_const);
 		}
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
@@ -212,10 +214,11 @@ set  parser_sym_arrow::set_initializer() {
 }
 
 void parser_sym_arrow::symbol_postfix_def(
-	std::vector<identifier>& args, identifier& t
+	std::vector<identifier>& args, identifier& t, bool& is_const
 ) {
 	
 	identifier y;
+	is_const = false;
 	
 	
 	try {      // for error handling
@@ -278,8 +281,7 @@ void parser_sym_arrow::symbol_postfix_def(
 		switch ( LA(1)) {
 		case COLON:
 		{
-			match(COLON);
-			t=sym_name();
+			type_postfix(t, is_const);
 			break;
 		}
 		case ANTLR_USE_NAMESPACE(antlr)Token::EOF_TYPE:
@@ -330,11 +332,11 @@ set  parser_sym_arrow::set_literal() {
 					}
 				}
 				else {
-					goto _loop52;
+					goto _loop53;
 				}
 				
 			}
-			_loop52:;
+			_loop53:;
 			} // ( ... )*
 			break;
 		}
@@ -676,6 +678,7 @@ expr  parser_sym_arrow::symbol_postfix() {
 	
 	identifier sym;  
 	identifier t;
+	bool is_const = false;
 	std::vector<expr> args;
 	
 	
@@ -739,14 +742,14 @@ expr  parser_sym_arrow::symbol_postfix() {
 				inputState->guessing--;
 			}
 			if ( synPredMatched30 ) {
-				index_postfix(args, t);
+				index_postfix(args, t, is_const);
 				if ( inputState->guessing==0 ) {
-					x = make_symbol(sym, args, t);
+					x = make_symbol(sym, args, t, is_const);
 				}
 			}
 			else if ((_tokenSet_4.member(LA(1)))) {
 				if ( inputState->guessing==0 ) {
-					x = make_symbol(sym, args, t);
+					x = make_symbol(sym, args, t, is_const);
 				}
 			}
 		else {
@@ -830,10 +833,11 @@ void parser_sym_arrow::function_postfix(
 }
 
 void parser_sym_arrow::index_postfix(
-	std::vector<expr>& args, identifier& t
+	std::vector<expr>& args, identifier& t, bool& is_const
 ) {
 	
 	expr y;
+	is_const = false;
 	
 	
 	try {      // for error handling
@@ -912,8 +916,7 @@ void parser_sym_arrow::index_postfix(
 		switch ( LA(1)) {
 		case COLON:
 		{
-			match(COLON);
-			t=sym_name();
+			type_postfix(t, is_const);
 			break;
 		}
 		case ANTLR_USE_NAMESPACE(antlr)Token::EOF_TYPE:
@@ -951,15 +954,16 @@ symbol  parser_sym_arrow::symbol_def() {
 	symbol x;
 	
 	identifier sym;    
+	bool is_const = false;
 	std::vector<expr> args;
 	identifier t;    
 	
 	
 	try {      // for error handling
 		sym=sym_name();
-		index_postfix(args, t);
+		index_postfix(args, t, is_const);
 		if ( inputState->guessing==0 ) {
-			x = make_symbol(sym, args, t);
+			x = make_symbol(sym, args, t, is_const);
 		}
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
@@ -973,22 +977,45 @@ symbol  parser_sym_arrow::symbol_def() {
 	return x;
 }
 
-identifier  parser_sym_arrow::type_postfix() {
-	identifier y;
+void parser_sym_arrow::type_postfix(
+	identifier& y, bool& is_const
+) {
+	
+	is_const = false;
+	
 	
 	try {      // for error handling
 		match(COLON);
+		{
+		switch ( LA(1)) {
+		case CONST:
+		{
+			match(CONST);
+			if ( inputState->guessing==0 ) {
+				is_const = true;
+			}
+			break;
+		}
+		case ID:
+		{
+			break;
+		}
+		default:
+		{
+			throw ANTLR_USE_NAMESPACE(antlr)NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
 		y=sym_name();
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
 		if( inputState->guessing == 0 ) {
 			reportError(ex);
-			recover(ex,_tokenSet_0);
+			recover(ex,_tokenSet_4);
 		} else {
 			throw;
 		}
 	}
-	return y;
 }
 
 expr  parser_sym_arrow::atom_number() {
@@ -1089,6 +1116,7 @@ const char* parser_sym_arrow::tokenNames[] = {
 	"\',\'",
 	"\']\'",
 	"\'>\'",
+	"\"const\"",
 	"\'{\'",
 	"\'}\'",
 	"number",
@@ -1120,7 +1148,7 @@ const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_0(_tokenSet_0
 const unsigned long parser_sym_arrow::_tokenSet_1_data_[] = { 7380994UL, 0UL, 0UL, 0UL };
 // EOF OR RPAREN COMMA RBRACK RANGLE 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_1(_tokenSet_1_data_,4);
-const unsigned long parser_sym_arrow::_tokenSet_2_data_[] = { 25083778UL, 0UL, 0UL, 0UL };
+const unsigned long parser_sym_arrow::_tokenSet_2_data_[] = { 41860994UL, 0UL, 0UL, 0UL };
 // EOF DOTEQ PLUS MINUS MULT DIV POWER OR RPAREN LBRACK LANGLE COLON COMMA 
 // RBRACK RANGLE RCURL 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_2(_tokenSet_2_data_,4);

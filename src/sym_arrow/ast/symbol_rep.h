@@ -87,8 +87,8 @@ class identifier_rep : public sym_dag::dag_item<identifier_rep, unique_nodes_tag
         size_t              get_base_symbol_code() const;
 };
 
-// data representing indexed_symbol_rep node
-class indexed_symbol_info
+// data representing symbol_rep node
+class symbol_info
 {
     public:
         // symbol name
@@ -103,23 +103,26 @@ class indexed_symbol_info
         // symbol type
         identifier_handle   m_type;
 
+        // const flag
+        bool                m_is_const;
+
         // hash value; will be set later
         mutable size_t      m_hash;
 
     public:
         // constructor; arguments must be cannonized
-        indexed_symbol_info(identifier_handle name, size_t size, const expr* args,
-                    identifier_handle type)
+        symbol_info(identifier_handle name, size_t size, const expr* args,
+                    identifier_handle type, bool is_const)
             : m_name(name), m_size(size), m_args(args), m_type(type)
-            , m_hash(0) 
+            , m_hash(0), m_is_const(is_const)
         {};
 };
 
 // class representing an indexed symbol
-class indexed_symbol_rep : public expr_symbols<indexed_symbol_rep>
+class symbol_rep : public expr_symbols<symbol_rep>
 {
     private:
-        using base_type = expr_symbols<indexed_symbol_rep>;
+        using base_type = expr_symbols<symbol_rep>;
 
     private:
         size_t          m_hash;
@@ -129,23 +132,24 @@ class indexed_symbol_rep : public expr_symbols<indexed_symbol_rep>
         identifier_ptr  m_name;
         expr_ptr*       m_expr;
         identifier_ptr  m_type;
+        bool            m_is_const;
 
     private:
-        indexed_symbol_rep(const indexed_symbol_rep&) = delete;
-        indexed_symbol_rep& operator=(const indexed_symbol_rep&) = delete;
+        symbol_rep(const symbol_rep&) = delete;
+        symbol_rep& operator=(const symbol_rep&) = delete;
 
     public:
         // construct from a data represented by ndexed_symbol_info class
-        explicit indexed_symbol_rep(const indexed_symbol_info&);
+        explicit symbol_rep(const symbol_info&);
 
         // destructor
-        ~indexed_symbol_rep();                                
+        ~symbol_rep();                                
 
         // test for equality
-        bool            equal(const indexed_symbol_info& pi) const;
+        bool            equal(const symbol_info& pi) const;
 
         // evaluate hash function
-        static size_t   eval_hash(const indexed_symbol_info& pi);
+        static size_t   eval_hash(const symbol_info& pi);
 
         // return hash value
         size_t          hash_value() const      { return m_hash; };
@@ -168,9 +172,12 @@ class indexed_symbol_rep : public expr_symbols<indexed_symbol_rep>
         identifier_handle
                         get_type() const        { return m_type.get();}
 
+        // return true if this symbol is constant
+        bool            is_const() const        { return m_is_const; };
+
         // return code of this symbol; different symbols have
         // differrent codes
-        size_t          get_indexed_symbol_code() const;
+        size_t          get_symbol_code() const;
 
         // return code of base symbol of this symbol; different 
         // base symbols have differrent codes

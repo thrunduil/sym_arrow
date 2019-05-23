@@ -29,7 +29,19 @@ namespace sym_arrow { namespace details
 
 bool details::is_constant(const expr& ex)
 {
-    (void)ex;
+    bool is_sym         = ex.get_ptr()->isa<sa::symbol_rep>();
+
+    if (is_sym == true)
+    {
+        bool is_const   = ex.get_ptr()->static_cast_to<sa::symbol_rep>()->is_const();
+
+        return is_const;
+    }
+
+    bool is_scal         = ex.get_ptr()->isa<sa::scalar_rep>();
+
+    if (is_scal == true)
+        return true;
 
     //TODO:
     return false;
@@ -37,10 +49,7 @@ bool details::is_constant(const expr& ex)
 
 bool details::is_constant(const symbol& s)
 {
-    (void)s;
-
-    //TODO:
-    return false;
+    return s.is_const();
 }
 
 bool details::is_convertible(const identifier& from, const identifier& to)
@@ -53,7 +62,7 @@ bool details::is_convertible(const identifier& from, const identifier& to)
 
 identifier details::get_type(const expr& ex)
 {
-    bool is_sym     = ex.get_ptr()->isa<ast::indexed_symbol_rep>();
+    bool is_sym     = ex.get_ptr()->isa<ast::symbol_rep>();
 
     if (is_sym == false)
     {

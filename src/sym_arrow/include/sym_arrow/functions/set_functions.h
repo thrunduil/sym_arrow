@@ -31,10 +31,6 @@ namespace sym_arrow
 //                        set functions
 //----------------------------------------------------------------------
 
-// return true if sets defined by symbols x and y are equal and false
-// otherwise; exception is thrown if x or y does not define a set
-bool SYM_ARROW_EXPORT   set_is_equal(const identifier& x, const identifier& y);
-
 // return true if sets defined by symbol A contains the element x and false
 // otherwise; exception is thrown if A does not define a set
 bool SYM_ARROW_EXPORT   set_is_member(const identifier& A, const expr& x);

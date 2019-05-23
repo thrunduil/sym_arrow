@@ -50,16 +50,23 @@ class sema_error
 
         void    undefined_symbol(const identifier& sym, size_t n_args);
         void    invalid_symbol_args(const identifier& sym, size_t n_args, 
-                    const std::vector<identifier>& def_args, const identifier& def_type);
+                    const std::vector<identifier>& def_args, const identifier& def_type,
+                    bool is_const_def);
         void    invalid_symbol_arg(const identifier& sym, size_t arg, const identifier& t_arg, 
-                    const std::vector<identifier>& def_args, const identifier& def_type);
+                    const std::vector<identifier>& def_args, const identifier& def_type,
+                    bool is_const_def);
         void    invalid_explicit_symbol_type(const identifier& sym, 
                     const std::vector<identifier>& def_args, const identifier&  def_type, 
-                    const identifier& loc_type);
+                    bool is_const_def, const identifier& loc_type);
+
+        void    invalid_symbol_nonconst_def(const identifier& sym, 
+                    const std::vector<identifier>& def_args, const identifier&  def_type, 
+                    bool is_const_def);
 
     private:
         void    disp_symbol_def(std::ostream& os, const identifier& sym, 
-                    const std::vector<identifier>& def_args, const identifier&  def_type);
+                    const std::vector<identifier>& def_args, const identifier&  def_type,
+                    bool is_const_def);
 };
 
 }}

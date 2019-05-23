@@ -68,12 +68,14 @@ type_def
 sym_def 
 {
     identifier sym;
+    bool is_const = false;
+
     std::vector<identifier> args;
     identifier t;
 }
     :   SYM
         sym   = sym_name
-        symbol_postfix_def[args, t]             { def_sym(sym, args, t); }
+        symbol_postfix_def[args, t, is_const]   { def_sym(sym, args, t, is_const); }
 ;
 
 set_initializer returns[set x]
@@ -175,6 +177,7 @@ symbol_postfix returns[expr x]
 {
     identifier sym;  
     identifier t;
+    bool is_const = false;
     std::vector<expr> args;
 }
     :   sym = sym_name
@@ -182,19 +185,21 @@ symbol_postfix returns[expr x]
             (LBRACK) 
                 => function_postfix[args]   { x = make_function(sym, args); }
         |   (LANGLE | COLON) 
-                => index_postfix[args, t]   { x = make_symbol(sym, args, t); }
-        |                                   { x = make_symbol(sym, args, t); }
+                => index_postfix[args, t, is_const]
+                                            { x = make_symbol(sym, args, t, is_const); }
+        |                                   { x = make_symbol(sym, args, t, is_const); }
         )
 ;
 
 symbol_def returns[symbol x]
 {
     identifier sym;    
+    bool is_const = false;
     std::vector<expr> args;
     identifier t;    
 }
     :   sym = sym_name
-        index_postfix[args, t]              { x = make_symbol(sym, args, t); }
+        index_postfix[args, t, is_const]    { x = make_symbol(sym, args, t, is_const); }
 ;
 
 function_postfix[std::vector<expr>& args]
@@ -212,9 +217,10 @@ function_postfix[std::vector<expr>& args]
         RBRACK                         
 ;
 
-index_postfix[std::vector<expr>& args, identifier& t]
+index_postfix[std::vector<expr>& args, identifier& t, bool& is_const]
 {
     expr y;
+    is_const = false;
 }
     :   (
             LANGLE
@@ -229,14 +235,14 @@ index_postfix[std::vector<expr>& args, identifier& t]
         )?
 
         (
-            COLON
-            t = sym_name
+            type_postfix[t, is_const]
         )?
 ;
 
-symbol_postfix_def[std::vector<identifier>& args, identifier& t]
+symbol_postfix_def[std::vector<identifier>& args, identifier& t, bool& is_const]
 {
     identifier y;
+    is_const = false;
 }
     :   (
             LANGLE
@@ -250,14 +256,18 @@ symbol_postfix_def[std::vector<identifier>& args, identifier& t]
             RANGLE                         
         )?
         (
-            COLON
-            t = sym_name
+            type_postfix[t, is_const]
         )?
 ;
 
-type_postfix returns[identifier y]
-{}
+type_postfix[identifier& y, bool& is_const]
+{
+    is_const = false;
+}
     :   COLON
+        (
+            CONST                       { is_const = true; }
+        )?
         y = sym_name
 ;
 
@@ -328,6 +338,7 @@ tokens
     SET                     = "set";
     SYM                     = "sym";
     TYPE                    = "type";
+    CONST                   = "const";
 }
 
 LPAREN  options {paraphrase = "'('";}

@@ -98,7 +98,7 @@ bool set_rep::equal(const set_rep_info& pi) const
 
 bool set_rep::is_member(const expr& x) const
 {
-    if (x.get_ptr()->isa<indexed_symbol_rep>() == false)
+    if (x.get_ptr()->isa<symbol_rep>() == false)
         return false;
 
     size_t n    = this->size();
@@ -106,7 +106,7 @@ bool set_rep::is_member(const expr& x) const
     if (n == false)
         return false;
 
-    symbol_handle is    = x.get_ptr()->static_cast_to<indexed_symbol_rep>();    
+    symbol_handle is    = x.get_ptr()->static_cast_to<symbol_rep>();    
 
     if (is->size() != 0)
         return false;

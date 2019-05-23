@@ -54,14 +54,17 @@ def_data_type::def_data_type()
 def_data_type::~def_data_type()
 {};
 
-def_data_symbol::def_data_symbol(const std::vector<identifier>& args, const identifier& t)
-    :def_data(symbol_kind::indexed_symbol), m_args(args), m_type(t)
+def_data_symbol::def_data_symbol(const std::vector<identifier>& args, const identifier& t, 
+                    bool is_const)
+    :def_data(symbol_kind::symbol), m_args(args), m_type(t), m_is_const(is_const)
 {};
 
-void def_data_symbol::get_def(std::vector<identifier>& args, identifier& t) const
+void def_data_symbol::get_def(std::vector<identifier>& args, identifier& t,
+                    bool& is_const) const
 {
     args    = m_args;
     t       = m_type;
+    is_const= m_is_const;
 }
 
 def_data_symbol::~def_data_symbol()
@@ -151,7 +154,7 @@ bool symbol_map::get_set(const identifier& sym, set& s) const
 }
 
 bool symbol_map::get_symbol(const identifier& sym, 
-                            std::vector<identifier>& args, identifier& t) const
+            std::vector<identifier>& args, identifier& t, bool& is_const) const
 {
     size_t code     = sym.get_base_symbol_code();
     auto pos        = m_code_sym_map.get(code);
@@ -164,10 +167,10 @@ bool symbol_map::get_symbol(const identifier& sym,
     if (def == nullptr)
         return false;
 
-    if (def->get_kind() != symbol_kind::indexed_symbol)
+    if (def->get_kind() != symbol_kind::symbol)
         return false;
 
-    dynamic_cast<const def_data_symbol*>(def)->get_def(args, t);
+    dynamic_cast<const def_data_symbol*>(def)->get_def(args, t, is_const);
     return true;
 }
 
@@ -225,7 +228,7 @@ void sym_table_impl::define_set(const identifier& sym, const set& s)
     for (size_t i = 0; i < n; ++i)
     {
         identifier id   = s.arg(i);
-        define_symbol(id, args, sym);
+        define_symbol(id, args, sym, true);
     }
 };
 
@@ -252,7 +255,8 @@ void sym_table_impl::define_type(const identifier& sym)
 }
 
 void sym_table_impl::define_symbol(const identifier& sym, 
-                            const std::vector<identifier>& args, const identifier& t)
+                            const std::vector<identifier>& args, const identifier& t,
+                            bool is_const)
 {
     identifier t_fin;
 
@@ -282,7 +286,7 @@ void sym_table_impl::define_symbol(const identifier& sym,
             error::sema_error().set_not_defined(it); 
     };
 
-    symbol_data_maker f = [&](){return new def_data_symbol(args, t_fin);};
+    symbol_data_maker f = [&](){return new def_data_symbol(args, t_fin, is_const);};
     const entry* ptr    = m_sym_map.define(sym, f);
 
     //1. symbol name cannot be already defined
@@ -325,9 +329,9 @@ bool sym_table_impl::get_set_definition(const identifier& sym, set& def) const
 }
 
 bool sym_table_impl::get_symbol_definition(const identifier& sym, 
-                            std::vector<identifier>& args, identifier& t) const
+            std::vector<identifier>& args, identifier& t, bool& is_const) const
 {
-    return m_sym_map.get_symbol(sym, args, t);
+    return m_sym_map.get_symbol(sym, args, t, is_const);
 }
 
 }};

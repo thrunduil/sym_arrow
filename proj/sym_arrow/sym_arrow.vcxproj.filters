@@ -58,6 +58,9 @@
     <Filter Include="Source Files\sema">
       <UniqueIdentifier>{96158e0d-b563-4ab3-ad6e-1f491689deb7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\func\lib">
+      <UniqueIdentifier>{f7b377bb-f1f3-4365-a36f-a337de805422}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\config.h">
@@ -297,6 +300,9 @@
     <ClInclude Include="..\..\src\sym_arrow\sema\typing.h">
       <Filter>Source Files\sema</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\constructor_functions.h">
+      <Filter>Source Files\include\sym_arrow\functions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp">
@@ -461,13 +467,7 @@
     <ClCompile Include="..\..\src\sym_arrow\nodes\value_functions_common.cpp">
       <Filter>Source Files\nodes</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\sym_arrow\func\boolean.cpp">
-      <Filter>Source Files\func</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\sym_arrow\func\func_names.cpp">
-      <Filter>Source Files\func</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\sym_arrow\func\function.cpp">
       <Filter>Source Files\func</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\sym_arrow\ast\value_context_data.cpp">
@@ -496,6 +496,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\sym_arrow\sema\typing.cpp">
       <Filter>Source Files\sema</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\lib\boolean.cpp">
+      <Filter>Source Files\func\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\lib\special.cpp">
+      <Filter>Source Files\func\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\func\constructor_functions.cpp">
+      <Filter>Source Files\func</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

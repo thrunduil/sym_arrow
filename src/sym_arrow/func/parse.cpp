@@ -24,6 +24,7 @@
 #include "sym_arrow/nodes/symbol.inl"
 #include "sym_arrow/ast/ast.h"
 #include "sym_arrow/functions/expr_functions.h"
+#include "sym_arrow/functions/constructor_functions.h"
 
 #include "antlr/antlr.h"
 #include "grammar/output/lexer_sym_arrow.hpp"

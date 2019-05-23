@@ -105,12 +105,12 @@ class registered_symbols
         // register new symbol; should be called after construction
         // of identifier_rep
         void                    register_sym(const identifier_rep* h);
-        void                    register_sym(const indexed_symbol_rep* h);
+        void                    register_sym(const symbol_rep* h);
 
         // unregister a symbol; should be called during destruction
         // of identifier_rep
         void                    unregister_sym(const identifier_rep* h);
-        void                    unregister_sym(const indexed_symbol_rep* h);
+        void                    unregister_sym(const symbol_rep* h);
 
         // get unused code; should be called during constructor of 
         // identifier_rep

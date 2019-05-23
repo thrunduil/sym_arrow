@@ -36,7 +36,7 @@ namespace sym_arrow { namespace ast
 enum class term_types : size_t
 {
     scalar  = 0,
-    indexed_symbol,
+    symbol,
     add_build,
     mult_build,
     add_rep,

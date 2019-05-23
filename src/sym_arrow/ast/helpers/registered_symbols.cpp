@@ -98,7 +98,7 @@ void registered_symbols::register_sym(const identifier_rep* h)
     pos.assign(ptr);
 };
 
-void registered_symbols::register_sym(const indexed_symbol_rep* h)
+void registered_symbols::register_sym(const symbol_rep* h)
 {
     //TODO:
     (void)h;
@@ -115,9 +115,9 @@ void registered_symbols::unregister_sym(const identifier_rep* h)
     m_free_codes.unregister_sym(code);
 };
 
-void registered_symbols::unregister_sym(const indexed_symbol_rep* h)
+void registered_symbols::unregister_sym(const symbol_rep* h)
 {
-    size_t code     = h->get_indexed_symbol_code();
+    size_t code     = h->get_symbol_code();
     //TODO
     m_free_codes.unregister_sym(code);
 };

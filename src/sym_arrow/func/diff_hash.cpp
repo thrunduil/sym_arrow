@@ -177,7 +177,7 @@ void diff_hash::unregister(ast::expr_handle h, stack_type& st)
         for (size_t i = 0; i < n; ++i)
         {
             const symbol& sym   = sym_data->elem(i);
-            size_t code         = sym.get_indexed_symbol_code();
+            size_t code         = sym.get_symbol_code();
 
             auto pos_dif        = m_hash_map_dif.find(expr_sym(h, code));
             m_hash_map_dif.remove(pos_dif, st);
@@ -200,7 +200,7 @@ expr diff_hash::find(ast::expr_handle h, const symbol& s)
     if (is_tracked == false)
         return expr();
 
-    size_t sym_code = s.get_indexed_symbol_code();
+    size_t sym_code = s.get_symbol_code();
     auto ed         = m_hash_map_dif.find(expr_sym(h, sym_code));
 
     if (ed.empty() == true)
@@ -233,7 +233,7 @@ void diff_hash::add(ast::expr_handle h, const symbol& s, const expr& dif)
     else
         pos->get_value().add(s);
 
-    size_t sym_code = s.get_indexed_symbol_code();
+    size_t sym_code = s.get_symbol_code();
     m_hash_map_dif.insert(expr_sym(h, sym_code), diff_hash_data(dif));
     
     h->set_tracked(true);

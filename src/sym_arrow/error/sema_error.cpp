@@ -169,14 +169,15 @@ void sema_error::undefined_symbol(const identifier& sym, size_t n_args)
 };
 
 void sema_error::invalid_symbol_args(const identifier& sym, size_t n_args, 
-            const std::vector<identifier>& def_args, const identifier& def_type)
+            const std::vector<identifier>& def_args, const identifier& def_type,
+            bool is_const_def)
 {
     error::error_formatter ef;
     ef.head() << "invalid number of symbol indices";
 
     ef.new_info();
     ef.line() << "symbol: ";
-        disp_symbol_def(ef.line(), sym, def_args, def_type);
+        disp_symbol_def(ef.line(), sym, def_args, def_type, is_const_def);
         ef.line() << " requires " << def_args.size() << " indices";
 
     ef.new_info();
@@ -186,14 +187,14 @@ void sema_error::invalid_symbol_args(const identifier& sym, size_t n_args,
 }
 
 void sema_error::invalid_symbol_arg(const identifier& sym, size_t arg, const identifier& t_arg, 
-            const std::vector<identifier>& def_args, const identifier& def_type)
+            const std::vector<identifier>& def_args, const identifier& def_type, bool is_const_def)
 {
     error::error_formatter ef;
     ef.head() << "invalid symbol index";
 
     ef.new_info();
     ef.line() << "symbol: ";
-        disp_symbol_def(ef.line(), sym, def_args, def_type);
+        disp_symbol_def(ef.line(), sym, def_args, def_type, is_const_def);
         ef.line() << " requires index of type ";
         disp(ef.line(), def_args[arg], false);
         ef.line() << " as " << arg + 1 << " index";
@@ -206,26 +207,43 @@ void sema_error::invalid_symbol_arg(const identifier& sym, size_t arg, const ide
 }
 
 void sema_error::invalid_explicit_symbol_type(const identifier& sym, 
-            const std::vector<identifier>& def_args, const identifier&  def_type, 
-            const identifier& loc_type)
+            const std::vector<identifier>& def_args, const identifier&  def_type,
+            bool is_const_def, const identifier& loc_type)
 {
     error::error_formatter ef;
     ef.head() << "invalid explicit symbol type";
 
     ef.new_info();
     ef.line() << "symbol definition: ";
-        disp_symbol_def(ef.line(), sym, def_args, def_type);
+        disp_symbol_def(ef.line(), sym, def_args, def_type, is_const_def);
 
     ef.new_info();
     ef.line() << "assigned type: ";
     disp(ef.line(), loc_type, false);
 
     throw std::runtime_error(ef.str());
+}
 
+void sema_error::invalid_symbol_nonconst_def(const identifier& sym, 
+            const std::vector<identifier>& def_args, const identifier&  def_type, 
+            bool is_const_def)
+{
+    error::error_formatter ef;
+    ef.head() << "const symbol cannot be created";
+
+    ef.new_info();
+    ef.line() << "symbol definition: ";
+        disp_symbol_def(ef.line(), sym, def_args, def_type, is_const_def);
+
+    ef.new_info();
+    ef.line() << "symbol is not defined as const";
+
+    throw std::runtime_error(ef.str());
 }
 
 void sema_error::disp_symbol_def(std::ostream& os, const identifier& sym, 
-            const std::vector<identifier>& def_args, const identifier&  def_type)
+            const std::vector<identifier>& def_args, const identifier&  def_type, 
+            bool is_const_def)
 {
     disp(os, sym, false);
 
@@ -243,51 +261,14 @@ void sema_error::disp_symbol_def(std::ostream& os, const identifier& sym,
         os << ">";
     }
 
-    if (def_type.is_null() == false)
+    if (def_type.is_null() == false || is_const_def == true)
     {
         os << " : ";
+        if (is_const_def == true)
+            os << "const ";
+
         disp(os, def_type, false);
     }
 }
-
-/*
-TODO
-void sema_error::unable_subs_index_set_different(const index& i1, const index& i2)
-{
-    error::error_formatter ef;
-    ef.head() << "invalid substitution of an index by an index";
-
-    ef.new_info();
-    ef.line() << "unable to substitute index ";
-        disp(ef.line(), i1, false);
-        ef.line() << " by index ";
-        disp(ef.line(), i2, false);
-
-    ef.new_info();
-    ef.line() << "index' sets are different";
-
-    throw std::runtime_error(ef.str());
-}
-*/
-/*
-TODO
-void sema_error::unable_subs_index_not_member(const index& i1, const expr& member)
-{
-    error::error_formatter ef;
-    ef.head() << "invalid substitution of an index by a set member";
-
-    ef.new_info();
-    ef.line() << "unable to substitute index ";
-        disp(ef.line(), i1, false);
-        ef.line() << " by ";
-        disp(ef.line(), member, false);
-
-    ef.new_info();
-    ef.line() << "result of substitution is not a member of ";
-        disp(ef.line(), i1.set_name(), false);
-
-    throw std::runtime_error(ef.str());
-}
-*/
 
 }}

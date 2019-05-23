@@ -160,9 +160,12 @@ class SYM_ARROW_EXPORT symbol
         // get i-th index
         expr                arg(size_t i) const;
 
+        // return true if this symbol is constant
+        bool                is_const() const;
+
         // return code of this symbol; different symbols have
         // differrent codes
-        size_t              get_indexed_symbol_code() const;
+        size_t              get_symbol_code() const;
 
         // return code of base symbol of this symbol; different 
         // base symbols have differrent codes
@@ -171,7 +174,7 @@ class SYM_ARROW_EXPORT symbol
     public:
         // create a symbol from internal representation; internal use only
         explicit symbol(const ptr_type& ex);
-        explicit symbol(const ast::indexed_symbol_rep* h);
+        explicit symbol(const ast::symbol_rep* h);
 
         // access to internal pointers; internal use only
         const ptr_type&     get_ptr() const;

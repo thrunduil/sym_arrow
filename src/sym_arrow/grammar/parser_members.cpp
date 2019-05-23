@@ -24,6 +24,7 @@
 #include "sym_arrow/nodes/set.h"
 #include "sym_arrow/sema/symbol_table.h"
 #include "sym_arrow/ast/ast.h"
+#include "sym_arrow/functions/constructor_functions.h"
 
 #pragma warning(push)
 #pragma warning(disable:4702)
@@ -318,9 +319,10 @@ expr parser_sym_arrow::make_function(const identifier& sym, const std::vector<ex
     return sym_arrow::function(sym, args);
 };
 
-symbol parser_sym_arrow::make_symbol(const identifier& sym, const std::vector<expr>& args, const identifier& t)
+symbol parser_sym_arrow::make_symbol(const identifier& sym, const std::vector<expr>& args, 
+        const identifier& t, bool is_const)
 {
-    return sym_arrow::make_symbol(sym, args, t);
+    return sym_arrow::make_symbol(sym, args, t, is_const);
 };
 
 set parser_sym_arrow::make_set(const std::vector<identifier>& args)
@@ -334,9 +336,9 @@ void parser_sym_arrow::def_set(const identifier& sym, const set& ex)
 }
 
 void parser_sym_arrow::def_sym(const identifier& sym, const std::vector<identifier>& args,
-                            const identifier& type)
+                            const identifier& type, bool is_const)
 {
-    sym_table::get().define_symbol(sym, args, type);
+    sym_table::get().define_symbol(sym, args, type, is_const);
 }
 
 void parser_sym_arrow::def_type(const identifier& sym)

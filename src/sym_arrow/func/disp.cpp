@@ -53,7 +53,7 @@ class do_disp_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do_dis
         void eval(const Node* ast, std::ostream& os, int prec);
 
         void eval(const ast::scalar_rep* h, std::ostream& os, int prec);
-        void eval(const ast::indexed_symbol_rep* h, std::ostream& os, int prec);
+        void eval(const ast::symbol_rep* h, std::ostream& os, int prec);
         void eval(const ast::add_build* h, std::ostream& os, int prec);
         void eval(const ast::mult_build* h, std::ostream& os, int prec);
         void eval(const ast::add_rep* h, std::ostream& os, int prec);
@@ -97,7 +97,7 @@ void do_disp_vis::eval(const ast::scalar_rep* h, std::ostream& os, int prec)
     return sym_arrow::disp(os, v, false);
 };  
 
-void do_disp_vis::eval(const ast::indexed_symbol_rep* h, std::ostream& os, int prec)
+void do_disp_vis::eval(const ast::symbol_rep* h, std::ostream& os, int prec)
 {
     (void)prec;
 
@@ -123,10 +123,18 @@ void do_disp_vis::eval(const ast::indexed_symbol_rep* h, std::ostream& os, int p
     ast::identifier_handle t = h->get_type();
     identifier t_default    = sym_dag::dag_context<ast::unique_nodes_tag>::get().get_context_data().default_id();
 
-    if (t && t_default.get_ptr().get() != t)
+    bool disp_type          = (t && t_default.get_ptr().get() != t);
+    bool disp_const         = h->is_const();
+
+    if (disp_type || disp_const)
     {
         os << ":";
-        disp_identifier(t, os);
+
+        if (disp_const == true)
+            os << " const ";
+
+        if (disp_type == true)
+            disp_identifier(t, os);
     }
 };
 

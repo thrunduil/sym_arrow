@@ -31,6 +31,7 @@
 #include "sym_arrow/utils/pool_hash_map.h"
 #include "sym_arrow/functions/expr_functions.h"
 #include "sym_arrow/functions/sym_functions.h"
+#include "sym_arrow/functions/constructor_functions.h"
 
 #include <sstream>
 #include <map>
@@ -69,7 +70,7 @@ class do_simplify_vis : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, do
         expr eval(const Node* ast);
 
         expr eval(const ast::scalar_rep* h);
-        expr eval(const ast::indexed_symbol_rep* h);
+        expr eval(const ast::symbol_rep* h);
         expr eval(const ast::add_build* h);
         expr eval(const ast::mult_build* h);
         expr eval(const ast::add_rep* h);
@@ -122,7 +123,7 @@ expr do_simplify_vis::eval(const ast::scalar_rep* h)
     return expr(ast::expr_ptr::from_this(h));
 };
 
-expr do_simplify_vis::eval(const ast::indexed_symbol_rep* h)
+expr do_simplify_vis::eval(const ast::symbol_rep* h)
 {
     //nothing to do
     return expr(ast::expr_ptr::from_this(h));
@@ -297,26 +298,7 @@ expr do_simplify_vis::eval(const ast::function_rep* h)
         ++size_counter;
     };
 
-    ast::function_rep_info bi(h->name(), n, buff_ptr);
-
-    if (bi.are_values_valid() == false)
-    {
-        expr ret    = scalar::make_nan();
-        insert(h, ret);
-
-        return ret;
-    };
-
-    expr ret;
-
-    bool evaled = global_function_evaler()
-                    .eval_function(identifier(h->name()), buff_ptr, n, ret);
-
-    if (evaled == false)
-    {
-        ast::expr_ptr simpl = ast::function_rep::make(bi);
-        ret                 = expr(std::move(simpl));
-    };
+    expr ret                = function(identifier(h->name()), buff_ptr, n);
 
     ret.cannonize(true);
     insert(h, ret);

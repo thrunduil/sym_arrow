@@ -71,6 +71,14 @@ int main(int argc, const char* argv[])
         sym_dag::registered_dag_context::get().print_memory_leaks(std::cout);
 
         {
+            sa::expr ex     = delta(sa::symbol("x"), sa::symbol("y"));
+            disp(ex);
+
+            auto dif_ex     = diff(ex, sa::symbol("x"));
+
+            disp(dif_ex);
+        }
+        {
             sa::parse_def("set S := {a0, a1, a2}");
             sa::parse_def("sym A<S>");
 
@@ -91,10 +99,19 @@ int main(int argc, const char* argv[])
             auto dif_A1         = diff(ex, sa::identifier("A").index(v1));
             auto dif_A2         = diff(ex, sa::identifier("A").index(v2));
 
+            auto dif_A_0        = sa::subs(dif_A, i, v0);;
+
+           
             disp(dif_A);
+            disp(dif_A_0);
+
             disp(dif_A0);
             disp(dif_A1);
             disp(dif_A2);
+
+            auto dif_AA         = diff(dif_A, sa::identifier("A").index(i));
+
+            disp(dif_AA);
         }
         {
             //auto x              = sa::symbol("x");

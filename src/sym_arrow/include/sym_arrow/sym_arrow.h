@@ -38,6 +38,7 @@
 #include "sym_arrow/sema/symbol_table.h"
 
 #include "sym_arrow/functions/expr_functions.h"
+#include "sym_arrow/functions/constructor_functions.h"
 #include "sym_arrow/functions/sym_functions.h"
 #include "sym_arrow/functions/set_functions.h"
 #include "sym_arrow/nodes/expr_visitor.h"

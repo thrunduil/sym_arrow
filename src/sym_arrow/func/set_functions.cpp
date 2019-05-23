@@ -31,24 +31,6 @@ namespace sym_arrow
 
 namespace sd    = sym_arrow::details;
 
-bool sym_arrow::set_is_equal(const identifier& x, const identifier& y)
-{
-    //1. x and y must define sets
-
-    set s1, s2;
-
-    bool is_set1            = sd::sym_table_impl::get()->get_set_definition(x, s1);
-    bool is_set2            = sd::sym_table_impl::get()->get_set_definition(y, s2);
-
-    if (is_set1 == false)
-        error::sema_error().set_not_defined(x);
-
-    if (is_set2 == false)
-        error::sema_error().set_not_defined(y);
-
-    return s1 == s2;
-}
-
 bool sym_arrow::set_is_member(const identifier& A, const expr& x)
 {
     //1. A must define set

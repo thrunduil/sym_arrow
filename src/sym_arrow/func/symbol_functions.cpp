@@ -24,6 +24,9 @@
 #include "sym_arrow/ast/traversal_visitor.h"
 #include "sym_arrow/functions/expr_functions.h"
 
+namespace sym_arrow
+{
+
 bool sym_arrow::contain_symbol(const expr& ex, const symbol& sym)
 {
     ast::symbol_handle sh = sym.get_ptr().get();
@@ -95,6 +98,8 @@ bool sym_arrow::contain_all(const expr& ex, const std::vector<symbol>& syms)
     return ast::details::has_all_symbols(ex.get_ptr().get(), f);
 };
 
+};
+
 namespace sym_arrow { namespace ast { namespace details
 {
 
@@ -114,8 +119,7 @@ class do_has_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::add_rep* h, size_t code)   { return h->has_symbol(code); };
         bool eval(const ast::mult_rep* h, size_t code)  { return h->has_symbol(code); };
         bool eval(const ast::function_rep* h, size_t c) { return h->has_symbol(c); };
-        bool eval(const ast::indexed_symbol_rep* h, size_t c)
-                                                        { return h->has_symbol(c); };
+        bool eval(const ast::symbol_rep* h, size_t c)   { return h->has_symbol(c); };
 };
 
 class do_has_any_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, 
@@ -135,8 +139,7 @@ class do_has_any_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::add_rep* h, const dbs& f)      { return h->has_any_symbol(f); };
         bool eval(const ast::mult_rep* h, const dbs& f)     { return h->has_any_symbol(f); };
         bool eval(const ast::function_rep* h, const dbs& f) { return h->has_any_symbol(f); };
-        bool eval(const ast::indexed_symbol_rep* h, const dbs& f)   
-                                                            { return h->has_any_symbol(f); };
+        bool eval(const ast::symbol_rep* h, const dbs& f)   { return h->has_any_symbol(f); };
 };
 
 class do_has_all_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, 
@@ -157,8 +160,7 @@ class do_has_all_symbol : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         bool eval(const ast::add_rep* h, const dbs& f)      { return h->has_all_symbols(f); };
         bool eval(const ast::mult_rep* h, const dbs& f)     { return h->has_all_symbols(f); };
         bool eval(const ast::function_rep* h, const dbs& f) { return h->has_all_symbols(f); };
-        bool eval(const ast::indexed_symbol_rep* h, const dbs& f)   
-                                                            { return h->has_all_symbols(f); };
+        bool eval(const ast::symbol_rep* h, const dbs& f)   { return h->has_all_symbols(f); };
 };
 
 class do_add_symbols : public sym_dag::dag_visitor<sym_arrow::ast::term_tag, 
@@ -184,7 +186,7 @@ class do_add_symbols : public sym_dag::dag_visitor<sym_arrow::ast::term_tag,
         void eval(const ast::mult_build*, dbs&)
         {};
 
-        void eval(const ast::indexed_symbol_rep* h, dbs& set)
+        void eval(const ast::symbol_rep* h, dbs& set)
         { 
             set = set | h->get_symbol_set();
         };
@@ -211,7 +213,7 @@ class do_measure_complexity : public sym_arrow::ast::traversal_visitor<do_measur
         void eval(const ast::mult_build*, expr_complexity&)
         {};
 
-        void eval(const ast::indexed_symbol_rep*, expr_complexity& compl)
+        void eval(const ast::symbol_rep*, expr_complexity& compl)
         { 
             compl.add_symbol();
         };
