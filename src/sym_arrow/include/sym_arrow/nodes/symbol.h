@@ -74,9 +74,9 @@ class SYM_ARROW_EXPORT identifier
         // null terminated pointer to name of this symbol
         const char*         get_name() const;
 
-        // return code of base symbol of this symbol; different 
-        // base symbols have differrent codes
-        size_t              get_base_symbol_code() const;
+        // return code of of this symbol; different identifiers
+        // have differrent codes
+        size_t              get_identifier_code() const;
 
     public:
         // create function f[], where f is this identifier name
@@ -163,13 +163,9 @@ class SYM_ARROW_EXPORT symbol
         // return true if this symbol is constant
         bool                is_const() const;
 
-        // return code of this symbol; different symbols have
-        // differrent codes
-        size_t              get_symbol_code() const;
-
-        // return code of base symbol of this symbol; different 
-        // base symbols have differrent codes
-        size_t              get_base_symbol_code() const;
+        // return code of name of this symbol; different identifiers
+        // have differrent codes
+        size_t              get_identifier_code() const;
 
     public:
         // create a symbol from internal representation; internal use only

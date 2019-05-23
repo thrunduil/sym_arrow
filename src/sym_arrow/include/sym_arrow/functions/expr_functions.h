@@ -236,17 +236,17 @@ size_t SYM_ARROW_EXPORT hash_value(const expr& ex);
 // calculate hash value
 size_t SYM_ARROW_EXPORT hash_value(const identifier& ex);
 
-// return true in an expression contains a symbol sym;
+// return true in an expression contains an identifier id;
 // expression ex is cannonized first
-bool SYM_ARROW_EXPORT   contain_symbol(const expr& ex, const symbol& sym);
+bool SYM_ARROW_EXPORT   contain_identifier(const expr& ex, const identifier& id);
 
-// return true in an expression contains any of symbol syms;
-// expression ex is cannonized first
-bool SYM_ARROW_EXPORT   contain_any(const expr& ex, const std::vector<symbol>& syms);
+// return true in an expression contains any of identifiers
+// syms; expression ex is cannonized first
+bool SYM_ARROW_EXPORT   contain_any(const expr& ex, const std::vector<identifier>& syms);
 
-// return true in an expression contains all of symbol syms;
-// expression ex is cannonized first
-bool SYM_ARROW_EXPORT   contain_all(const expr& ex, const std::vector<symbol>& syms);        
+// return true in an expression contains all of identifiers
+// syms; expression ex is cannonized first
+bool SYM_ARROW_EXPORT   contain_all(const expr& ex, const std::vector<identifier>& syms);        
 
 // return expression type code
 SYM_ARROW_EXPORT ast::term_types        get_expression_type(const expr& ex);

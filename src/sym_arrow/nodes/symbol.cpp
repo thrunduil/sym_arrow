@@ -56,9 +56,9 @@ const char* identifier::get_name() const
     return get_ptr()->get_name();
 }
 
-size_t identifier::get_base_symbol_code() const
+size_t identifier::get_identifier_code() const
 {
-    return get_ptr()->get_base_symbol_code();
+    return get_ptr()->get_identifier_code();
 };
 
 expr identifier::operator()() const
@@ -150,14 +150,9 @@ expr symbol::arg(size_t i) const
     return expr(get_ptr()->arg(i));
 }
 
-size_t symbol::get_symbol_code() const
+size_t symbol::get_identifier_code() const
 {
-    return get_ptr()->get_symbol_code();
-};
-
-size_t symbol::get_base_symbol_code() const
-{
-    return get_ptr()->get_base_symbol_code();
+    return get_ptr()->get_identifier_code();
 };
 
 };

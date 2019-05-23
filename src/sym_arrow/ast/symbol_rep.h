@@ -82,9 +82,9 @@ class identifier_rep : public sym_dag::dag_item<identifier_rep, unique_nodes_tag
         // number of characters in name of this symbol
         size_t              get_name_size() const;
 
-        // return code of this symbol; different symbols have
+        // return code of this identifier; different identifier have
         // differrent codes
-        size_t              get_base_symbol_code() const;
+        size_t              get_identifier_code() const;
 };
 
 // data representing symbol_rep node
@@ -127,7 +127,6 @@ class symbol_rep : public expr_symbols<symbol_rep>
     private:
         size_t          m_hash;
         size_t          m_size;
-        size_t          m_code;
 
         identifier_ptr  m_name;
         expr_ptr*       m_expr;
@@ -175,13 +174,9 @@ class symbol_rep : public expr_symbols<symbol_rep>
         // return true if this symbol is constant
         bool            is_const() const        { return m_is_const; };
 
-        // return code of this symbol; different symbols have
+        // return code of name of this symbol; different names have
         // differrent codes
-        size_t          get_symbol_code() const;
-
-        // return code of base symbol of this symbol; different 
-        // base symbols have differrent codes
-        size_t          get_base_symbol_code() const;
+        size_t          get_identifier_code() const;
 };
 
 };}

@@ -32,7 +32,7 @@ namespace sym_arrow { namespace ast
 //----------------------------------------------------------------------
 identifier_rep::identifier_rep(const identifier_info& info)
     :base_type(this)
-    , m_code(context_type::get().get_context_data().get_fresh_symbol_code())
+    , m_code(context_type::get().get_context_data().get_fresh_ident_code())
 {
     size_t N            = info.m_size;
     size_t hash         = eval_hash(info);
@@ -41,13 +41,13 @@ identifier_rep::identifier_rep(const identifier_info& info)
     if (N == 0 || info.m_name[0] == '$')
         throw std::runtime_error("invalid symbol name");
 
-    context_type::get().get_context_data().register_symbol(this);
+    context_type::get().get_context_data().register_ident(this);
 };
 
 identifier_rep::~identifier_rep()
 {
     m_name.destroy();
-    context_type::get().get_context_data().unregister_symbol(this);
+    context_type::get().get_context_data().unregister_ident(this);
 };
 
 size_t identifier_rep::eval_hash(const identifier_info& info)
@@ -80,18 +80,13 @@ bool identifier_rep::equal(const identifier_info& info) const
 symbol_rep::symbol_rep(const symbol_info& pi)
     :base_type(this), m_hash(pi.m_hash)
     , m_size(pi.m_size), m_expr(nullptr), m_name(identifier_ptr::from_this(pi.m_name))
-    , m_code(context_type::get().get_context_data().get_fresh_symbol_code())
     , m_type(identifier_ptr::from_this(pi.m_type))
     , m_is_const(pi.m_is_const)
 {
-    context_type::get().get_context_data().register_symbol(this);
-
     if (m_type.get() == nullptr)
         m_type          = sym_dag::dag_context<unique_nodes_tag>::get().get_context_data().default_id().get_ptr();
 
-    //TODO: only one code if number of indices is zero
-    add_symbol(pi.m_name->get_base_symbol_code());
-    add_symbol(m_code);
+    add_symbol(pi.m_name->get_identifier_code());
 
     if (m_size == 0)
         return;
@@ -112,8 +107,6 @@ symbol_rep::symbol_rep(const symbol_info& pi)
 
 symbol_rep::~symbol_rep()
 {
-    context_type::get().get_context_data().unregister_symbol(this);
-
     if (m_size == 0)
         return;
 

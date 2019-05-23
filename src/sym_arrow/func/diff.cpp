@@ -96,7 +96,7 @@ expr do_diff_vis::eval(const ast::scalar_rep* h, const symbol&)
 
 expr do_diff_vis::eval(const ast::symbol_rep* h, const symbol& sym)
 {
-    if (h->get_base_symbol_code() != sym.get_base_symbol_code())
+    if (h->get_identifier_code() != sym.get_identifier_code())
         return ast::scalar_rep::make_zero();
 
     // symbols are exactly the same - result 1
@@ -152,7 +152,7 @@ expr do_diff_vis::eval(const ast::add_rep* h, const symbol& sym)
 {
     ast::symbol_handle sh = sym.get_ptr().get();
 
-    if (ast::details::has_symbol(h, sh->get_base_symbol_code()) == false)
+    if (ast::details::has_symbol(h, sh->get_identifier_code()) == false)
         return ast::scalar_rep::make_zero();
 
     expr hash           = diff_hash::get().find(h, sym);
@@ -208,6 +208,9 @@ expr do_diff_vis::eval(const ast::add_rep* h, const symbol& sym)
         };
     };
 
+    if (size_counter == 0)
+        return scalar::make_zero();
+
     value zero  = value::make_zero();
     ast::add_build_info2<item> bi(&zero, size_counter, sum_buff_ptr, nullptr);
     ast::expr_ptr diff_all = ast::add_build::make(bi);
@@ -232,7 +235,7 @@ expr do_diff_vis::eval(const ast::mult_rep* h, const symbol& sym)
 
     ast::symbol_handle sh = sym.get_ptr().get();
 
-    if (ast::details::has_symbol(h, sh->get_base_symbol_code()) == false)
+    if (ast::details::has_symbol(h, sh->get_identifier_code()) == false)
         return ast::scalar_rep::make_zero();
 
     expr hash           = diff_hash::get().find(h, sym);
@@ -366,6 +369,9 @@ expr do_diff_vis::eval(const ast::mult_rep* h, const symbol& sym)
         }
     };
 
+    if (size_counter == 0)
+        return scalar::make_zero();
+
     value vzero  = value::make_zero();
     ast::add_build_info2<item> bi(&vzero, size_counter, sum_buff_ptr, nullptr);
     ast::expr_ptr diff_all = ast::add_build::make(bi);
@@ -383,7 +389,7 @@ expr do_diff_vis::eval(const ast::function_rep* h, const symbol& sym)
     ast::symbol_handle sh   = sym.get_ptr().get();
     size_t n                = h->size();
 
-    if (ast::details::has_symbol(h, sh->get_base_symbol_code()) == false|| n == 0)
+    if (ast::details::has_symbol(h, sh->get_identifier_code()) == false|| n == 0)
         return ast::scalar_rep::make_zero();
 
     expr hash           = diff_hash::get().find(h, sym);
@@ -438,6 +444,9 @@ expr do_diff_vis::eval(const ast::function_rep* h, const symbol& sym)
             ++sum_counter;
         }
     };
+
+    if (sum_counter == 0)
+        return scalar::make_zero();
 
     value zero  = value::make_zero();
     ast::add_build_info2<item> bi(&zero, sum_counter, sum_buff_ptr, nullptr);

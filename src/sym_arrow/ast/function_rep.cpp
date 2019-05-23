@@ -31,7 +31,7 @@ function_rep::function_rep(const function_rep_info& pi)
     :base_type(this), m_hash(pi.m_hash)
     ,m_size(pi.m_size), m_expr(nullptr), m_name(identifier_ptr::from_this(pi.m_name))
 {
-    add_symbol(pi.m_name->get_base_symbol_code());
+    add_symbol(pi.m_name->get_identifier_code());
 
     if (m_size == 0)
         return;

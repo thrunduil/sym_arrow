@@ -64,16 +64,6 @@ class term_context_data : public sym_dag::context_data_base
 
         // scalar representing value NaN
         const scalar&       get_scalar_nan();
-
-        // return a code not used by other symbols
-        size_t              get_fresh_symbol_code();
-
-        // newly created symbols must be registered by this function
-        void                register_symbol(const symbol_rep* h);
-
-        // symbols about be beining destroyed must be unregistered 
-        // by this function
-        void                unregister_symbol(const symbol_rep* h);
 };
 
 }}};

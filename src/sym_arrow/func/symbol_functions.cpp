@@ -27,19 +27,19 @@
 namespace sym_arrow
 {
 
-bool sym_arrow::contain_symbol(const expr& ex, const symbol& sym)
+bool sym_arrow::contain_identifier(const expr& ex, const identifier& sym)
 {
-    ast::symbol_handle sh = sym.get_ptr().get();
+    ast::identifier_handle sh = sym.get_ptr().get();
 
     if (ex.is_null() == true || !sh)
         return false;
 
     ex.cannonize(do_cse_default);
 
-    return ast::details::has_symbol(ex.get_ptr().get(), sh->get_base_symbol_code());
+    return ast::details::has_symbol(ex.get_ptr().get(), sh->get_identifier_code());
 };
 
-bool sym_arrow::contain_any(const expr& ex, const std::vector<symbol>& syms)
+bool sym_arrow::contain_any(const expr& ex, const std::vector<identifier>& syms)
 {
     if (syms.size() == 0)
         return true;
@@ -50,14 +50,14 @@ bool sym_arrow::contain_any(const expr& ex, const std::vector<symbol>& syms)
     ex.cannonize(do_cse_default);
 
     if (syms.size() == 1)
-        return ast::details::has_symbol(ex.get_ptr().get(), syms[0].get_ptr()->get_base_symbol_code());
+        return ast::details::has_symbol(ex.get_ptr().get(), syms[0].get_identifier_code());
 
     std::vector<size_t> codes(syms.size());
 
     size_t N = syms.size();
 
     for (size_t i = 0; i < N; ++i)
-        codes[i] = syms[i].get_ptr()->get_base_symbol_code();
+        codes[i] = syms[i].get_identifier_code();
 
     std::sort(codes.begin(), codes.end());
 
@@ -67,7 +67,7 @@ bool sym_arrow::contain_any(const expr& ex, const std::vector<symbol>& syms)
     return ast::details::has_any_symbol(ex.get_ptr().get(), f);
 };
 
-bool sym_arrow::contain_all(const expr& ex, const std::vector<symbol>& syms)
+bool sym_arrow::contain_all(const expr& ex, const std::vector<identifier>& syms)
 {
     if (syms.size() == 0)
         return true;
@@ -80,7 +80,7 @@ bool sym_arrow::contain_all(const expr& ex, const std::vector<symbol>& syms)
     if (syms.size() == 1)
     {
         return ast::details::has_symbol(ex.get_ptr().get(), 
-                    syms[0].get_ptr()->get_base_symbol_code());
+                    syms[0].get_identifier_code());
     }
 
     std::vector<size_t> codes(syms.size());
@@ -88,7 +88,7 @@ bool sym_arrow::contain_all(const expr& ex, const std::vector<symbol>& syms)
     size_t N = syms.size();
 
     for (size_t i = 0; i < N; ++i)
-        codes[i] = syms[i].get_ptr()->get_base_symbol_code();
+        codes[i] = syms[i].get_identifier_code();
 
     std::sort(codes.begin(), codes.end());
 

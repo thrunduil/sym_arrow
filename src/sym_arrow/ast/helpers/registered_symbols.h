@@ -48,20 +48,18 @@ class symbol_codes
         // release all memory
         void                    close();
 
-        // unregister a symbol; should be called during destruction
-        // of base symbol or indexed symbol with given code
-        void                    unregister_sym(size_t code);
+        // mark given code as unused
+        void                    release_code(size_t code);
 
-        // get unused code; should be called during constructor of 
-        // identifier_rep
-        size_t                  get_fresh_symbol_code();
+        // get unused code
+        size_t                  get_fresh_code();
 };
 
 // assign unique code to a new symbol and maintain code -> symbol mapping
 class registered_symbols
 {
     private:
-        using code_sym          = std::pair<size_t, const identifier_rep*>;
+        using code_ident        = std::pair<size_t, const identifier_rep*>;
         using allocator         = sym_dag::details::symbolic_allocator<registered_symbols>;
         using pool_allocator    = sym_dag::details::object_allocator<allocator>;
         using dbs               = dbs_lib::dbs;
@@ -70,23 +68,23 @@ class registered_symbols
         struct cs_h
         {
             size_t operator()(size_t c) const           { return c;};
-            size_t operator()(const code_sym* c) const  { return c->first;};
+            size_t operator()(const code_ident* c) const{ return c->first;};
         };
 
         struct cs_e
         {
-            bool operator()(const code_sym* c1, size_t, size_t c2) const 
+            bool operator()(const code_ident* c1, size_t, size_t c2) const 
                                                         { return c1->first == c2; };
         };
 
-        using code_sym_map      = sym_dag::hash_table<code_sym, cs_h, cs_e>;
+        using code_ident_map    = sym_dag::hash_table<code_ident, cs_h, cs_e>;
 
     public:
         using reg_sym_ptr       = registered_symbols*;
 
     private:
         pool_allocator          m_pool;
-        code_sym_map            m_code_sym_map;
+        code_ident_map          m_code_ident_map;
         symbol_codes            m_free_codes;
         size_t                  m_refcount;
         static reg_sym_ptr      m_handle;
@@ -104,22 +102,20 @@ class registered_symbols
 
         // register new symbol; should be called after construction
         // of identifier_rep
-        void                    register_sym(const identifier_rep* h);
-        void                    register_sym(const symbol_rep* h);
+        void                    register_ident(const identifier_rep* h);
 
         // unregister a symbol; should be called during destruction
         // of identifier_rep
-        void                    unregister_sym(const identifier_rep* h);
-        void                    unregister_sym(const symbol_rep* h);
+        void                    unregister_ident(const identifier_rep* h);
 
         // get unused code; should be called during constructor of 
-        // identifier_rep
-        size_t                  get_fresh_symbol_code();
+        // identifier and symbol
+        size_t                  get_fresh_identifier_code();
 
         // get symbol with given code; code must be valid, i.e. there
         // must exist a symbol with given code, otherwise nullptr is
         // returned
-        const identifier_rep*   get_symbol_from_code(size_t code) const;        
+        const identifier_rep*   get_ident_from_code(size_t code) const;        
 
         // release handle to this object; memory is released if all handles 
         // are released

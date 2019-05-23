@@ -26,19 +26,19 @@
 namespace sym_arrow { namespace ast { namespace details
 {
 
-inline size_t symbol_context_data::get_fresh_symbol_code()
+inline size_t symbol_context_data::get_fresh_ident_code()
 { 
-    return m_reg_symbols->get_fresh_symbol_code(); 
+    return m_reg_symbols->get_fresh_identifier_code();
 };
 
-inline void symbol_context_data::register_symbol(const identifier_rep* h)
+inline void symbol_context_data::register_ident(const identifier_rep* h)
 { 
-    m_reg_symbols->register_sym(h); 
+    m_reg_symbols->register_ident(h); 
 };
 
-inline void symbol_context_data::unregister_symbol(const identifier_rep* h)
+inline void symbol_context_data::unregister_ident(const identifier_rep* h)
 {
-    m_reg_symbols->unregister_sym(h); 
+    m_reg_symbols->unregister_ident(h); 
 };
 
 inline const identifier& symbol_context_data::default_id() const

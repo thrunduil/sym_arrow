@@ -101,18 +101,18 @@ class diff_hash_data
 struct expr_sym
 {
     ast::expr_handle    m_handle;
-    size_t              m_code;
+    ast::symbol_handle  m_sym;
     size_t              m_hash;
 
-    expr_sym(ast::expr_handle eh, size_t code)
-        : m_handle(eh), m_code(code)
+    expr_sym(ast::expr_handle eh, ast::symbol_handle sh)
+        : m_handle(eh), m_sym(sh)
     {
         m_hash          = eval_hash();
     }
 
     size_t eval_hash() const
     {
-        size_t seed = m_code + (size_t)m_handle;
+        size_t seed = (size_t)m_sym + (size_t)m_handle;
         //boost::hash_combine(seed, m_code);
         return seed;
     }
@@ -127,7 +127,7 @@ struct expr_sym_hash_equal
 
     static bool equal(const expr_sym& h1, const expr_sym& h2)
     {
-        return h1.m_handle == h2.m_handle && h1.m_code == h2.m_code;
+        return h1.m_handle == h2.m_handle && h1.m_sym == h2.m_sym;
     }
 };
 

@@ -73,7 +73,7 @@ def_data_symbol::~def_data_symbol()
 symbol_map_entry::symbol_map_entry(const identifier& sym, const symbol_data_maker& data)
     :m_sym(sym), m_data(data())
 {
-    m_code = sym.get_base_symbol_code();
+    m_code = sym.get_identifier_code();
 }
 
 symbol_map_entry::~symbol_map_entry()
@@ -108,7 +108,7 @@ symbol_map::~symbol_map()
 
 const symbol_map::entry* symbol_map::define(const identifier& sym, const symbol_data_maker& data)
 {
-    size_t code     = sym.get_base_symbol_code();
+    size_t code     = sym.get_identifier_code();
     auto pos        = m_code_sym_map.get(code);
 
     if (pos.empty() == false)
@@ -124,7 +124,7 @@ const symbol_map::entry* symbol_map::define(const identifier& sym, const symbol_
 
 const symbol_map::entry* symbol_map::get_entry(const identifier& sym) const
 {
-    size_t code     = sym.get_base_symbol_code();
+    size_t code     = sym.get_identifier_code();
     auto pos        = m_code_sym_map.get(code);
 
     if (pos.empty() == true)
@@ -135,7 +135,7 @@ const symbol_map::entry* symbol_map::get_entry(const identifier& sym) const
 
 bool symbol_map::get_set(const identifier& sym, set& s) const
 {
-    size_t code     = sym.get_base_symbol_code();
+    size_t code     = sym.get_identifier_code();
     auto pos        = m_code_sym_map.get(code);
 
     if (pos.empty() == true)
@@ -156,7 +156,7 @@ bool symbol_map::get_set(const identifier& sym, set& s) const
 bool symbol_map::get_symbol(const identifier& sym, 
             std::vector<identifier>& args, identifier& t, bool& is_const) const
 {
-    size_t code     = sym.get_base_symbol_code();
+    size_t code     = sym.get_identifier_code();
     auto pos        = m_code_sym_map.get(code);
 
     if (pos.empty() == true)

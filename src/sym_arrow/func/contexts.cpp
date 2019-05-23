@@ -134,16 +134,16 @@ void subs_context_impl::add_symbol(const symbol& sym, size_t code)
     remove_bind();
 
     m_map[sym]  = code;
-    m_set       = m_set.set(sym.get_ptr()->get_symbol_code());
-    m_set       = m_set.set(sym.get_ptr()->get_base_symbol_code());
+    m_set       = m_set.set(sym.get_ptr()->get_identifier_code());
 }
 
 void subs_context_impl::remove_symbol(const symbol& sym)
 {
     remove_bind();
-
     m_map.erase(sym);
-    m_set = m_set.reset(sym.get_ptr()->get_symbol_code());
+
+    // code set cannot be changed since different symbols may have
+    // the same code
 }
 
 size_t subs_context_impl::add_symbol(const symbol& sym)

@@ -41,12 +41,12 @@ void symbol_codes::close()
     m_free_codes = dbs_lib::dbs();
 };
 
-void symbol_codes::unregister_sym(size_t code)
+void symbol_codes::release_code(size_t code)
 {
     m_free_codes    = std::move(m_free_codes).set(code);
 };
 
-size_t symbol_codes::get_fresh_symbol_code()
+size_t symbol_codes::get_fresh_code()
 {
     if (m_free_codes.any() == true)
     {
@@ -62,7 +62,7 @@ size_t symbol_codes::get_fresh_symbol_code()
 registered_symbols::reg_sym_ptr registered_symbols::m_handle = nullptr;
 
 registered_symbols::registered_symbols()
-    :m_pool(sizeof(code_sym)), m_refcount(0)
+    :m_pool(sizeof(code_ident)), m_refcount(0)
 {};
 
 registered_symbols::~registered_symbols()
@@ -72,7 +72,7 @@ registered_symbols::~registered_symbols()
 
 void registered_symbols::release_memory()
 {
-    m_code_sym_map.close();
+    m_code_ident_map.close();
     m_pool.purge_memory();
 };
 
@@ -87,44 +87,32 @@ void registered_symbols::close()
     };
 };
 
-void registered_symbols::register_sym(const identifier_rep* h)
+void registered_symbols::register_ident(const identifier_rep* h)
 {
-    size_t code     = h->get_base_symbol_code();
-    code_sym* ptr   = (code_sym*)m_pool.malloc(); 
+    size_t code     = h->get_identifier_code();
+    code_ident* ptr = (code_ident*)m_pool.malloc(); 
 
-    new(ptr) code_sym(code,h);
+    new(ptr) code_ident(code,h);
 
-    auto pos        = m_code_sym_map.get(code);
+    auto pos        = m_code_ident_map.get(code);
     pos.assign(ptr);
 };
 
-void registered_symbols::register_sym(const symbol_rep* h)
+void registered_symbols::unregister_ident(const identifier_rep* h)
 {
-    //TODO:
-    (void)h;
-}
+    size_t code     = h->get_identifier_code();
 
-void registered_symbols::unregister_sym(const identifier_rep* h)
-{
-    size_t code     = h->get_base_symbol_code();
-    auto pos        = m_code_sym_map.get(code);
-    code_sym* ptr   = *pos;
-    pos.assign<code_sym>(nullptr);
+    auto pos        = m_code_ident_map.get(code);
+    code_ident* ptr = *pos;
+    pos.assign<code_ident>(nullptr);
     m_pool.free(ptr);
 
-    m_free_codes.unregister_sym(code);
+    m_free_codes.release_code(code);
 };
 
-void registered_symbols::unregister_sym(const symbol_rep* h)
+const identifier_rep* registered_symbols::get_ident_from_code(size_t code) const
 {
-    size_t code     = h->get_symbol_code();
-    //TODO
-    m_free_codes.unregister_sym(code);
-};
-
-const identifier_rep* registered_symbols::get_symbol_from_code(size_t code) const
-{
-    auto pos = m_code_sym_map.find(code);
+    auto pos = m_code_ident_map.find(code);
 
     if (pos == nullptr)
         return nullptr;
@@ -133,9 +121,9 @@ const identifier_rep* registered_symbols::get_symbol_from_code(size_t code) cons
     return h;
 };
 
-size_t registered_symbols::get_fresh_symbol_code()
+size_t registered_symbols::get_fresh_identifier_code()
 {
-    return m_free_codes.get_fresh_symbol_code();
+    return m_free_codes.get_fresh_code();
 };
 
 registered_symbols::reg_sym_ptr registered_symbols::get()

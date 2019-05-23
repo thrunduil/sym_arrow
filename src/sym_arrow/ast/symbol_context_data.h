@@ -50,15 +50,15 @@ class symbol_context_data : public sym_dag::context_data_base
         virtual void        close() override;
 
     public:
-        // return a code not used by other symbols
-        size_t              get_fresh_symbol_code();
+        // return a code not used by other identifiers
+        size_t              get_fresh_ident_code();
 
-        // newly created symbols must be registered by this function
-        void                register_symbol(const identifier_rep* h);
+        // newly created identifiers must be registered by this function
+        void                register_ident(const identifier_rep* h);
 
         // symbols about be beining destroyed must be unregistered 
         // by this function
-        void                unregister_symbol(const identifier_rep* h);
+        void                unregister_ident(const identifier_rep* h);
 
         const identifier&   default_id() const;
 };

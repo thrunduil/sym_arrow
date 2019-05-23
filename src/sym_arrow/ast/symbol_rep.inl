@@ -36,7 +36,7 @@ inline size_t identifier_rep::get_name_size() const
     return m_name.get_size();
 };
 
-inline size_t identifier_rep::get_base_symbol_code() const
+inline size_t identifier_rep::get_identifier_code() const
 { 
     return m_code; 
 };
@@ -46,14 +46,9 @@ inline size_t identifier_rep::hash_value() const
     return m_name.get_hash();
 };
 
-inline size_t symbol_rep::get_base_symbol_code() const
+inline size_t symbol_rep::get_identifier_code() const
 {
-    return m_name->get_base_symbol_code();
-}
-
-inline size_t symbol_rep::get_symbol_code() const
-{
-    return m_code;
+    return m_name->get_identifier_code();
 }
 
 };}
