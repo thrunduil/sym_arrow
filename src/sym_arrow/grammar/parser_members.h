@@ -29,7 +29,7 @@ private:
 
     expr                    make_function(const identifier& sym, const std::vector<expr>& args);
     symbol                  make_symbol(const identifier& sym, const std::vector<expr>& args, 
-                                const identifier& t, bool is_const);
+                                const type& t);
     set                     make_set(const std::vector<identifier>& args);
 
     void                    to_number(const std::string& value_str0, bool is_complex, double& ret);
@@ -38,8 +38,10 @@ private:
 
     void                    def_set(const identifier& sym, const set& ex);
     void                    def_sym(const identifier& sym, const std::vector<identifier>& args,
-                                const identifier& type, bool is_const);
+                                const type& t);
     void                    def_type(const identifier& sym);
+    void                    def_fun(const identifier& id, const std::vector<formal_arg>& args, 
+                                const type& t);
 
 private:
     void                    reportError(const antlr::RecognitionException& ex);

@@ -24,6 +24,7 @@
 #include "sym_arrow/nodes/expr.h"
 #include "sym_arrow/functions/expr_functions.h"
 #include "sym_arrow/nodes/set.h"
+#include "sym_arrow/nodes/type.h"
 
 #pragma warning(disable:4101) //unreferenced local variable
 

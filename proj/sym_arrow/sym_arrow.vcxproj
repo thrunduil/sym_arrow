@@ -45,6 +45,7 @@
     <ClInclude Include="..\..\src\sym_arrow\ast\helpers\utils.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\mult_rep.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\scalar_rep.h" />
+    <ClInclude Include="..\..\src\sym_arrow\ast\scope_rep.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\set_rep.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\symbol_context_data.h" />
     <ClInclude Include="..\..\src\sym_arrow\ast\symbol_rep.h" />
@@ -82,8 +83,10 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\index.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\mult_expr.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\scalar.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\scope.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\set.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\symbol.h" />
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\type.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value_double.h" />
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\value_gsli.h" />
@@ -119,6 +122,7 @@
     <ClCompile Include="..\..\src\sym_arrow\ast\helpers\string_data.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\mult_rep.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\scalar_rep.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\ast\scope_rep.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\set_rep.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\symbol_context_data.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\ast\symbol_rep.cpp" />
@@ -175,6 +179,7 @@
     <ClCompile Include="..\..\src\sym_arrow\nodes\function_expr.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\mult_expr.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\scalar.cpp" />
+    <ClCompile Include="..\..\src\sym_arrow\nodes\scope.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\set.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\symbol.cpp" />
     <ClCompile Include="..\..\src\sym_arrow\nodes\value_double.cpp" />
@@ -214,6 +219,7 @@
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr_visitor.inl" />
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\global_context_initializers.inl" />
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\scalar.inl" />
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\type.inl" />
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_double.inl" />
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_mp.inl" />
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\value_gsli.inl" />
@@ -230,6 +236,7 @@
     <Text Include="..\..\INSTALL.txt" />
     <Text Include="..\..\src\sym_arrow\grammar\output\sym_arrow_vocabularyTokenTypes.txt" />
     <Text Include="..\..\src\sym_arrow\simplifications.txt" />
+    <Text Include="..\..\src\sym_arrow\todo.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4BE517FA-056D-4070-91EC-C33F3274AE38}</ProjectGuid>
@@ -243,85 +250,65 @@
     </SccLocalPath>
     <SccProvider>
     </SccProvider>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\props\prop_Win32_Release.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\props\prop_x64_Release.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\props\prop_Win32_Debug.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).$(Configuration).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\props\prop_x64_Debug.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IncludePath);$(boost_dir)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath);$(boost_lib_x64)</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IncludePath);$(boost_dir)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(LibraryPath);$(boost_lib_x64)</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;..\..\..\arrow\antlr\antlr\lib\cpp;..\..\..\arrow\antlr\region\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;matcl-mp-$(Platform)-$(Configuration).lib;matcl-core-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration);..\..\..\matcl\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -330,19 +317,11 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;..\..\..\arrow\antlr\antlr\lib\cpp;..\..\..\arrow\antlr\region\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN64;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;matcl-mp-$(Platform)-$(Configuration).lib;matcl-core-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration);..\..\..\matcl\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -351,24 +330,16 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;..\..\..\arrow\antlr\antlr\lib\cpp;..\..\..\arrow\antlr\region\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;matcl-mp-$(Platform)-$(Configuration).lib;matcl-core-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration);..\..\..\matcl\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -377,22 +348,14 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;..\..\..\matcl\src\include;..\..\..\arrow\antlr\antlr\lib\cpp;..\..\..\arrow\antlr\region\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;matcl-mp-$(Platform)-$(Configuration).lib;matcl-core-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration);..\..\..\matcl\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>

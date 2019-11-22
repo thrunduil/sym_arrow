@@ -35,8 +35,9 @@ class expr;
 class add_expr;
 class mult_expr;
 class function_expr;
-
+class type;
 class set;
+class scope;
 
 class data_provider;
 class subs_context;
@@ -70,6 +71,7 @@ struct unique_nodes_tag{};
 
 // other ast nodes
 class set_rep;
+class scope_rep;
 class identifier_rep;
 
 // terms representations
@@ -113,6 +115,7 @@ using symbol_ptr            = sym_dag::dag_ptr<symbol_rep, term_tag>;
 
 using identifier_ptr        = sym_dag::dag_ptr<identifier_rep, unique_nodes_tag>;
 using set_ptr               = sym_dag::dag_ptr<set_rep, unique_nodes_tag>;
+using scope_ptr             = sym_dag::dag_ptr<scope_rep, unique_nodes_tag>;
 
 using weak_expr_ptr         = sym_dag::weak_dag_item<term_tag>;
 

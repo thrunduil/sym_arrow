@@ -199,4 +199,18 @@ struct dag_node_to_code<sym_arrow::ast::unique_nodes_tag,
     static const size_t code    = (size_t)sym_arrow::ast::unique_nodes_types::set;
 };
 
+template<>
+struct dag_code_to_node<sym_arrow::ast::unique_nodes_tag, 
+                            (size_t)sym_arrow::ast::unique_nodes_types::scope>
+{
+    using type = sym_arrow::ast::scope_rep;
+};
+
+template<>
+struct dag_node_to_code<sym_arrow::ast::unique_nodes_tag, 
+                            sym_arrow::ast::scope_rep>
+{
+    static const size_t code    = (size_t)sym_arrow::ast::unique_nodes_types::scope;
+};
+
 };

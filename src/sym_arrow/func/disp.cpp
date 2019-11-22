@@ -120,21 +120,21 @@ void do_disp_vis::eval(const ast::symbol_rep* h, std::ostream& os, int prec)
         os << ">";
     };
 
-    ast::identifier_handle t = h->get_type();
-    identifier t_default    = sym_dag::dag_context<ast::unique_nodes_tag>::get().get_context_data().default_id();
+    const type& t           = h->get_type();
+    const type&  t_default  = sym_dag::dag_context<ast::unique_nodes_tag>::get()
+                                .get_context_data().default_type();
 
-    bool disp_type          = (t && t_default.get_ptr().get() != t);
-    bool disp_const         = h->is_const();
+    bool disp_type          = (t != t_default);
+    bool is_const           = h->is_const();
 
-    if (disp_type || disp_const)
+    if (disp_type)
     {
         os << ":";
 
-        if (disp_const == true)
+        if (is_const == true)
             os << " const ";
 
-        if (disp_type == true)
-            disp_identifier(t, os);
+        disp_identifier(t.type_name().get_ptr().get(), os);
     }
 };
 

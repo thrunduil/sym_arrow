@@ -22,6 +22,7 @@
 #pragma once
 
 #include "sym_arrow/nodes/expr.h"
+#include "sym_arrow/nodes/type.h"
 #include "sym_arrow/functions/contexts.h"
 
 namespace sym_arrow
@@ -46,18 +47,17 @@ expr SYM_ARROW_EXPORT   function(const identifier& sym, const expr* arg, size_t 
 
 // make symbol with name sym, indexers args, type t and const flag is_const;
 // if t is not initialized, then type is infered based on existing declarations
-symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const identifier& t = identifier(),
-                            bool is_const = false);
+symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const type& t = type());
 symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const expr& a1,
-                            const identifier& t = identifier(), bool is_const = false);
+                            const type& t = type());
 symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const expr& a1, const expr& a2,
-                            const identifier& t = identifier(), bool is_const = false);
+                            const type& t = type());
 symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, std::initializer_list<expr> args,
-                            const identifier& t = identifier(), bool is_const = false);
+                            const type& t = type());
 symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const std::vector<expr>& args,
-                            const identifier& t = identifier(), bool is_const = false);
+                            const type& t = type());
 symbol SYM_ARROW_EXPORT make_symbol(const identifier& sym, const expr* arg, size_t n,
-                            const identifier& t = identifier(), bool is_const = false);
+                            const type& t = type());
 
 };
 

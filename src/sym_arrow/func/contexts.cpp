@@ -120,7 +120,7 @@ void subs_context_impl::check_substitution(const symbol& sym, const expr& ex) co
     if (is_const == true)
         error::sema_error().const_symbol_substitution(sym);
 
-    identifier ty_s     = sym.get_type();
+    identifier ty_s     = sym.get_type().type_name();
     identifier ty_e     = get_type(ex);
 
     bool is_convert     = is_convertible(ty_e, ty_s);

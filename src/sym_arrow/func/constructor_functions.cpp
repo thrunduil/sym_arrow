@@ -27,6 +27,7 @@
 #include "sym_arrow/sema/typing.h"
 #include "sym_arrow/error/sema_error.h"
 #include "sym_arrow/sema/symbol_table_impl.h"
+#include "sym_arrow/ast/symbol_context_data.h"
 
 namespace sym_arrow
 {
@@ -66,6 +67,9 @@ expr sym_arrow::function(const identifier& sym, const expr* arg, size_t n)
     for (size_t i = 0; i < n; ++i)
         arg[i].cannonize(do_cse_default);
 
+    // TODO
+    //bool defined        = sd::sym_table_impl::get()->get_function_definition(sym, arg, n);
+
     {
         expr res;
         bool evaled         = global_function_evaler()
@@ -82,39 +86,38 @@ expr sym_arrow::function(const identifier& sym, const expr* arg, size_t n)
     return expr(ep);
 };
 
-symbol sym_arrow::make_symbol(const identifier& sym, const identifier& t, bool is_const)
+symbol sym_arrow::make_symbol(const identifier& sym, const type& t)
 {
-    return sym_arrow::make_symbol(sym, nullptr, 0, t, is_const);
+    return sym_arrow::make_symbol(sym, nullptr, 0, t);
 };
 
-symbol sym_arrow::make_symbol(const identifier& sym, const expr& arg1, const identifier& t, 
-                                bool is_const)
+symbol sym_arrow::make_symbol(const identifier& sym, const expr& arg1, const type& t)
 {
     expr args[] = {arg1};
-    return sym_arrow::make_symbol(sym, args, 1, t, is_const);
+    return sym_arrow::make_symbol(sym, args, 1, t);
 };
 
 symbol sym_arrow::make_symbol(const identifier& sym, const expr& arg1, const expr& arg2,
-                        const identifier& t, bool is_const)
+                        const type& t)
 {
     expr args[] = {arg1, arg2};
-    return sym_arrow::make_symbol(sym, args, 2, t, is_const);
+    return sym_arrow::make_symbol(sym, args, 2, t);
 };
 
 symbol sym_arrow::make_symbol(const identifier& sym, const std::vector<expr>& arg, 
-                        const identifier& t, bool is_const)
+                        const type& t)
 {
-    return sym_arrow::make_symbol(sym, arg.data(), arg.size(), t, is_const);
+    return sym_arrow::make_symbol(sym, arg.data(), arg.size(), t);
 };
 
 symbol sym_arrow::make_symbol(const identifier& sym, std::initializer_list<expr> arg,
-                        const identifier& t, bool is_const)
+                        const type& t)
 {
-    return sym_arrow::make_symbol(sym, arg.begin(), arg.size(), t, is_const);
+    return sym_arrow::make_symbol(sym, arg.begin(), arg.size(), t);
 };
 
 symbol sym_arrow::make_symbol(const identifier& sym, const expr* arg, size_t n,
-                        const identifier& t, bool is_const)
+                        const type& t)
 {
     for (size_t i = 0; i < n; ++i)
         arg[i].cannonize(do_cse_default);
@@ -122,31 +125,30 @@ symbol sym_arrow::make_symbol(const identifier& sym, const expr* arg, size_t n,
     using info          = ast::symbol_info;
 
     std::vector<identifier> def_args;
-    identifier              t_def;
-    bool                    is_const_def;
+    type                    t_def;
 
-    bool defined        = sd::sym_table_impl::get()->get_symbol_definition(sym, def_args, t_def,
-                                                        is_const_def);
+    bool defined        = sd::sym_table_impl::get()->get_symbol_definition(sym, def_args, t_def);
 
+    // TODO: simplify this 
     if (defined == false)
     {
-        if (n == 0)
-        {
-            sd::sym_table_impl::get()->define_symbol(sym, def_args, t, is_const);
-            t_def           = t;
-            is_const_def    = is_const;
-        }
+        if (t.is_null() == true)
+            t_def       = sym_dag::dag_context<ast::unique_nodes_tag>::get()
+                            .get_context_data().default_type();
         else
-        {
+            t_def       = t;
+
+        if (n == 0)
+            sd::sym_table_impl::get()->define_symbol(sym, def_args, t_def);
+        else
             se::sema_error().undefined_symbol(sym, n);
-        }
     }
     else
     {
         // check indices
         if (def_args.size() != n)
         {
-            error::sema_error().invalid_symbol_args(sym, n, def_args, t_def, is_const_def);
+            error::sema_error().invalid_symbol_args(sym, n, def_args, t_def);
         }
         else
         {
@@ -156,39 +158,37 @@ symbol sym_arrow::make_symbol(const identifier& sym, const expr* arg, size_t n,
                 bool match          = details::is_convertible(t_arg, def_args[i]);
 
                 if (match == false)
-                    error::sema_error().invalid_symbol_arg(sym, i, t_arg, def_args, t_def, is_const_def);
+                    error::sema_error().invalid_symbol_arg(sym, i, t_arg, def_args, t_def);
             }
         }
     }
     
-    identifier t_fin;
+    type t_fin;
 
     if (t.is_null() == true)
         t_fin           = t_def;
     else
         t_fin           = t;
     
-    info f_info         = info(sym.get_ptr().get(), n, arg, t_fin.get_ptr().get(), is_const_def);
+    info f_info         = info(sym.get_ptr().get(), n, arg, &t_fin);
 
     ast::symbol_ptr ep  = ast::symbol_rep::make(f_info);
     symbol ret          = symbol(ep);
 
-    if (t_fin != t_def)
-        se::sema_error().invalid_explicit_symbol_type(sym, def_args, t_def, is_const_def, t);
+    if (t_fin.type_name() != t_def.type_name())
+        se::sema_error().invalid_explicit_symbol_type(sym, def_args, t_def, t_fin);
 
-    if (is_const_def != is_const)
+    if (t_def.is_const() != t_fin.is_const())
     {
-        if (is_const_def == true)
+        if (t_def.is_const() == true)
         {
             // if existing definition defines const symbol and local definition
             // defins nonconst symbol, then const symbol is created
         }
         else
         {
-            // is_const_def = false
-
-            if (is_const == true)
-                se::sema_error().invalid_symbol_nonconst_def(sym, def_args, t_def, is_const_def);
+            if (t_fin.is_const() == true)
+                se::sema_error().invalid_symbol_nonconst_def(sym, def_args, t_def);
         }
     }
     

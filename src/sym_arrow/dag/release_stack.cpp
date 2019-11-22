@@ -26,7 +26,7 @@
 namespace sym_dag { namespace details
 {
 
-struct release_stack_tag;
+struct release_stack_tag{};
 
 class stack_arrays_impl
 {

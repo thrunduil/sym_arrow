@@ -41,19 +41,20 @@ class SYM_ARROW_EXPORT identifier
         ptr_type            m_expr;
 
     public:
-        // create uninitialized symbol
+        // create uninitialized identifier
         identifier();
 
-        // create symbol with given name; name != nullptr; name must be null
-        // terminated and cannot begin with '$' sign
+        // create identifier with given name; name != nullptr; name must
+        // be null terminated and cannot begin with '$' sign
         explicit identifier(const char* name);
 
-        // create symbol with given name; name.size() > 0
+        // create identifier with given name; name.size() > 0
         // name cannot begin with '$' sign
         explicit identifier(const std::string& name);
 
-        // create symbol with given name; name must point to an array with
-        // at least num_char characters; num_char > 0; 
+        // create identifier with given name; name must point to an array
+        // with at least num_char characters; num_char > 0, name cannot begin 
+        // with '$' sign
         identifier(const char* name, size_t num_char);
 
         // destructor
@@ -88,16 +89,12 @@ class SYM_ARROW_EXPORT identifier
         expr                operator()(std::initializer_list<expr> args) const;
         expr                operator()(const std::vector<expr>& args) const;
 
-        // create symbol f<x1, x2, ...> of type t, where f is this identifier name;
-        // if t is not initialized, then type is infered based on existing declarations
-        symbol              index(const identifier& t = identifier()) const;
-        symbol              index(const expr& x1, const identifier& t = identifier()) const;
-        symbol              index(const expr& x1, const expr& x2,
-                                const identifier& t = identifier()) const;
-        symbol              index(std::initializer_list<expr> args,
-                                const identifier& t = identifier()) const;
-        symbol              index(const std::vector<expr>& args,
-                                const identifier& t = identifier()) const;
+        // create symbol f<x1, x2, ...>, where f is this identifier name;
+        symbol              index() const;
+        symbol              index(const expr& x1) const;
+        symbol              index(const expr& x1, const expr& x2) const;
+        symbol              index(std::initializer_list<expr> args) const;
+        symbol              index(const std::vector<expr>& args) const;
 
     public:
         // create a symbol from internal representation; internal use only
@@ -152,7 +149,7 @@ class SYM_ARROW_EXPORT symbol
         identifier          get_name() const;
 
         // type of this symbol; can be nullpr
-        identifier          get_type() const;
+        const type&         get_type() const;
 
         // return number of indices
         size_t              size() const;

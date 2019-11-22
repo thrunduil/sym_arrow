@@ -55,6 +55,7 @@ enum class unique_nodes_types : size_t
 {
     base_symbol  = 0,
     set,
+    scope,
     number_codes
 };
 

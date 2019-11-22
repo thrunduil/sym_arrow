@@ -112,6 +112,7 @@ struct expr_sym
 
     size_t eval_hash() const
     {
+        // TODO: check this hashing
         size_t seed = (size_t)m_sym + (size_t)m_handle;
         //boost::hash_combine(seed, m_code);
         return seed;

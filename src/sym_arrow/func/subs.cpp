@@ -109,7 +109,7 @@ expr do_subs_vis::eval(const ast::symbol_rep* h, const subs_context& sc)
 
     // make substituted index
     ast::symbol_ptr h_sub = make_symbol(identifier(h->get_name()), buff_ptr, n, 
-                                identifier(h->get_type()), false).get_ptr();
+                                h->get_type()).get_ptr();
 
     // final substitution
     expr res = subs_indexed_final(h_sub.get(), sc);
@@ -344,6 +344,7 @@ expr do_subs_vis::eval(const ast::function_rep* h, const subs_context& sc)
     if (any == false)
         return expr();
 
+    //TODO: avoid full rebuilding of function
     expr ret                = function(identifier(h->name()), buff_ptr, n);
     return ret;
 };

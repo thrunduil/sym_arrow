@@ -47,10 +47,15 @@ public:
 	public: void set_def();
 	public: void type_def();
 	public: void sym_def();
+	public: void fun_def();
 	public: identifier  sym_name();
 	public: set  set_initializer();
 	public: void symbol_postfix_def(
-		std::vector<identifier>& args, identifier& t, bool& is_const
+		std::vector<identifier>& args, type& t
+	);
+	public: formal_arg  function_arg();
+	public: void type_postfix(
+		type& t
 	);
 	public: set  set_literal();
 	public: expr  addExpr();
@@ -67,12 +72,9 @@ public:
 		std::vector<expr>& args
 	);
 	public: void index_postfix(
-		std::vector<expr>& args, identifier& t, bool& is_const
+		std::vector<expr>& args, type& t
 	);
 	public: symbol  symbol_def();
-	public: void type_postfix(
-		identifier& y, bool& is_const
-	);
 	public: expr  atom_number();
 	public: int  atom_int();
 public:
@@ -86,10 +88,10 @@ protected:
 private:
 	static const char* tokenNames[];
 #ifndef NO_STATIC_CONSTS
-	static const int NUM_TOKENS = 46;
+	static const int NUM_TOKENS = 47;
 #else
 	enum {
-		NUM_TOKENS = 46
+		NUM_TOKENS = 47
 	};
 #endif
 	
@@ -105,6 +107,8 @@ private:
 	static const ANTLR_USE_NAMESPACE(antlr)BitSet _tokenSet_4;
 	static const unsigned long _tokenSet_5_data_[];
 	static const ANTLR_USE_NAMESPACE(antlr)BitSet _tokenSet_5;
+	static const unsigned long _tokenSet_6_data_[];
+	static const ANTLR_USE_NAMESPACE(antlr)BitSet _tokenSet_6;
 };
 
 #endif /*INC_parser_sym_arrow_hpp_*/

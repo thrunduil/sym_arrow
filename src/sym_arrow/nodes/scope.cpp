@@ -19,36 +19,48 @@
 *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#pragma once
+#include "sym_arrow/nodes/scope.h"
+#include "sym_arrow/ast/ast.h"
 
-#include "symbol_context_data.h"
-
-namespace sym_arrow { namespace ast { namespace details
+namespace sym_arrow
 {
 
-inline size_t symbol_context_data::get_fresh_ident_code()
-{ 
-    return m_reg_symbols->get_fresh_identifier_code();
-};
+scope::scope()
+    :m_expr(value_type::global_scope())
+{};
 
-inline void symbol_context_data::register_ident(const identifier_rep* h)
-{ 
-    m_reg_symbols->register_ident(h); 
-};
+scope::scope(const ptr_type& ex)
+    : m_expr(ex)
+{};
 
-inline void symbol_context_data::unregister_ident(const identifier_rep* h)
+const scope::ptr_type& scope::get_ptr() const
 {
-    m_reg_symbols->unregister_ident(h); 
+    return m_expr;
 };
 
-inline const type& symbol_context_data::default_type() const
+scope scope::make_scope(const scope& parent)
 {
-    return m_default_type;
+    return scope(value_type::make_scope(parent.get_ptr().get()));
+};
+
+scope scope::make_scope(const scope& parent, const std::string& name)
+{
+    return scope(value_type::make_scope(parent.get_ptr().get(), name));
+};
+
+bool scope::is_global() const
+{
+    return m_expr->is_global();
+};
+
+identifier scope::get_unique_identifier() const
+{
+    return m_expr->get_unique_identifier();
 }
 
-inline const scope_ptr& symbol_context_data::global_scope() const
+scope scope::get_parent_scope() const
 {
-    return m_global_scope;
+    return scope(m_expr->get_parent_scope());
 }
 
-}}};
+};

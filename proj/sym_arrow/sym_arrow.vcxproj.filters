@@ -303,6 +303,15 @@
     <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\functions\constructor_functions.h">
       <Filter>Source Files\include\sym_arrow\functions</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\type.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\include\sym_arrow\nodes\scope.h">
+      <Filter>Source Files\include\sym_arrow\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sym_arrow\ast\scope_rep.h">
+      <Filter>Source Files\ast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\sym_arrow\ast\add_rep.cpp">
@@ -506,6 +515,12 @@
     <ClCompile Include="..\..\src\sym_arrow\func\constructor_functions.cpp">
       <Filter>Source Files\func</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\nodes\scope.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\sym_arrow\ast\scope_rep.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\sym_arrow\include\sym_arrow\details\expr.inl">
@@ -604,6 +619,9 @@
     <None Include="..\..\src\sym_arrow\ast\symbol_context_data.inl">
       <Filter>Source Files\ast</Filter>
     </None>
+    <None Include="..\..\src\sym_arrow\include\sym_arrow\details\type.inl">
+      <Filter>Source Files\include\sym_arrow\details</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\src\sym_arrow\grammar\output\sym_arrow_vocabularyTokenTypes.txt">
@@ -613,6 +631,9 @@
       <Filter>Source Files</Filter>
     </Text>
     <Text Include="..\..\src\sym_arrow\simplifications.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="..\..\src\sym_arrow\todo.txt">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>

@@ -33,7 +33,7 @@ bool add_rep_info<Item_type>::are_values_valid() const
     if (scal0->is_nan() == true)
         return false;
 
-    for (int i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i)
     {
         if (elems[i].get_value().is_nan() == true)
             return false;

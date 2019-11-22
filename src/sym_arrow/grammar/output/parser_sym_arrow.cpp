@@ -84,6 +84,11 @@ void parser_sym_arrow::any_def() {
 			sym_def();
 			break;
 		}
+		case FUN:
+		{
+			fun_def();
+			break;
+		}
 		default:
 		{
 			throw ANTLR_USE_NAMESPACE(antlr)NoViableAltException(LT(1), getFilename());
@@ -149,18 +154,81 @@ void parser_sym_arrow::type_def() {
 void parser_sym_arrow::sym_def() {
 	
 	identifier sym;
-	bool is_const = false;
 	
 	std::vector<identifier> args;
-	identifier t;
+	type t;
 	
 	
 	try {      // for error handling
 		match(SYM);
 		sym=sym_name();
-		symbol_postfix_def(args, t, is_const);
+		symbol_postfix_def(args, t);
 		if ( inputState->guessing==0 ) {
-			def_sym(sym, args, t, is_const);
+			def_sym(sym, args, t);
+		}
+	}
+	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
+		if( inputState->guessing == 0 ) {
+			reportError(ex);
+			recover(ex,_tokenSet_0);
+		} else {
+			throw;
+		}
+	}
+}
+
+void parser_sym_arrow::fun_def() {
+	
+	identifier      sym;
+	formal_arg      arg;
+	type            t;
+	std::vector<formal_arg> args;
+	
+	
+	try {      // for error handling
+		match(FUN);
+		sym=sym_name();
+		match(LBRACK);
+		{
+		switch ( LA(1)) {
+		case ID:
+		{
+			arg=function_arg();
+			if ( inputState->guessing==0 ) {
+				args.push_back(arg);
+			}
+			{ // ( ... )*
+			for (;;) {
+				if ((LA(1) == COMMA)) {
+					match(COMMA);
+					arg=function_arg();
+					if ( inputState->guessing==0 ) {
+						args.push_back(arg);
+					}
+				}
+				else {
+					goto _loop9;
+				}
+				
+			}
+			_loop9:;
+			} // ( ... )*
+			break;
+		}
+		case RBRACK:
+		{
+			break;
+		}
+		default:
+		{
+			throw ANTLR_USE_NAMESPACE(antlr)NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		match(RBRACK);
+		type_postfix(t);
+		if ( inputState->guessing==0 ) {
+			def_fun(sym, args, t);
 		}
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
@@ -214,11 +282,11 @@ set  parser_sym_arrow::set_initializer() {
 }
 
 void parser_sym_arrow::symbol_postfix_def(
-	std::vector<identifier>& args, identifier& t, bool& is_const
+	std::vector<identifier>& args, type& t
 ) {
 	
 	identifier y;
-	is_const = false;
+	bool is_const = false;
 	
 	
 	try {      // for error handling
@@ -245,11 +313,11 @@ void parser_sym_arrow::symbol_postfix_def(
 						}
 					}
 					else {
-						goto _loop46;
+						goto _loop51;
 					}
 					
 				}
-				_loop46:;
+				_loop51:;
 				} // ( ... )*
 				break;
 			}
@@ -266,7 +334,6 @@ void parser_sym_arrow::symbol_postfix_def(
 			match(RANGLE);
 			break;
 		}
-		case ANTLR_USE_NAMESPACE(antlr)Token::EOF_TYPE:
 		case COLON:
 		{
 			break;
@@ -277,28 +344,82 @@ void parser_sym_arrow::symbol_postfix_def(
 		}
 		}
 		}
-		{
-		switch ( LA(1)) {
-		case COLON:
-		{
-			type_postfix(t, is_const);
-			break;
-		}
-		case ANTLR_USE_NAMESPACE(antlr)Token::EOF_TYPE:
-		{
-			break;
-		}
-		default:
-		{
-			throw ANTLR_USE_NAMESPACE(antlr)NoViableAltException(LT(1), getFilename());
-		}
-		}
-		}
+		type_postfix(t);
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
 		if( inputState->guessing == 0 ) {
 			reportError(ex);
 			recover(ex,_tokenSet_0);
+		} else {
+			throw;
+		}
+	}
+}
+
+formal_arg  parser_sym_arrow::function_arg() {
+	formal_arg x;
+	
+	identifier      id;
+	type            t;
+	
+	
+	try {      // for error handling
+		id=sym_name();
+		type_postfix(t);
+		if ( inputState->guessing==0 ) {
+			x = formal_arg(id, t);
+		}
+	}
+	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
+		if( inputState->guessing == 0 ) {
+			reportError(ex);
+			recover(ex,_tokenSet_3);
+		} else {
+			throw;
+		}
+	}
+	return x;
+}
+
+void parser_sym_arrow::type_postfix(
+	type& t
+) {
+	
+	identifier y;
+	bool is_const = false;
+	
+	
+	try {      // for error handling
+		match(COLON);
+		{
+		switch ( LA(1)) {
+		case CONST:
+		{
+			match(CONST);
+			if ( inputState->guessing==0 ) {
+				is_const = true;
+			}
+			break;
+		}
+		case ID:
+		{
+			break;
+		}
+		default:
+		{
+			throw ANTLR_USE_NAMESPACE(antlr)NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		y=sym_name();
+		if ( inputState->guessing==0 ) {
+			t = type(y, is_const);
+		}
+	}
+	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
+		if( inputState->guessing == 0 ) {
+			reportError(ex);
+			recover(ex,_tokenSet_4);
 		} else {
 			throw;
 		}
@@ -332,11 +453,11 @@ set  parser_sym_arrow::set_literal() {
 					}
 				}
 				else {
-					goto _loop53;
+					goto _loop57;
 				}
 				
 			}
-			_loop53:;
+			_loop57:;
 			} // ( ... )*
 			break;
 		}
@@ -397,11 +518,11 @@ expr  parser_sym_arrow::addExpr() {
 			}
 			default:
 			{
-				goto _loop10;
+				goto _loop15;
 			}
 			}
 		}
-		_loop10:;
+		_loop15:;
 		} // ( ... )*
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
@@ -446,17 +567,17 @@ expr  parser_sym_arrow::multExpr() {
 			}
 			default:
 			{
-				goto _loop13;
+				goto _loop18;
 			}
 			}
 		}
-		_loop13:;
+		_loop18:;
 		} // ( ... )*
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
 		if( inputState->guessing == 0 ) {
 			reportError(ex);
-			recover(ex,_tokenSet_3);
+			recover(ex,_tokenSet_5);
 		} else {
 			throw;
 		}
@@ -533,11 +654,11 @@ expr  parser_sym_arrow::powExpr() {
 				}
 			}
 			else {
-				goto _loop16;
+				goto _loop21;
 			}
 			
 		}
-		_loop16:;
+		_loop21:;
 		} // ( ... )*
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
@@ -677,18 +798,17 @@ expr  parser_sym_arrow::symbol_postfix() {
 	expr x;
 	
 	identifier sym;  
-	identifier t;
-	bool is_const = false;
+	type t;
 	std::vector<expr> args;
 	
 	
 	try {      // for error handling
 		sym=sym_name();
 		{
-		bool synPredMatched28 = false;
+		bool synPredMatched33 = false;
 		if (((LA(1) == LBRACK))) {
-			int _m28 = mark();
-			synPredMatched28 = true;
+			int _m33 = mark();
+			synPredMatched33 = true;
 			inputState->guessing++;
 			try {
 				{
@@ -697,22 +817,22 @@ expr  parser_sym_arrow::symbol_postfix() {
 			}
 			catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& pe) {
 				(void) pe; /* suppress warnings about unreferenced var 'pe' */
-				synPredMatched28 = false;
+				synPredMatched33 = false;
 			}
-			rewind(_m28);
+			rewind(_m33);
 			inputState->guessing--;
 		}
-		if ( synPredMatched28 ) {
+		if ( synPredMatched33 ) {
 			function_postfix(args);
 			if ( inputState->guessing==0 ) {
 				x = make_function(sym, args);
 			}
 		}
 		else {
-			bool synPredMatched30 = false;
-			if (((_tokenSet_5.member(LA(1))))) {
-				int _m30 = mark();
-				synPredMatched30 = true;
+			bool synPredMatched35 = false;
+			if (((_tokenSet_6.member(LA(1))))) {
+				int _m35 = mark();
+				synPredMatched35 = true;
 				inputState->guessing++;
 				try {
 					{
@@ -736,20 +856,20 @@ expr  parser_sym_arrow::symbol_postfix() {
 				}
 				catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& pe) {
 					(void) pe; /* suppress warnings about unreferenced var 'pe' */
-					synPredMatched30 = false;
+					synPredMatched35 = false;
 				}
-				rewind(_m30);
+				rewind(_m35);
 				inputState->guessing--;
 			}
-			if ( synPredMatched30 ) {
-				index_postfix(args, t, is_const);
+			if ( synPredMatched35 ) {
+				index_postfix(args, t);
 				if ( inputState->guessing==0 ) {
-					x = make_symbol(sym, args, t, is_const);
+					x = make_symbol(sym, args, t);
 				}
 			}
 			else if ((_tokenSet_4.member(LA(1)))) {
 				if ( inputState->guessing==0 ) {
-					x = make_symbol(sym, args, t, is_const);
+					x = make_symbol(sym, args, t);
 				}
 			}
 		else {
@@ -802,11 +922,11 @@ void parser_sym_arrow::function_postfix(
 					}
 				}
 				else {
-					goto _loop35;
+					goto _loop40;
 				}
 				
 			}
-			_loop35:;
+			_loop40:;
 			} // ( ... )*
 			break;
 		}
@@ -833,11 +953,11 @@ void parser_sym_arrow::function_postfix(
 }
 
 void parser_sym_arrow::index_postfix(
-	std::vector<expr>& args, identifier& t, bool& is_const
+	std::vector<expr>& args, type& t
 ) {
 	
 	expr y;
-	is_const = false;
+	bool is_const = false;
 	
 	
 	try {      // for error handling
@@ -870,11 +990,11 @@ void parser_sym_arrow::index_postfix(
 						}
 					}
 					else {
-						goto _loop40;
+						goto _loop45;
 					}
 					
 				}
-				_loop40:;
+				_loop45:;
 				} // ( ... )*
 				break;
 			}
@@ -892,6 +1012,8 @@ void parser_sym_arrow::index_postfix(
 			break;
 		}
 		case ANTLR_USE_NAMESPACE(antlr)Token::EOF_TYPE:
+		case COMMA:
+		case RBRACK:
 		case PLUS:
 		case MINUS:
 		case MULT:
@@ -900,8 +1022,6 @@ void parser_sym_arrow::index_postfix(
 		case OR:
 		case RPAREN:
 		case COLON:
-		case COMMA:
-		case RBRACK:
 		case RANGLE:
 		{
 			break;
@@ -916,10 +1036,12 @@ void parser_sym_arrow::index_postfix(
 		switch ( LA(1)) {
 		case COLON:
 		{
-			type_postfix(t, is_const);
+			type_postfix(t);
 			break;
 		}
 		case ANTLR_USE_NAMESPACE(antlr)Token::EOF_TYPE:
+		case COMMA:
+		case RBRACK:
 		case PLUS:
 		case MINUS:
 		case MULT:
@@ -927,8 +1049,6 @@ void parser_sym_arrow::index_postfix(
 		case POWER:
 		case OR:
 		case RPAREN:
-		case COMMA:
-		case RBRACK:
 		case RANGLE:
 		{
 			break;
@@ -954,16 +1074,15 @@ symbol  parser_sym_arrow::symbol_def() {
 	symbol x;
 	
 	identifier sym;    
-	bool is_const = false;
 	std::vector<expr> args;
-	identifier t;    
+	type t;    
 	
 	
 	try {      // for error handling
 		sym=sym_name();
-		index_postfix(args, t, is_const);
+		index_postfix(args, t);
 		if ( inputState->guessing==0 ) {
-			x = make_symbol(sym, args, t, is_const);
+			x = make_symbol(sym, args, t);
 		}
 	}
 	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
@@ -975,47 +1094,6 @@ symbol  parser_sym_arrow::symbol_def() {
 		}
 	}
 	return x;
-}
-
-void parser_sym_arrow::type_postfix(
-	identifier& y, bool& is_const
-) {
-	
-	is_const = false;
-	
-	
-	try {      // for error handling
-		match(COLON);
-		{
-		switch ( LA(1)) {
-		case CONST:
-		{
-			match(CONST);
-			if ( inputState->guessing==0 ) {
-				is_const = true;
-			}
-			break;
-		}
-		case ID:
-		{
-			break;
-		}
-		default:
-		{
-			throw ANTLR_USE_NAMESPACE(antlr)NoViableAltException(LT(1), getFilename());
-		}
-		}
-		}
-		y=sym_name();
-	}
-	catch (ANTLR_USE_NAMESPACE(antlr)RecognitionException& ex) {
-		if( inputState->guessing == 0 ) {
-			reportError(ex);
-			recover(ex,_tokenSet_4);
-		} else {
-			throw;
-		}
-	}
 }
 
 expr  parser_sym_arrow::atom_number() {
@@ -1100,6 +1178,10 @@ const char* parser_sym_arrow::tokenNames[] = {
 	"\"set\"",
 	"\"type\"",
 	"\"sym\"",
+	"\"fun\"",
+	"\'[\'",
+	"\',\'",
+	"\']\'",
 	":=",
 	"\'+\'",
 	"\'-\'",
@@ -1110,11 +1192,8 @@ const char* parser_sym_arrow::tokenNames[] = {
 	"\'(\'",
 	"\')\'",
 	"an identifier",
-	"\'[\'",
 	"\'<\'",
 	"\':\'",
-	"\',\'",
-	"\']\'",
 	"\'>\'",
 	"\"const\"",
 	"\'{\'",
@@ -1145,21 +1224,24 @@ const char* parser_sym_arrow::tokenNames[] = {
 const unsigned long parser_sym_arrow::_tokenSet_0_data_[] = { 2UL, 0UL, 0UL, 0UL };
 // EOF 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_0(_tokenSet_0_data_,4);
-const unsigned long parser_sym_arrow::_tokenSet_1_data_[] = { 7380994UL, 0UL, 0UL, 0UL };
-// EOF OR RPAREN COMMA RBRACK RANGLE 
+const unsigned long parser_sym_arrow::_tokenSet_1_data_[] = { 9045506UL, 0UL, 0UL, 0UL };
+// EOF COMMA RBRACK OR RPAREN RANGLE 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_1(_tokenSet_1_data_,4);
-const unsigned long parser_sym_arrow::_tokenSet_2_data_[] = { 41860994UL, 0UL, 0UL, 0UL };
-// EOF DOTEQ PLUS MINUS MULT DIV POWER OR RPAREN LBRACK LANGLE COLON COMMA 
-// RBRACK RANGLE RCURL 
+const unsigned long parser_sym_arrow::_tokenSet_2_data_[] = { 82575106UL, 0UL, 0UL, 0UL };
+// EOF LBRACK COMMA RBRACK DOTEQ PLUS MINUS MULT DIV POWER OR RPAREN LANGLE 
+// COLON RANGLE RCURL 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_2(_tokenSet_2_data_,4);
-const unsigned long parser_sym_arrow::_tokenSet_3_data_[] = { 7381762UL, 0UL, 0UL, 0UL };
-// EOF PLUS MINUS OR RPAREN COMMA RBRACK RANGLE 
+const unsigned long parser_sym_arrow::_tokenSet_3_data_[] = { 1536UL, 0UL, 0UL, 0UL };
+// COMMA RBRACK 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_3(_tokenSet_3_data_,4);
-const unsigned long parser_sym_arrow::_tokenSet_4_data_[] = { 7388930UL, 0UL, 0UL, 0UL };
-// EOF PLUS MINUS MULT DIV POWER OR RPAREN COMMA RBRACK RANGLE 
+const unsigned long parser_sym_arrow::_tokenSet_4_data_[] = { 9172482UL, 0UL, 0UL, 0UL };
+// EOF COMMA RBRACK PLUS MINUS MULT DIV POWER OR RPAREN RANGLE 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_4(_tokenSet_4_data_,4);
-const unsigned long parser_sym_arrow::_tokenSet_5_data_[] = { 8175362UL, 0UL, 0UL, 0UL };
-// EOF PLUS MINUS MULT DIV POWER OR RPAREN LANGLE COLON COMMA RBRACK RANGLE 
+const unsigned long parser_sym_arrow::_tokenSet_5_data_[] = { 9057794UL, 0UL, 0UL, 0UL };
+// EOF COMMA RBRACK PLUS MINUS OR RPAREN RANGLE 
 const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_5(_tokenSet_5_data_,4);
+const unsigned long parser_sym_arrow::_tokenSet_6_data_[] = { 15463938UL, 0UL, 0UL, 0UL };
+// EOF COMMA RBRACK PLUS MINUS MULT DIV POWER OR RPAREN LANGLE COLON RANGLE 
+const ANTLR_USE_NAMESPACE(antlr)BitSet parser_sym_arrow::_tokenSet_6(_tokenSet_6_data_,4);
 
 

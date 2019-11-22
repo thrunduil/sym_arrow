@@ -3,42 +3,43 @@ sym_arrow_vocabulary    // output token vocab name
 SET="set"=4
 TYPE="type"=5
 SYM="sym"=6
-DOTEQ(":=")=7
-PLUS("'+'")=8
-MINUS("'-'")=9
-MULT("'*'")=10
-DIV("'/'")=11
-POWER("'^'")=12
-OR("|")=13
-LPAREN("'('")=14
-RPAREN("')'")=15
-ID("an identifier")=16
-LBRACK("'['")=17
-LANGLE("'<'")=18
-COLON("':'")=19
-COMMA("','")=20
-RBRACK("']'")=21
-RANGLE("'>'")=22
-CONST="const"=23
-LCURL("'{'")=24
-RCURL("'}'")=25
-NUMBER("number")=26
-INT("integer")=27
-SEMI("';'")=28
-ESC=29
-WHITESPACE("white space")=30
-NEWLINE("new line")=31
-NOT_NEWLINE("not new line")=32
-NON_NEWLINE_WHITESPACE("not new line")=33
-COMMENT("comment")=34
-SL_COMMENT=35
-SL_DCOMMENT=36
-ML_COMMENT=37
-STRING_LITERAL("string")=38
-MULTILINE_STRING("string")=39
-CONTINUATION("continuation")=40
-DIGIT("digit")=41
-EXPONENT("exponent")=42
-COMPLEX("complex")=43
-DDOT("double dot")=44
-DOT("dot")=45
+FUN="fun"=7
+LBRACK("'['")=8
+COMMA("','")=9
+RBRACK("']'")=10
+DOTEQ(":=")=11
+PLUS("'+'")=12
+MINUS("'-'")=13
+MULT("'*'")=14
+DIV("'/'")=15
+POWER("'^'")=16
+OR("|")=17
+LPAREN("'('")=18
+RPAREN("')'")=19
+ID("an identifier")=20
+LANGLE("'<'")=21
+COLON("':'")=22
+RANGLE("'>'")=23
+CONST="const"=24
+LCURL("'{'")=25
+RCURL("'}'")=26
+NUMBER("number")=27
+INT("integer")=28
+SEMI("';'")=29
+ESC=30
+WHITESPACE("white space")=31
+NEWLINE("new line")=32
+NOT_NEWLINE("not new line")=33
+NON_NEWLINE_WHITESPACE("not new line")=34
+COMMENT("comment")=35
+SL_COMMENT=36
+SL_DCOMMENT=37
+ML_COMMENT=38
+STRING_LITERAL("string")=39
+MULTILINE_STRING("string")=40
+CONTINUATION("continuation")=41
+DIGIT("digit")=42
+EXPONENT("exponent")=43
+COMPLEX("complex")=44
+DDOT("double dot")=45
+DOT("dot")=46

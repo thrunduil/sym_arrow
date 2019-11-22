@@ -25,6 +25,7 @@
 #include "dag/dag.h"
 #include "sym_arrow/fwd_decls.h"
 #include "sym_arrow/ast/helpers/registered_symbols.h"
+#include "sym_arrow/nodes/scope.h"
 
 namespace sym_arrow { namespace ast { namespace details
 {
@@ -42,7 +43,8 @@ class symbol_context_data : public sym_dag::context_data_base
         reg_sym_ptr         m_reg_symbols;
         sym_tab_ptr         m_sym_tab;
 
-        identifier          m_default_id;
+        type                m_default_type;
+        scope_ptr           m_global_scope;
 
         virtual ~symbol_context_data() override;
 
@@ -60,7 +62,8 @@ class symbol_context_data : public sym_dag::context_data_base
         // by this function
         void                unregister_ident(const identifier_rep* h);
 
-        const identifier&   default_id() const;
+        const type&         default_type() const;
+        const scope_ptr&    global_scope() const;
 };
 
 }}};

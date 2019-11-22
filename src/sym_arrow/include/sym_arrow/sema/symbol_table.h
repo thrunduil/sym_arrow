@@ -22,6 +22,7 @@
 #pragma once
 
 #include "sym_arrow/nodes/expr.h"
+#include "sym_arrow/nodes/type.h"
 #include "sym_arrow/nodes/set.h"
 
 #pragma warning(push)
@@ -63,7 +64,13 @@ class SYM_ARROW_EXPORT sym_table
         // function, if type name t is not initialized, then sym has
         // default type
         void                define_symbol(const identifier& sym, const std::vector<identifier>& args,
-                                const identifier& t, bool is_const);
+                                const type& t);
+
+        // define function sym[n1 : t1, ..., nk : tk> of type t
+        // with k arguments of types ti; arguments names ni plays only
+        // debugging purpose
+        void                define_function(const identifier& sym, const std::vector<formal_arg>& args,
+                                const type& t);
 
     public:
         // return true is symbol sym defines a set

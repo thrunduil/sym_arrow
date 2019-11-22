@@ -32,6 +32,8 @@
 #include "sym_arrow/nodes/add_expr.h"
 #include "sym_arrow/nodes/mult_expr.h"
 #include "sym_arrow/nodes/function_expr.h"
+#include "sym_arrow/nodes/type.h"
+#include "sym_arrow/nodes/scope.h"
 
 #include "sym_arrow/nodes/set.h"
 

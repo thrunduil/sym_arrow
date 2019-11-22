@@ -41,10 +41,10 @@ int main(int argc, const char* argv[])
     try
     {
         {
-            sa::parse_def("type real");
+            sa::parse_def("type re");
             sa::parse_def("set A := {a1, a2, a3}");
             sa::parse_def("set B := {b1, b2, b3}");
-            sa::parse_def("sym x<A,B> : real");
+            sa::parse_def("sym x<A,B> : re");
 
             sa::parse_def("set S := {a,b,c}");
             sa::parse_def("set T := {aa,bb,cc}");
@@ -52,7 +52,7 @@ int main(int argc, const char* argv[])
             sa::symbol i        = sa::parse_sym("i : S");
             sa::symbol j        = sa::parse_sym("j : S");
 
-            sa::parse_def("sym W<S>");
+            sa::parse_def("sym W<S> : real");
 
             sa::expr e          = sa::identifier("W").index(i) + sa::symbol("y");
 
@@ -80,9 +80,9 @@ int main(int argc, const char* argv[])
         }
         {
             sa::parse_def("set S := {a0, a1, a2}");
-            sa::parse_def("sym A<S>");
+            sa::parse_def("sym A<S> : real");
 
-            sa::symbol i        = sa::identifier("i").index(sa::identifier("S"));
+            sa::symbol i        = sa::make_symbol(sa::identifier("i"), sa::type(sa::identifier("S"), false));
             sa::expr k          = i + i;
             disp(i);
             disp(k);

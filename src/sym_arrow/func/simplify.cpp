@@ -95,6 +95,7 @@ do_simplify_vis::~do_simplify_vis()
 
 expr do_simplify_vis::make(const ast::expr_base* ast)
 {
+    //expression must be rebuilded in order to activate full cannonization
     expr ret = visit(ast);
     return ret;
 };
@@ -298,6 +299,7 @@ expr do_simplify_vis::eval(const ast::function_rep* h)
         ++size_counter;
     };
 
+    //TODO: avoid full rebuilding of function
     expr ret                = function(identifier(h->name()), buff_ptr, n);
 
     ret.cannonize(true);

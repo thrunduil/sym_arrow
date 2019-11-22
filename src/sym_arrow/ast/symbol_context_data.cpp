@@ -35,12 +35,16 @@ void symbol_context_data::initialize()
     m_reg_symbols   = registered_symbols::get();
     m_sym_tab       = sd::sym_table_impl::get();
 
-    m_default_id    = identifier("default");
+    m_default_type  = type(identifier("real"), false);
+    m_global_scope  = scope_rep::make_global_scope();
+
+    m_sym_tab->define_type(m_default_type.type_name());
 };
 
 void symbol_context_data::close()
 {
-    m_default_id    = identifier();
+    m_default_type  = type();
+    m_global_scope  = scope_ptr();
 
     m_sym_tab->close();
     m_reg_symbols->close();   

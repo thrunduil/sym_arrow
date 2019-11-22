@@ -23,6 +23,7 @@
 
 #include "sym_arrow/config.h"
 #include "sym_arrow/fwd_decls.h"
+#include "sym_arrow/nodes/type.h"
 
 namespace sym_arrow { namespace error
 {
@@ -50,23 +51,19 @@ class sema_error
 
         void    undefined_symbol(const identifier& sym, size_t n_args);
         void    invalid_symbol_args(const identifier& sym, size_t n_args, 
-                    const std::vector<identifier>& def_args, const identifier& def_type,
-                    bool is_const_def);
+                    const std::vector<identifier>& def_args, const type& def_type);
         void    invalid_symbol_arg(const identifier& sym, size_t arg, const identifier& t_arg, 
-                    const std::vector<identifier>& def_args, const identifier& def_type,
-                    bool is_const_def);
+                    const std::vector<identifier>& def_args, const type& def_type);
         void    invalid_explicit_symbol_type(const identifier& sym, 
-                    const std::vector<identifier>& def_args, const identifier&  def_type, 
-                    bool is_const_def, const identifier& loc_type);
+                    const std::vector<identifier>& def_args, const type&  def_type, 
+                    const type& loc_type);
 
         void    invalid_symbol_nonconst_def(const identifier& sym, 
-                    const std::vector<identifier>& def_args, const identifier&  def_type, 
-                    bool is_const_def);
+                    const std::vector<identifier>& def_args, const type&  def_type);
 
     private:
         void    disp_symbol_def(std::ostream& os, const identifier& sym, 
-                    const std::vector<identifier>& def_args, const identifier&  def_type,
-                    bool is_const_def);
+                    const std::vector<identifier>& def_args, const type& def_type);
 };
 
 }}

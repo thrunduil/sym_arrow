@@ -57,9 +57,15 @@ void sym_table::define_set(const identifier& sym, const set& s)
 };
 
 void sym_table::define_symbol(const identifier& sym, const std::vector<identifier>& args,
-                        const identifier& t, bool is_const)
+                        const type& t)
 {
-    return m_impl->define_symbol(sym, args, t, is_const);
+    return m_impl->define_symbol(sym, args, t);
+}
+
+void sym_table::define_function(const identifier& sym, const std::vector<formal_arg>& args,
+                        const type& t)
+{
+    return m_impl->define_function(sym, args, t);
 }
 
 void sym_table::define_type(const identifier& t)

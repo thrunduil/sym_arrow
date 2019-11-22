@@ -28,6 +28,7 @@
 #include "sym_arrow/sema/symbol_table_impl.h"
 #include "sym_arrow/sema/typing.h"
 #include "sym_arrow/error/sema_error.h"
+#include "sym_arrow/nodes/type.h"
 
 namespace sym_arrow 
 {
@@ -44,11 +45,10 @@ identifier::~identifier()
 identifier::identifier(const char* name, size_t num_char)
     :m_expr()
 {
-    ast::identifier_ptr n = ast::identifier_rep::make(ast::identifier_info(name, num_char));
+    //TODO
+    ast::identifier_ptr n = ast::identifier_rep::make(ast::identifier_info(name, 
+                                        num_char, nullptr));
     m_expr = n;
-
-    if (num_char == 0 || name[0] == '$')
-        throw std::runtime_error("invalid symbol name");
 };
 
 const char* identifier::get_name() const
@@ -86,29 +86,29 @@ expr identifier::operator()(const std::vector<expr>& ex) const
     return sym_arrow::function(*this, ex);
 }
 
-symbol identifier::index(const identifier& t) const
+symbol identifier::index() const
 {
-    return sym_arrow::make_symbol(*this, t, false);
+    return sym_arrow::make_symbol(*this);
 }
 
-symbol identifier::index(const expr& x1, const identifier& t) const
+symbol identifier::index(const expr& x1) const
 {
-    return sym_arrow::make_symbol(*this, x1, t, false);
+    return sym_arrow::make_symbol(*this, x1);
 }
 
-symbol identifier::index(const expr& x1, const expr& x2, const identifier& t) const
+symbol identifier::index(const expr& x1, const expr& x2) const
 {
-    return sym_arrow::make_symbol(*this, x1, x2, t, false);
+    return sym_arrow::make_symbol(*this, x1, x2);
 }
 
-symbol identifier::index(std::initializer_list<expr> ex, const identifier& t) const
+symbol identifier::index(std::initializer_list<expr> ex) const
 {
-    return sym_arrow::make_symbol(*this, ex, t, false);
+    return sym_arrow::make_symbol(*this, ex);
 }
 
-symbol identifier::index(const std::vector<expr>& ex, const identifier& t) const
+symbol identifier::index(const std::vector<expr>& ex) const
 {
-    return sym_arrow::make_symbol(*this, ex, t, false);
+    return sym_arrow::make_symbol(*this, ex);
 }
 
 //-------------------------------------------------------------------
@@ -121,8 +121,11 @@ symbol::~symbol()
 symbol::symbol(const char* name, size_t num_char)
     :m_expr()
 {
-    ast::identifier_ptr n = ast::identifier_rep::make(ast::identifier_info(name, num_char));
-    m_expr = make_symbol(identifier(n), identifier(), false).get_ptr();
+    //TODO
+    ast::identifier_ptr n = ast::identifier_rep::make(ast::identifier_info
+                                        (name, num_char, nullptr));
+
+    m_expr = make_symbol(identifier(n)).get_ptr();
 };
 
 identifier symbol::get_name() const
@@ -130,9 +133,9 @@ identifier symbol::get_name() const
     return identifier(get_ptr()->get_name());
 }
 
-identifier symbol::get_type() const
+const type& symbol::get_type() const
 {
-    return identifier(get_ptr()->get_type());
+    return get_ptr()->get_type();
 }
 
 size_t symbol::size() const

@@ -26,6 +26,7 @@
 #include "dag/dag.h"
 #include "sym_arrow/ast/helpers/string_data.h"
 #include "sym_arrow/ast/ast_tags.h"
+#include "sym_arrow/nodes/type.h"
 
 #pragma warning(push)
 #pragma warning(disable : 4251) //needs to have dll-interface to be used by clients
@@ -36,15 +37,27 @@ namespace sym_arrow { namespace ast
 // data to construct a symbol with given name
 struct identifier_info
 {
-    const char*             m_name;
-    size_t                  m_size;
+    public:
+        const char*             m_name;
+        size_t                  m_size;
+        const scope_rep*        m_scope;        
 
-    // create a named symbol with name stored in first 'size'
-    // charackters of a char ptr 'name' (null terminator need not be
-    // added)
-    identifier_info(const char* name, size_t size)
-        :m_name(name), m_size(size)
-    {};
+        // create a named symbol with name stored in first 'size'
+        // charackters of a char ptr 'name' (null terminator need not be
+        // added)
+        identifier_info(const char* name, size_t size, const scope_rep* sc)
+            :m_name(name), m_size(size), m_scope(sc), m_special(false)
+        {};
+
+    private:
+        bool                    m_special;
+
+        void set_special()
+        {
+            m_special = true;
+        };
+
+        friend identifier_rep;
 };
 
 // class representing a symbol
@@ -56,6 +69,7 @@ class identifier_rep : public sym_dag::dag_item<identifier_rep, unique_nodes_tag
     private:
         details::string_data    m_name;
         size_t                  m_code;
+        scope_ptr               m_scope;
 
     public:
         identifier_rep(const identifier_info& info);
@@ -85,6 +99,18 @@ class identifier_rep : public sym_dag::dag_item<identifier_rep, unique_nodes_tag
         // return code of this identifier; different identifier have
         // differrent codes
         size_t              get_identifier_code() const;
+
+        // return true if identifier scope is set
+        bool                is_qualified() const;
+
+        // make special identifier used internally by this library
+        static identifier_ptr
+                            make_special(size_t code, const scope_rep* scope);
+
+        // make special identifier used internally by this library
+        // name must begin with '$' and an alphabetic letter
+        static identifier_ptr
+                            make_special(const std::string& name, const scope_rep* scope);
 };
 
 // data representing symbol_rep node
@@ -101,7 +127,7 @@ class symbol_info
         const expr*         m_args;
 
         // symbol type
-        identifier_handle   m_type;
+        const type*         m_type;
 
         // const flag
         bool                m_is_const;
@@ -112,9 +138,8 @@ class symbol_info
     public:
         // constructor; arguments must be cannonized
         symbol_info(identifier_handle name, size_t size, const expr* args,
-                    identifier_handle type, bool is_const)
-            : m_name(name), m_size(size), m_args(args), m_type(type)
-            , m_hash(0), m_is_const(is_const)
+                    const type*  t)
+            : m_name(name), m_size(size), m_args(args), m_type(t), m_hash(0)
         {};
 };
 
@@ -130,8 +155,7 @@ class symbol_rep : public expr_symbols<symbol_rep>
 
         identifier_ptr  m_name;
         expr_ptr*       m_expr;
-        identifier_ptr  m_type;
-        bool            m_is_const;
+        type            m_type;
 
     private:
         symbol_rep(const symbol_rep&) = delete;
@@ -168,11 +192,10 @@ class symbol_rep : public expr_symbols<symbol_rep>
                         get_name() const        { return m_name.get();}
 
         // type of this symbol; can be nullpr
-        identifier_handle
-                        get_type() const        { return m_type.get();}
+        const type&     get_type() const        { return m_type;}
 
         // return true if this symbol is constant
-        bool            is_const() const        { return m_is_const; };
+        bool            is_const() const        { return m_type.is_const(); };
 
         // return code of name of this symbol; different names have
         // differrent codes

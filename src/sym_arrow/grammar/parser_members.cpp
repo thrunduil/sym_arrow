@@ -320,9 +320,9 @@ expr parser_sym_arrow::make_function(const identifier& sym, const std::vector<ex
 };
 
 symbol parser_sym_arrow::make_symbol(const identifier& sym, const std::vector<expr>& args, 
-        const identifier& t, bool is_const)
+        const type& t)
 {
-    return sym_arrow::make_symbol(sym, args, t, is_const);
+    return sym_arrow::make_symbol(sym, args, t);
 };
 
 set parser_sym_arrow::make_set(const std::vector<identifier>& args)
@@ -336,9 +336,15 @@ void parser_sym_arrow::def_set(const identifier& sym, const set& ex)
 }
 
 void parser_sym_arrow::def_sym(const identifier& sym, const std::vector<identifier>& args,
-                            const identifier& type, bool is_const)
+                            const type& t)
 {
-    sym_table::get().define_symbol(sym, args, type, is_const);
+    sym_table::get().define_symbol(sym, args, t);
+}
+
+void parser_sym_arrow::def_fun(const identifier& id, const std::vector<formal_arg>& args, 
+                        const type& t)
+{
+    sym_table::get().define_function(id, args, t);
 }
 
 void parser_sym_arrow::def_type(const identifier& sym)

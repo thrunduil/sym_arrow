@@ -32,6 +32,7 @@
 #include "sym_arrow/ast/function_rep.h"
 
 #include "sym_arrow/ast/set_rep.h"
+#include "sym_arrow/ast/scope_rep.h"
 
 #include "sym_arrow/ast/mult_rep.inl"
 #include "sym_arrow/ast/add_rep.inl"

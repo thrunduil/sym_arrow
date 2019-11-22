@@ -45,6 +45,7 @@ any_def
     :   set_def
     |   type_def
     |   sym_def
+    |   fun_def
 ;
 
 set_def 
@@ -68,14 +69,45 @@ type_def
 sym_def 
 {
     identifier sym;
-    bool is_const = false;
 
     std::vector<identifier> args;
-    identifier t;
+    type t;
 }
     :   SYM
         sym   = sym_name
-        symbol_postfix_def[args, t, is_const]   { def_sym(sym, args, t, is_const); }
+        symbol_postfix_def[args, t] { def_sym(sym, args, t); }
+;
+
+fun_def 
+{
+    identifier      sym;
+    formal_arg      arg;
+    type            t;
+    std::vector<formal_arg> args;
+}
+    :   FUN
+        sym   = sym_name
+
+        LBRACK
+        (
+            arg = function_arg          { args.push_back(arg); }
+            (
+                COMMA
+                arg = function_arg      { args.push_back(arg); }
+            )*
+        )?
+        RBRACK
+
+        type_postfix[t]                 { def_fun(sym, args, t); }
+;
+
+function_arg returns[formal_arg x]
+{
+    identifier      id;
+    type            t;
+}
+    :   id = sym_name
+        type_postfix[t]                 { x = formal_arg(id, t);}
 ;
 
 set_initializer returns[set x]
@@ -176,8 +208,7 @@ sym_name returns[identifier x]
 symbol_postfix returns[expr x]
 {
     identifier sym;  
-    identifier t;
-    bool is_const = false;
+    type t;
     std::vector<expr> args;
 }
     :   sym = sym_name
@@ -185,21 +216,19 @@ symbol_postfix returns[expr x]
             (LBRACK) 
                 => function_postfix[args]   { x = make_function(sym, args); }
         |   (LANGLE | COLON) 
-                => index_postfix[args, t, is_const]
-                                            { x = make_symbol(sym, args, t, is_const); }
-        |                                   { x = make_symbol(sym, args, t, is_const); }
+                => index_postfix[args, t]   { x = make_symbol(sym, args, t); }
+        |                                   { x = make_symbol(sym, args, t); }
         )
 ;
 
 symbol_def returns[symbol x]
 {
     identifier sym;    
-    bool is_const = false;
     std::vector<expr> args;
-    identifier t;    
+    type t;    
 }
     :   sym = sym_name
-        index_postfix[args, t, is_const]    { x = make_symbol(sym, args, t, is_const); }
+        index_postfix[args, t]          { x = make_symbol(sym, args, t); }
 ;
 
 function_postfix[std::vector<expr>& args]
@@ -217,10 +246,10 @@ function_postfix[std::vector<expr>& args]
         RBRACK                         
 ;
 
-index_postfix[std::vector<expr>& args, identifier& t, bool& is_const]
+index_postfix[std::vector<expr>& args, type& t]
 {
     expr y;
-    is_const = false;
+    bool is_const = false;
 }
     :   (
             LANGLE
@@ -235,14 +264,14 @@ index_postfix[std::vector<expr>& args, identifier& t, bool& is_const]
         )?
 
         (
-            type_postfix[t, is_const]
+            type_postfix[t]
         )?
 ;
 
-symbol_postfix_def[std::vector<identifier>& args, identifier& t, bool& is_const]
+symbol_postfix_def[std::vector<identifier>& args, type& t]
 {
     identifier y;
-    is_const = false;
+    bool is_const = false;
 }
     :   (
             LANGLE
@@ -255,20 +284,20 @@ symbol_postfix_def[std::vector<identifier>& args, identifier& t, bool& is_const]
             )?
             RANGLE                         
         )?
-        (
-            type_postfix[t, is_const]
-        )?
+
+        type_postfix[t]
 ;
 
-type_postfix[identifier& y, bool& is_const]
+type_postfix[type& t]
 {
-    is_const = false;
+    identifier y;
+    bool is_const = false;
 }
     :   COLON
         (
             CONST                       { is_const = true; }
         )?
-        y = sym_name
+        y = sym_name                    { t = type(y, is_const); }
 ;
 
 set_literal returns[set x]
@@ -338,6 +367,7 @@ tokens
     SET                     = "set";
     SYM                     = "sym";
     TYPE                    = "type";
+    FUN                     = "fun";
     CONST                   = "const";
 }
 

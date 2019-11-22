@@ -77,7 +77,6 @@ size_t set_rep::eval_hash(const set_rep_info& pi)
 
     pi.m_hash = seed;
     return seed;
-
 };
 
 bool set_rep::equal(const set_rep_info& pi) const

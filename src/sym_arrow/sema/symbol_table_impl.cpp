@@ -54,21 +54,31 @@ def_data_type::def_data_type()
 def_data_type::~def_data_type()
 {};
 
-def_data_symbol::def_data_symbol(const std::vector<identifier>& args, const identifier& t, 
-                    bool is_const)
-    :def_data(symbol_kind::symbol), m_args(args), m_type(t), m_is_const(is_const)
+def_data_symbol::def_data_symbol(const std::vector<identifier>& args, const type& t)
+    :def_data(symbol_kind::symbol), m_args(args), m_type(t)
 {};
 
-void def_data_symbol::get_def(std::vector<identifier>& args, identifier& t,
-                    bool& is_const) const
+void def_data_symbol::get_def(std::vector<identifier>& args, type& t) const
 {
     args    = m_args;
     t       = m_type;
-    is_const= m_is_const;
 }
 
 def_data_symbol::~def_data_symbol()
 {};
+
+def_data_function::def_data_function(const std::vector<formal_arg>& args, const type& t)
+    : def_data(symbol_kind::function), m_args(args), m_type(t)
+{};
+
+def_data_function::~def_data_function()
+{};
+
+void def_data_function::get_def(std::vector<formal_arg>& args, type& t) const
+{
+    args    = m_args;
+    t       = m_type;
+}
 
 symbol_map_entry::symbol_map_entry(const identifier& sym, const symbol_data_maker& data)
     :m_sym(sym), m_data(data())
@@ -154,7 +164,7 @@ bool symbol_map::get_set(const identifier& sym, set& s) const
 }
 
 bool symbol_map::get_symbol(const identifier& sym, 
-            std::vector<identifier>& args, identifier& t, bool& is_const) const
+            std::vector<identifier>& args, type& t) const
 {
     size_t code     = sym.get_identifier_code();
     auto pos        = m_code_sym_map.get(code);
@@ -170,7 +180,7 @@ bool symbol_map::get_symbol(const identifier& sym,
     if (def->get_kind() != symbol_kind::symbol)
         return false;
 
-    dynamic_cast<const def_data_symbol*>(def)->get_def(args, t, is_const);
+    dynamic_cast<const def_data_symbol*>(def)->get_def(args, t);
     return true;
 }
 
@@ -228,7 +238,7 @@ void sym_table_impl::define_set(const identifier& sym, const set& s)
     for (size_t i = 0; i < n; ++i)
     {
         identifier id   = s.arg(i);
-        define_symbol(id, args, sym, true);
+        define_symbol(id, args, type(sym, true));
     }
 };
 
@@ -255,25 +265,14 @@ void sym_table_impl::define_type(const identifier& sym)
 }
 
 void sym_table_impl::define_symbol(const identifier& sym, 
-                            const std::vector<identifier>& args, const identifier& t,
-                            bool is_const)
+                            const std::vector<identifier>& args, const type& t)
 {
-    identifier t_fin;
-
-    if (t.is_null() == false)
+    // type name must be defined
     {
-        // type name must be defined
-
-        bool is_def = this->is_defined_type(t);
+        bool is_def = this->is_defined_type(t.type_name());
 
         if (is_def == false)
-            error::sema_error().type_not_defined(t); 
-
-        t_fin   = t;
-    }
-    else
-    {
-        t_fin   = sym_dag::dag_context<ast::unique_nodes_tag>::get().get_context_data().default_id();
+            error::sema_error().type_not_defined(t.type_name()); 
     }
 
     for (const auto& it : args)
@@ -286,7 +285,7 @@ void sym_table_impl::define_symbol(const identifier& sym,
             error::sema_error().set_not_defined(it); 
     };
 
-    symbol_data_maker f = [&](){return new def_data_symbol(args, t_fin, is_const);};
+    symbol_data_maker f = [&](){return new def_data_symbol(args, t);};
     const entry* ptr    = m_sym_map.define(sym, f);
 
     //1. symbol name cannot be already defined
@@ -300,6 +299,43 @@ void sym_table_impl::define_symbol(const identifier& sym,
         return;
     };    
 }
+
+void sym_table_impl::define_function(const identifier& sym, 
+                            const std::vector<formal_arg>& args,const type& t)
+{
+    for (const auto& it : args)
+    {
+        // argument type name must be defined
+
+        const type& ty  = it.type_name();
+        bool is_def     = this->is_defined_type(ty.type_name());
+
+        if (is_def == false)
+            error::sema_error().type_not_defined(ty.type_name()); 
+    };
+
+    // function type name must be defined
+    {
+        bool is_def     = this->is_defined_type(t.type_name());
+
+        if (is_def == false)
+            error::sema_error().type_not_defined(t.type_name()); 
+    };    
+
+    symbol_data_maker f = [&](){return new def_data_function(args, t);};
+    const entry* ptr    = m_sym_map.define(sym, f);
+
+    //1. symbol name cannot be already defined
+
+    if (ptr)
+    {      
+        // symbol is already defined
+        // TODO: more informative error
+        error::sema_error().symbol_already_defined(sym);
+
+        return;
+    };
+};
 
 bool sym_table_impl::is_defined_set(const identifier& sym) const
 {
@@ -329,9 +365,9 @@ bool sym_table_impl::get_set_definition(const identifier& sym, set& def) const
 }
 
 bool sym_table_impl::get_symbol_definition(const identifier& sym, 
-            std::vector<identifier>& args, identifier& t, bool& is_const) const
+            std::vector<identifier>& args, type& t) const
 {
-    return m_sym_map.get_symbol(sym, args, t, is_const);
+    return m_sym_map.get_symbol(sym, args, t);
 }
 
 }};

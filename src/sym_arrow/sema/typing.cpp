@@ -67,12 +67,13 @@ identifier details::get_type(const expr& ex)
     if (is_sym == false)
     {
         //TODO
-        return sym_dag::dag_context<ast::unique_nodes_tag>::get().get_context_data().default_id();
+        return sym_dag::dag_context<ast::unique_nodes_tag>::get()
+                    .get_context_data().default_type().type_name();
     }
 
     symbol id       = cast_symbol(ex);
 
-    return id.get_type();
+    return id.get_type().type_name();
 }
 
 }};
