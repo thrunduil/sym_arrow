@@ -1,0 +1,17 @@
+1. scopes
+2. improve sets
+3. sums
+4. overloading
+5. check nan propagation
+6. documentation
+7. other atomic types
+8. noncommutative algebras
+9. other value type of expr
+10.expectation operator
+11. domains
+
+milestones:
+1. indexed objects
+2. expectation operator
+3. RBC model
+4. matrix diff rules
