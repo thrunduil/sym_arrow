@@ -262,7 +262,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;C:\Program Files %28x86%29\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;C:\coding\extern\boost_1_71_0;C:\coding\public\tmp\arrow\antlr\antlr\lib\cpp;C:\coding\public\tmp\arrow\antlr\region\src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -277,13 +277,13 @@
       <SubSystem>Windows</SubSystem>
       <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Visual Leak Detector\lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;C:\coding\extern\boost_1_71_0;C:\coding\public\tmp\arrow\antlr\antlr\lib\cpp;C:\coding\public\tmp\arrow\antlr\region\src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN64;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -298,13 +298,13 @@
       <SubSystem>Windows</SubSystem>
       <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration);C:\coding\extern\boost_1_71_0\stage\x64_debug_multi\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;C:\coding\extern\boost_1_71_0;C:\coding\public\tmp\arrow\antlr\antlr\lib\cpp;C:\coding\public\tmp\arrow\antlr\region\src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -324,13 +324,13 @@
     <Link>
       <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\sym_arrow;..\..\src\sym_arrow\include;..\..\src;..\..\..\dbs\src\dbs\include;..\..\..\gsli\src\gsli\include;C:\coding\extern\boost_1_71_0;C:\coding\public\tmp\arrow\antlr\antlr\lib\cpp;C:\coding\public\tmp\arrow\antlr\region\src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SYM_ARROW_EXPORTS;WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -348,8 +348,8 @@
     <Link>
       <ProgramDatabaseFile>$(TargetDir)/$(ProjectName)-$(Platform)-$(Configuration).pdb</ProgramDatabaseFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>region.lib;antlr.lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>region-$(Platform)-$(Configuration).lib;antlr-$(Platform)-$(Configuration).lib;libboost_system.lib;gsli-$(Platform)-$(Configuration).lib;dbs-$(Platform)-$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\gsli\$(Platform)\$(Configuration);..\..\..\dbs\$(Platform)\$(Configuration);..\..\..\arrow\$(Platform)\$(Configuration);C:\coding\extern\boost_1_71_0\stage\x64_release_multi\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
