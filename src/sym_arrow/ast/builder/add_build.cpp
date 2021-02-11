@@ -1,8 +1,7 @@
 /* 
- *  Morfa programming language.
  *  This file is a part of sym_arrow library.
  *
- *  Copyright (c) Pawe³ Kowal 2017
+ *  Copyright (c) Pawe³ Kowal 2017 - 2021
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

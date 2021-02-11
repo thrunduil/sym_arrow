@@ -4,8 +4,6 @@ C++ library for symbolic differentiation.
 Sym_arrow provides only basic algebraic capabilities but instead is concentraced on
 calculating symbolic derivatives of expressions as fast as possible.
 
-This library is a part of the Morfa project. See morfalang.org.
-
 ## Code example
 
 A complete C++ program that computes (not normalized) 
